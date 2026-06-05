@@ -1,15 +1,17 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" translate="no">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Genproia — Construction de ton site</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Genproia — Moteur IA</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --void: #05030f;
     --deep: #0a0618;
+    --surface: #0f0b20;
     --card: #13102a;
+    --card2: #181330;
     --border: rgba(139,92,246,0.15);
     --border2: rgba(255,255,255,0.06);
     --violet: #7c3aed;
@@ -21,767 +23,658 @@
     --yellow: #f59e0b;
     --white: #f0ecff;
     --muted: #7a6fa0;
-    --font-display: 'Syne', sans-serif;
+    --muted2: #4a4068;
+    --font-display: 'Inter', sans-serif;
     --font-body: 'DM Sans', sans-serif;
+    --sidebar-w: 260px;
   }
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--void); color: var(--white);
-    font-family: var(--font-body); min-height: 100vh;
-    display: flex; flex-direction: column; align-items: center;
-    justify-content: center; padding: 24px;
-  }
+  html, body { height: 100%; }
+  body { background: var(--void); color: var(--white); font-family: var(--font-body); display: flex; overflow: hidden; }
+
   body::before {
-    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.5;
   }
-  .orb { position: fixed; border-radius: 50%; pointer-events: none; filter: blur(90px); }
-  .orb1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(124,58,237,0.2), transparent 70%); top: -100px; left: -150px; }
-  .orb2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(236,72,153,0.12), transparent 70%); bottom: -80px; right: -100px; }
 
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 16px 32px;
-    background: rgba(5,3,15,0.85); backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-  }
-  .logo { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800;
-    background: linear-gradient(135deg, var(--violet-glow), var(--pink));
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  /* SIDEBAR */
+  .sidebar { width: var(--sidebar-w); min-height: 100vh; background: var(--deep); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; z-index: 50; }
+  .sidebar-logo { padding: 26px 22px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .logo-icon { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, var(--violet), var(--pink)); display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 800; }
+  .logo-text { font-family: 'Inter', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--white); letter-spacing: -0.03em; }
+  .logo-text span { color: var(--violet-bright); }
+  .sidebar-nav { flex: 1; padding: 18px 10px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
+  .nav-section-label { font-family: 'Inter', sans-serif; font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); padding: 10px 12px 5px; font-weight: 600; }
+  .nav-item { display: flex; align-items: center; gap: 11px; padding: 9px 12px; border-radius: 9px; cursor: pointer; transition: background 0.2s, color 0.2s; color: var(--muted); font-size: 0.83rem; font-weight: 500; text-decoration: none; position: relative; border: 1px solid transparent; }
+  .nav-item:hover { background: rgba(139,92,246,0.08); color: var(--white); }
+  .nav-item.active { background: rgba(139,92,246,0.13); color: var(--white); border-color: rgba(139,92,246,0.22); }
+  .nav-item.active::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 55%; background: var(--violet-bright); border-radius: 0 3px 3px 0; }
+  .nav-icon { width: 18px; text-align: center; font-size: 0.95rem; flex-shrink: 0; }
+  .sidebar-bottom { padding: 14px 10px; border-top: 1px solid var(--border); }
+  .user-card { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 9px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); cursor: pointer; transition: background 0.2s; }
+  .user-card:hover { background: rgba(255,255,255,0.06); }
+  .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--violet), var(--pink)); display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.75rem; flex-shrink: 0; }
+  .user-name { font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 600; }
+  .user-plan { font-family: 'Inter', sans-serif; font-size: 0.67rem; color: var(--violet-glow); background: rgba(124,58,237,0.12); padding: 1px 7px; border-radius: 100px; margin-top: 2px; display: inline-block; }
 
-  /* WRAP */
-  .wrap { width: 100%; max-width: 560px; position: relative; z-index: 1; margin-top: 70px; }
+  /* MAIN */
+  .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto; }
 
-  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  /* TOPBAR */
+  .topbar { position: sticky; top: 0; z-index: 40; background: rgba(5,3,15,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 30px; height: 62px; display: flex; align-items: center; justify-content: space-between; }
+  .topbar-title { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; letter-spacing: -0.01em; }
+  .topbar-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+  .back-btn { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 0.82rem; cursor: pointer; text-decoration: none; transition: color 0.2s; font-family: 'Inter', sans-serif; }
+  .back-btn:hover { color: var(--white); }
+
+  /* CONTENT */
+  .content { padding: 32px 40px; max-width: 1100px; margin: 0 auto; width: 100%; }
+
+  /* ETAPES */
+  .steps-indicator { display: flex; align-items: center; gap: 0; margin-bottom: 36px; }
+  .step-ind { display: flex; align-items: center; gap: 10px; flex: 1; }
+  .step-ind-num { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 700; border: 2px solid var(--border2); color: var(--muted); flex-shrink: 0; transition: all 0.3s; }
+  .step-ind.active .step-ind-num { background: var(--violet); border-color: var(--violet); color: var(--white); }
+  .step-ind.done .step-ind-num { background: var(--green); border-color: var(--green); color: var(--white); }
+  .step-ind-label { font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 500; color: var(--muted); transition: color 0.3s; }
+  .step-ind.active .step-ind-label { color: var(--white); }
+  .step-ind.done .step-ind-label { color: var(--green); }
+  .step-line { flex: 1; height: 1px; background: var(--border); margin: 0 12px; max-width: 60px; }
+
+  /* SECTION IDÉE */
+  .idea-section { animation: fadeUp 0.5s ease both; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-  @keyframes spin { to{transform:rotate(360deg)} }
-  @keyframes pulse { 0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(124,58,237,0.4)} 50%{transform:scale(1.06);box-shadow:0 0 60px rgba(124,58,237,0.65)} }
 
-  /* ── SCREEN: RECAP ── */
-  .screen { display: none; animation: fadeUp 0.5s ease; }
-  .screen.active { display: block; }
+  .section-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 32px; margin-bottom: 20px; position: relative; overflow: hidden; }
+  .section-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--violet), var(--pink)); }
+  .section-card-title { font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.02em; }
+  .section-card-sub { font-size: 0.82rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
 
-  .recap-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 20px; overflow: hidden;
-  }
-  .recap-card::before { content:''; display:block; height:2px; background:linear-gradient(90deg,var(--violet),var(--pink)); }
+  .idea-textarea { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(139,92,246,0.2); border-radius: 12px; padding: 16px 20px; color: var(--white); font-family: var(--font-body); font-size: 0.95rem; outline: none; resize: none; height: 130px; transition: border-color 0.2s, box-shadow 0.2s; }
+  .idea-textarea::placeholder { color: var(--muted); }
+  .idea-textarea:focus { border-color: var(--violet-bright); box-shadow: 0 0 0 3px rgba(139,92,246,0.1); }
 
-  .recap-head { padding: 22px 24px; border-bottom: 1px solid var(--border); }
-  .recap-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
-  .recap-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; }
-  .recap-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+  .examples-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .ex-chip { background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2); border-radius: 100px; padding: 5px 13px; font-size: 0.77rem; color: var(--violet-glow); cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+  .ex-chip:hover { background: rgba(139,92,246,0.18); border-color: var(--violet-bright); }
 
-  .recap-identity {
-    display: flex; align-items: center; gap: 16px;
-    padding: 20px 24px; border-bottom: 1px solid var(--border);
-    background: rgba(124,58,237,0.05);
-  }
-  .recap-logo {
-    width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display); font-size: 1.3rem; font-weight: 800;
-    box-shadow: 0 0 20px rgba(124,58,237,0.3);
-  }
-  .recap-brand-name { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; margin-bottom: 3px; }
-  .recap-slogan { font-size: 0.82rem; color: var(--muted); font-style: italic; }
+  /* TYPE GRID */
+  .type-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  .type-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: 14px; padding: 18px 14px; text-align: center; cursor: pointer; transition: all 0.2s; }
+  .type-card:hover { background: rgba(139,92,246,0.08); border-color: rgba(139,92,246,0.3); }
+  .type-card.selected { background: rgba(139,92,246,0.15); border-color: var(--violet-bright); }
+  .type-card-icon { font-size: 1.6rem; margin-bottom: 8px; }
+  .type-card-name { font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 600; margin-bottom: 4px; }
+  .type-card-desc { font-size: 0.7rem; color: var(--muted); }
 
-  .recap-details { padding: 16px 24px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--border); }
-  .recap-row { display: flex; justify-content: space-between; align-items: center; }
-  .recap-row-label { font-size: 0.72rem; color: var(--muted); }
-  .recap-row-value { font-size: 0.78rem; font-weight: 600; color: var(--cyan); }
+  /* BOUTON GENERATE */
+  .generate-main-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--violet), #9333ea); color: var(--white); border: none; cursor: pointer; border-radius: 14px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: -0.01em; transition: transform 0.2s, opacity 0.2s; margin-top: 8px; }
+  .generate-main-btn:hover:not(:disabled) { transform: translateY(-2px); opacity: 0.92; }
+  .generate-main-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-  .recap-actions { padding: 18px 24px; display: flex; gap: 10px; }
-  .btn-build {
-    flex: 1; padding: 13px;
-    background: linear-gradient(135deg, var(--violet), #9333ea);
-    color: var(--white); border: none; cursor: pointer;
-    border-radius: 12px; font-family: var(--font-display);
-    font-weight: 700; font-size: 0.95rem;
-    box-shadow: 0 0 28px rgba(124,58,237,0.4);
-    transition: transform 0.2s, box-shadow 0.2s;
-  }
-  .btn-build:hover { transform: translateY(-1px); box-shadow: 0 0 40px rgba(124,58,237,0.6); }
-  .btn-restart {
-    padding: 13px 16px; border-radius: 12px;
-    background: transparent; border: 1px solid var(--border2);
-    color: var(--muted); cursor: pointer;
-    font-family: var(--font-body); font-size: 0.82rem;
-    transition: all 0.2s;
-  }
-  .btn-restart:hover { color: var(--white); border-color: var(--border); }
+  /* LOADING */
+  .loading-section { display: none; text-align: center; padding: 60px 20px; animation: fadeIn 0.4s ease; }
+  .loading-section.visible { display: block; }
+  .loading-orb-wrap { position: relative; width: 100px; height: 100px; margin: 0 auto 28px; }
+  .loading-orb { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, var(--violet), var(--pink)); animation: spin 3s linear infinite; }
+  .loading-orb-inner { position: absolute; inset: 8px; border-radius: 50%; background: var(--void); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; }
+  @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+  .loading-title { font-family: 'Inter', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.02em; }
+  .loading-sub { font-size: 0.85rem; color: var(--muted); margin-bottom: 32px; }
+  .loading-steps { display: flex; flex-direction: column; gap: 10px; max-width: 300px; margin: 0 auto; text-align: left; }
+  .ls { display: flex; align-items: center; gap: 12px; font-size: 0.82rem; color: var(--muted); transition: color 0.3s; }
+  .ls.done { color: var(--green); }
+  .ls.active { color: var(--white); }
+  .ls-dot { width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid currentColor; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; flex-shrink: 0; }
+  .ls.done .ls-dot { background: var(--green); border-color: var(--green); }
+  .ls.active .ls-dot { border-color: var(--violet-glow); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(139,92,246,0.4)} 50%{box-shadow:0 0 0 5px rgba(139,92,246,0)} }
 
-  /* ── SCREEN: BUILDING ── */
-  .building-wrap { text-align: center; }
-  .build-orb {
-    width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 24px;
-    background: linear-gradient(135deg, var(--violet), var(--pink));
-    animation: pulse 2s ease-in-out infinite;
-  }
-  .build-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
-  .build-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 28px; line-height: 1.6; }
+  /* RÉSULTAT */
+  .result-section { display: none; animation: fadeUp 0.5s ease both; }
+  .result-section.visible { display: block; }
 
-  .build-steps { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; text-align: left; }
-  .build-step {
-    display: flex; align-items: center; gap: 12px;
-    padding: 11px 16px; border-radius: 11px;
-    background: rgba(255,255,255,0.02); border: 1px solid transparent;
-    transition: all 0.3s;
-  }
-  .build-step.active { background: rgba(124,58,237,0.08); border-color: rgba(124,58,237,0.2); }
-  .build-step.done { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.15); }
-  .build-step-icon {
-    width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.9rem; background: rgba(255,255,255,0.04);
-    border: 1px solid var(--border2); transition: all 0.3s;
-  }
-  .build-step.active .build-step-icon { background: rgba(124,58,237,0.15); border-color: rgba(124,58,237,0.3); }
-  .build-step.done .build-step-icon { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.25); }
-  .build-step-label { font-size: 0.82rem; flex: 1; transition: color 0.3s; }
-  .build-step.active .build-step-label { color: var(--white); font-weight: 500; }
-  .build-step.done .build-step-label { color: var(--muted); }
-  .build-step-check { font-size: 0.75rem; color: var(--green); opacity: 0; transition: opacity 0.3s; }
-  .build-step.done .build-step-check { opacity: 1; }
+  .result-header { display: flex; align-items: center; gap: 20px; margin-bottom: 24px; padding: 24px 28px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; position: relative; overflow: hidden; }
+  .result-header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--violet), var(--pink)); }
+  .result-logo { width: 64px; height: 64px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 1.4rem; font-weight: 800; flex-shrink: 0; }
+  .result-brand { flex: 1; }
+  .result-name { font-family: 'Inter', sans-serif; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.04em; margin-bottom: 4px; }
+  .result-slogan { font-size: 0.88rem; color: var(--muted); font-style: italic; margin-bottom: 8px; }
+  .result-tags { display: flex; gap: 7px; flex-wrap: wrap; }
+  .result-tag { font-family: 'Inter', sans-serif; font-size: 0.68rem; padding: 3px 10px; border-radius: 100px; background: rgba(139,92,246,0.12); border: 1px solid rgba(139,92,246,0.22); color: var(--violet-glow); }
+  .result-actions { display: flex; gap: 10px; flex-direction: column; }
+  .btn-download { padding: 10px 20px; background: linear-gradient(135deg, var(--violet), #9333ea); color: var(--white); border: none; cursor: pointer; border-radius: 10px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.82rem; transition: opacity 0.2s; white-space: nowrap; }
+  .btn-download:hover { opacity: 0.9; }
+  .btn-preview { padding: 10px 20px; background: transparent; color: var(--white); border: 1px solid var(--border2); cursor: pointer; border-radius: 10px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.82rem; transition: all 0.2s; white-space: nowrap; }
+  .btn-preview:hover { background: rgba(255,255,255,0.05); border-color: var(--border); }
 
-  .progress-bar { height: 5px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; margin-bottom: 8px; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--violet), var(--pink)); border-radius: 100px; transition: width 0.6s ease; }
-  .progress-label { font-size: 0.75rem; color: var(--muted); }
+  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+  .result-cell { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .result-cell-label { font-family: 'Inter', sans-serif; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .result-cell-value { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600; color: var(--white); }
 
-  /* ── SCREEN: READY ── */
-  .ready-card {
-    background: var(--card); border: 1px solid rgba(16,185,129,0.3);
-    border-radius: 20px; overflow: hidden;
-    box-shadow: 0 0 50px rgba(16,185,129,0.1);
-  }
-  .ready-card::before { content:''; display:block; height:2px; background:linear-gradient(90deg,var(--green),var(--cyan)); }
+  .domain-list { display: flex; flex-direction: column; gap: 6px; }
+  .domain-row { display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 8px; background: rgba(255,255,255,0.02); border: 1px solid transparent; cursor: pointer; transition: all 0.2s; }
+  .domain-row:hover { background: rgba(139,92,246,0.08); border-color: rgba(139,92,246,0.2); }
+  .domain-row.selected { background: rgba(139,92,246,0.12); border-color: rgba(139,92,246,0.35); }
+  .domain-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); flex-shrink: 0; }
+  .domain-row.selected .domain-dot { background: var(--violet-glow); }
+  .domain-name { font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 600; flex: 1; }
+  .domain-check { font-size: 0.75rem; color: var(--green); opacity: 0; }
+  .domain-row.selected .domain-check { opacity: 1; }
 
-  .ready-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);
-    border-radius: 100px; padding: 4px 14px; margin: 20px 24px 0;
-    font-size: 0.72rem; color: #6ee7b7; font-weight: 600;
-  }
-  .ready-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 1.5s infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .features-list { display: flex; flex-direction: column; gap: 8px; }
+  .feat-row { display: flex; align-items: center; gap: 10px; font-size: 0.83rem; }
+  .feat-check { color: var(--green); flex-shrink: 0; }
 
-  .site-preview-wrap { margin: 16px 24px; }
-  .site-browser {
-    background: var(--deep); border: 1px solid var(--border);
-    border-radius: 14px; overflow: hidden;
-  }
-  .browser-bar {
-    background: rgba(255,255,255,0.04); padding: 9px 14px;
-    display: flex; align-items: center; gap: 7px;
-    border-bottom: 1px solid var(--border);
-  }
-  .bdot { width: 8px; height: 8px; border-radius: 50%; }
-  .browser-url-field {
-    flex: 1; background: rgba(255,255,255,0.06); border-radius: 6px;
-    padding: 4px 12px; font-size: 0.7rem; color: #6ee7b7;
-    margin: 0 8px; font-family: monospace;
-  }
-  .browser-content {
-    height: 180px; padding: 24px 20px;
-    display: flex; flex-direction: column; justify-content: center; align-items: center;
-    text-align: center;
-    background: linear-gradient(160deg, #0f0b20, #1a1040);
-  }
-  .preview-logo {
-    width: 52px; height: 52px; border-radius: 13px;
-    display: flex; align-items: center; justify-content: center;
-    font-family: var(--font-display); font-size: 1.3rem; font-weight: 800;
-    margin: 0 auto 10px;
-  }
-  .preview-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
-  .preview-slogan { font-size: 0.75rem; color: var(--muted); }
+  .color-preview { display: flex; gap: 10px; margin-top: 4px; }
+  .color-swatch { width: 36px; height: 36px; border-radius: 8px; }
+  .color-info { display: flex; flex-direction: column; justify-content: center; }
+  .color-label { font-size: 0.68rem; color: var(--muted); }
+  .color-hex { font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 600; }
 
-  .ready-features {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
-    padding: 16px 24px;
-  }
-  .ready-feat {
-    display: flex; align-items: center; gap: 7px;
-    font-size: 0.75rem; color: #6ee7b7;
-  }
-  .ready-feat-icon { font-size: 0.85rem; }
+  /* PREVIEW IFRAME */
+  .preview-section { display: none; margin-top: 20px; }
+  .preview-section.visible { display: block; animation: fadeIn 0.3s ease; }
+  .preview-bar { background: var(--card); border: 1px solid var(--border); border-radius: 14px 14px 0 0; padding: 12px 18px; display: flex; align-items: center; gap: 10px; }
+  .preview-dots { display: flex; gap: 6px; }
+  .preview-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .preview-url { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--border2); border-radius: 6px; padding: 4px 12px; font-size: 0.75rem; color: var(--muted); font-family: 'Inter', sans-serif; }
+  .preview-iframe { width: 100%; height: 600px; border: 1px solid var(--border); border-top: none; border-radius: 0 0 14px 14px; background: white; }
 
-  .ready-actions { padding: 16px 24px 20px; }
-  .btn-deploy {
-    width: 100%; padding: 14px;
-    background: linear-gradient(135deg, var(--violet), #9333ea);
-    color: var(--white); border: none; cursor: pointer;
-    border-radius: 12px; font-family: var(--font-display);
-    font-weight: 700; font-size: 1rem;
-    box-shadow: 0 0 28px rgba(124,58,237,0.45);
-    transition: transform 0.2s, box-shadow 0.2s;
-    margin-bottom: 10px;
-  }
-  .btn-deploy:hover { transform: translateY(-1px); box-shadow: 0 0 40px rgba(124,58,237,0.65); }
-  .deploy-sub { font-size: 0.75rem; color: var(--muted); text-align: center; }
+  /* REGEN BTN */
+  .regen-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; background: transparent; color: var(--muted); border: 1px solid var(--border2); cursor: pointer; border-radius: 12px; font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.85rem; transition: all 0.2s; margin-top: 12px; }
+  .regen-btn:hover { color: var(--white); border-color: var(--border); background: rgba(255,255,255,0.03); }
 
-  /* NO DATA */
-  .nodata-wrap { text-align: center; padding: 40px 24px; }
-  .nodata-icon { font-size: 3rem; margin-bottom: 16px; }
-  .nodata-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
-  .nodata-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; }
-  .btn-back {
-    display: inline-block; padding: 12px 28px;
-    background: linear-gradient(135deg, var(--violet), #9333ea);
-    color: var(--white); text-decoration: none; border-radius: 11px;
-    font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;
-    box-shadow: 0 0 24px rgba(124,58,237,0.4);
-  }
+  /* ERROR */
+  .error-box { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 12px; padding: 14px 18px; font-size: 0.83rem; color: #fca5a5; display: none; margin-bottom: 16px; }
+  .error-box.visible { display: block; animation: fadeIn 0.3s ease; }
 
-  @media (max-width: 480px) {
-    nav { padding: 14px 16px; }
-    body { padding: 16px; }
-    .recap-actions { flex-direction: column; }
-    .ready-features { grid-template-columns: 1fr; }
-  }
+  /* UPGRADE */
+  .upgrade-box { background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(236,72,153,0.08)); border: 1px solid rgba(139,92,246,0.3); border-radius: 16px; padding: 24px; text-align: center; display: none; margin-bottom: 16px; }
+  .upgrade-box.visible { display: block; animation: fadeIn 0.3s ease; }
+  .upgrade-title { font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  .upgrade-sub { font-size: 0.83rem; color: var(--muted); margin-bottom: 16px; }
+  .upgrade-btn { padding: 10px 24px; background: linear-gradient(135deg, var(--violet), #9333ea); color: var(--white); border: none; cursor: pointer; border-radius: 10px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem; }
 
-  /* ECOSYSTEM */
-  .eco-section {
-    background: rgba(255,255,255,0.02); border: 1px solid var(--border2);
-    border-radius: 14px; padding: 16px; margin-bottom: 12px;
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .main { margin-left: 0; }
+    .content { padding: 20px; }
+    .type-grid { grid-template-columns: 1fr 1fr; }
+    .result-grid { grid-template-columns: 1fr; }
+    .result-header { flex-direction: column; align-items: flex-start; }
+    .result-actions { flex-direction: row; }
   }
-  .eco-section-title {
-    display: flex; align-items: center; gap: 8px;
-    font-family: var(--font-display); font-size: 0.88rem; font-weight: 700;
-    margin-bottom: 12px; color: var(--white);
-  }
-  .eco-section-icon {
-    width: 28px; height: 28px; border-radius: 7px;
-    display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
-  }
-  .eco-item {
-    display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start;
-  }
-  .eco-item:last-child { margin-bottom: 0; }
-  .eco-item-dot {
-    width: 6px; height: 6px; border-radius: 50%;
-    flex-shrink: 0; margin-top: 6px;
-  }
-  .eco-item-main { flex: 1; min-width: 0; }
-  .eco-item-name { font-size: 0.82rem; font-weight: 600; margin-bottom: 2px; }
-  .eco-item-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
-  .eco-item-link {
-    font-size: 0.68rem; color: var(--cyan); text-decoration: none;
-    border: 1px solid rgba(6,182,212,0.25); padding: 2px 8px; border-radius: 4px;
-    white-space: nowrap; flex-shrink: 0; transition: all 0.2s;
-    display: inline-block; margin-top: 3px;
-  }
-  .eco-item-link:hover { background: rgba(6,182,212,0.1); }
-  .eco-tag {
-    display: inline-block; font-size: 0.62rem; padding: 2px 7px;
-    border-radius: 100px; font-weight: 600; margin-right: 4px; margin-top: 3px;
-  }
-  .eco-tag-green { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
-  .eco-tag-yellow { background: rgba(245,158,11,0.1); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
-  .eco-tag-violet { background: rgba(124,58,237,0.12); color: var(--violet-glow); border: 1px solid rgba(124,58,237,0.2); }
-  .eco-budget {
-    background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2);
-    border-radius: 10px; padding: 12px 14px; margin-top: 4px;
-    display: flex; align-items: center; gap: 8px; font-size: 0.8rem;
-  }
-  .eco-loading {
-    text-align: center; padding: 32px 0;
-  }
-  .eco-spinner {
-    width: 36px; height: 36px; border-radius: 50%;
-    border: 3px solid rgba(245,158,11,0.2); border-top-color: var(--yellow);
-    animation: spin 0.9s linear infinite; margin: 0 auto 12px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
 </style>
 </head>
 <body>
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
 
-<nav>
-  <div class="logo">Genproia</div>
-  <div style="font-size:0.7rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:#6ee7b7;padding:4px 12px;border-radius:100px;font-weight:600;">⚡ Moteur IA</div>
-</nav>
-
-<div class="wrap">
-
-  <!-- SCREEN 1: RECAP + CONFIRM -->
-  <div class="screen active" id="screenRecap">
-    <div class="recap-card">
-      <div class="recap-head">
-        <div class="recap-label">✦ Prêt à construire</div>
-        <div class="recap-title">Ton identité est validée !</div>
-        <div class="recap-sub">Voici ce qu'on va construire pour toi</div>
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">G</div>
+    <div class="logo-text">Genpr<span>oia</span></div>
+  </div>
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Principal</div>
+    <a class="nav-item" href="/genproia-dashboard.html"><span class="nav-icon">⊞</span> Vue d'ensemble</a>
+    <a class="nav-item" href="/genproia-dashboard.html"><span class="nav-icon">✦</span> Mes projets</a>
+    <a class="nav-item active"><span class="nav-icon">⚡</span> Générer</a>
+    <div class="nav-section-label">Outils</div>
+    <a class="nav-item"><span class="nav-icon">🎨</span> Identité visuelle</a>
+    <a class="nav-item"><span class="nav-icon">🌐</span> Domaines</a>
+    <a class="nav-item"><span class="nav-icon">💳</span> Paiements</a>
+    <a class="nav-item"><span class="nav-icon">📊</span> Analytics</a>
+    <div class="nav-section-label">Compte</div>
+    <a class="nav-item"><span class="nav-icon">⚙️</span> Paramètres</a>
+    <a class="nav-item"><span class="nav-icon">🆘</span> Support</a>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="user-card" onclick="logout()">
+      <div class="user-avatar" id="userAvatar">?</div>
+      <div>
+        <div class="user-name" id="userName">Chargement…</div>
+        <div class="user-plan" id="userPlan">Free</div>
       </div>
-
-      <div class="recap-identity">
-        <div class="recap-logo" id="recapLogo">—</div>
-        <div>
-          <div class="recap-brand-name" id="recapName">—</div>
-          <div class="recap-slogan" id="recapSlogan">—</div>
-        </div>
-      </div>
-
-      <div class="recap-details">
-        <div class="recap-row">
-          <div class="recap-row-label">🌐 Domaine principal</div>
-          <div class="recap-row-value" id="recapDomain">—</div>
-        </div>
-        <div class="recap-row">
-          <div class="recap-row-label">⚙️ Type de site</div>
-          <div class="recap-row-value" id="recapType">—</div>
-        </div>
-        <div class="recap-row">
-          <div class="recap-row-label">💳 Paiement</div>
-          <div class="recap-row-value">Stripe intégré</div>
-        </div>
-        <div class="recap-row">
-          <div class="recap-row-label">📊 Dashboard admin</div>
-          <div class="recap-row-value">Inclus</div>
-        </div>
-      </div>
-
-      <div class="recap-actions">
-        <button class="btn-build" onclick="startBuilding()">⚡ Construire mon site maintenant</button>
-        <button class="btn-restart" onclick="goBack()">← Modifier</button>
-      </div>
+      <span style="margin-left:auto;color:var(--muted);font-size:0.8rem">⏻</span>
     </div>
   </div>
+</aside>
 
-  <!-- SCREEN 2: BUILDING -->
-  <div class="screen" id="screenBuilding">
-    <div class="building-wrap">
-      <div class="build-orb"></div>
-      <div class="build-title">Construction en cours…</div>
-      <div class="build-sub" id="buildSub">Claude génère ton site complet<br>avec toutes les fonctionnalités</div>
-
-      <div class="build-steps">
-        <div class="build-step" id="bs1">
-          <div class="build-step-icon">🏗️</div>
-          <div class="build-step-label">Architecture & structure du site</div>
-          <div class="build-step-check">✓</div>
-        </div>
-        <div class="build-step" id="bs2">
-          <div class="build-step-icon">🎨</div>
-          <div class="build-step-label">Design & identité visuelle</div>
-          <div class="build-step-check">✓</div>
-        </div>
-        <div class="build-step" id="bs3">
-          <div class="build-step-icon">⚙️</div>
-          <div class="build-step-label">Fonctionnalités & pages</div>
-          <div class="build-step-check">✓</div>
-        </div>
-        <div class="build-step" id="bs4">
-          <div class="build-step-icon">💳</div>
-          <div class="build-step-label">Intégration Stripe & paiements</div>
-          <div class="build-step-check">✓</div>
-        </div>
-        <div class="build-step" id="bs5">
-          <div class="build-step-icon">📊</div>
-          <div class="build-step-label">Dashboard admin & analytics</div>
-          <div class="build-step-check">✓</div>
-        </div>
-        <div class="build-step" id="bs6">
-          <div class="build-step-icon">🚀</div>
-          <div class="build-step-label">Optimisation SEO & déploiement</div>
-          <div class="build-step-check">✓</div>
-        </div>
-      </div>
-
-      <div class="progress-bar">
-        <div class="progress-fill" id="progressFill" style="width:0%"></div>
-      </div>
-      <div class="progress-label" id="progressLabel">0% — Initialisation…</div>
+<div class="main">
+  <div class="topbar">
+    <div>
+      <div class="topbar-title">Moteur IA</div>
+      <div class="topbar-sub">Génère ton business complet en quelques minutes</div>
     </div>
+    <a href="/genproia-dashboard.html" class="back-btn">← Retour au dashboard</a>
   </div>
 
-  <!-- SCREEN 3: READY -->
-  <div class="screen" id="screenReady">
-    <div class="ready-card">
-      <div class="ready-badge">
-        <div class="ready-badge-dot"></div>
-        Ton site est prêt à être déployé
-      </div>
+  <div class="content">
 
-      <div class="site-preview-wrap">
-        <div class="site-browser">
-          <div class="browser-bar">
-            <div class="bdot" style="background:#ef4444"></div>
-            <div class="bdot" style="background:#f59e0b"></div>
-            <div class="bdot" style="background:#10b981"></div>
-            <div class="browser-url-field" id="readyUrl">https://monsite.fr</div>
+    <!-- INDICATEUR ÉTAPES -->
+    <div class="steps-indicator" id="stepsIndicator">
+      <div class="step-ind active" id="sind1">
+        <div class="step-ind-num">1</div>
+        <div class="step-ind-label">Ton idée</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-ind" id="sind2">
+        <div class="step-ind-num">2</div>
+        <div class="step-ind-label">Type de site</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-ind" id="sind3">
+        <div class="step-ind-num">3</div>
+        <div class="step-ind-label">Génération IA</div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step-ind" id="sind4">
+        <div class="step-ind-num">4</div>
+        <div class="step-ind-label">Résultat</div>
+      </div>
+    </div>
+
+    <!-- ERREUR -->
+    <div class="error-box" id="errorBox"></div>
+
+    <!-- UPGRADE -->
+    <div class="upgrade-box" id="upgradeBox">
+      <div class="upgrade-title">Limite du plan gratuit atteinte</div>
+      <div class="upgrade-sub">Tu as déjà généré ton projet gratuit. Passe au plan Pro pour des générations illimitées.</div>
+      <button class="upgrade-btn" onclick="window.location.href='/index.html#pricing'">Passer au plan Pro →</button>
+    </div>
+
+    <!-- ÉTAPE 1 — IDÉE -->
+    <div id="step1" class="idea-section">
+      <div class="section-card">
+        <div class="section-card-title">Décris ton idée de projet</div>
+        <div class="section-card-sub">Plus tu es précis, plus le résultat sera adapté à ton marché et ta cible.</div>
+        <textarea class="idea-textarea" id="ideaInput" placeholder="Ex : Je veux créer une boutique en ligne pour vendre des accessoires de yoga haut de gamme, ciblant les femmes actives de 25-45 ans…"></textarea>
+        <div class="examples-row">
+          <span class="ex-chip" onclick="setIdea(this)">Boutique streetwear</span>
+          <span class="ex-chip" onclick="setIdea(this)">SaaS de facturation</span>
+          <span class="ex-chip" onclick="setIdea(this)">Livraison de repas</span>
+          <span class="ex-chip" onclick="setIdea(this)">App de coaching fitness</span>
+          <span class="ex-chip" onclick="setIdea(this)">Agence immobilière luxe</span>
+          <span class="ex-chip" onclick="setIdea(this)">Marketplace artisans</span>
+        </div>
+      </div>
+      <button class="generate-main-btn" onclick="goStep2()" id="step1Btn">Continuer →</button>
+    </div>
+
+    <!-- ÉTAPE 2 — TYPE -->
+    <div id="step2" style="display:none" class="idea-section">
+      <div class="section-card">
+        <div class="section-card-title">Quel type de site veux-tu ?</div>
+        <div class="section-card-sub">Choisis le modèle le plus adapté à ton projet.</div>
+        <div class="type-grid">
+          <div class="type-card selected" onclick="selectType(this,'ecommerce')">
+            <div class="type-card-icon">🛒</div>
+            <div class="type-card-name">E-commerce</div>
+            <div class="type-card-desc">Boutique + paiement Stripe</div>
           </div>
-          <div class="browser-content">
-            <div class="preview-logo" id="readyLogo">—</div>
-            <div class="preview-name" id="readyName">—</div>
-            <div class="preview-slogan" id="readySlogan">—</div>
+          <div class="type-card" onclick="selectType(this,'saas')">
+            <div class="type-card-icon">⚙️</div>
+            <div class="type-card-name">SaaS</div>
+            <div class="type-card-desc">Abonnements + admin</div>
+          </div>
+          <div class="type-card" onclick="selectType(this,'vitrine')">
+            <div class="type-card-icon">🏢</div>
+            <div class="type-card-name">Vitrine</div>
+            <div class="type-card-desc">Site pro + contact</div>
+          </div>
+          <div class="type-card" onclick="selectType(this,'landing')">
+            <div class="type-card-icon">📱</div>
+            <div class="type-card-name">Landing page</div>
+            <div class="type-card-desc">Capture + conversion</div>
+          </div>
+          <div class="type-card" onclick="selectType(this,'marketplace')">
+            <div class="type-card-icon">🏪</div>
+            <div class="type-card-name">Marketplace</div>
+            <div class="type-card-desc">Multi-vendeurs</div>
+          </div>
+          <div class="type-card" onclick="selectType(this,'blog')">
+            <div class="type-card-icon">📰</div>
+            <div class="type-card-name">Blog / Média</div>
+            <div class="type-card-desc">Contenu + monétisation</div>
           </div>
         </div>
       </div>
-
-      <div class="ready-features">
-        <div class="ready-feat"><div class="ready-feat-icon">✓</div> Stripe configuré</div>
-        <div class="ready-feat"><div class="ready-feat-icon">✓</div> Dashboard admin</div>
-        <div class="ready-feat"><div class="ready-feat-icon">✓</div> SSL automatique</div>
-        <div class="ready-feat"><div class="ready-feat-icon">✓</div> SEO optimisé</div>
-        <div class="ready-feat"><div class="ready-feat-icon">✓</div> Mobile responsive</div>
-        <div class="ready-feat"><div class="ready-feat-icon">✓</div> Analytics inclus</div>
-      </div>
-
-      <div class="ready-actions">
-        <button class="btn-deploy" onclick="deploy()">🚀 Déployer mon site en ligne</button>
-        <div class="deploy-sub">Disponible en ligne dans moins de 2 minutes</div>
+      <div style="display:flex;gap:12px;margin-top:8px">
+        <button class="regen-btn" style="margin-top:0" onclick="goBack(2)">← Retour</button>
+        <button class="generate-main-btn" style="margin-top:0" onclick="lancerGeneration()">Générer mon business avec l'IA ✦</button>
       </div>
     </div>
-  </div>
 
-  <!-- SCREEN 4: ECOSYSTEM -->
-  <div class="screen" id="screenEco">
-    <div style="margin-bottom:16px;">
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
-        <div style="width:36px;height:36px;border-radius:10px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">🏭</div>
-        <div>
-          <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;">Ton écosystème business</div>
-          <div style="font-size:0.75rem;color:var(--muted);">Fournisseurs, contacts et roadmap pour lancer</div>
+    <!-- ÉTAPE 3 — LOADING -->
+    <div id="step3" class="loading-section">
+      <div class="loading-orb-wrap">
+        <div class="loading-orb"></div>
+        <div class="loading-orb-inner">✦</div>
+      </div>
+      <div class="loading-title">L'IA génère ton business…</div>
+      <div class="loading-sub">Claude analyse ton idée et construit tout. ~30 secondes.</div>
+      <div class="loading-steps">
+        <div class="ls" id="ls1"><div class="ls-dot">✓</div>Analyse de l'idée</div>
+        <div class="ls" id="ls2"><div class="ls-dot"></div>Génération du nom & slogan</div>
+        <div class="ls" id="ls3"><div class="ls-dot"></div>Création de l'identité visuelle</div>
+        <div class="ls" id="ls4"><div class="ls-dot"></div>Construction du site complet</div>
+        <div class="ls" id="ls5"><div class="ls-dot"></div>Finalisation & sauvegarde</div>
+      </div>
+    </div>
+
+    <!-- ÉTAPE 4 — RÉSULTAT -->
+    <div id="step4" class="result-section">
+
+      <!-- HEADER MARQUE -->
+      <div class="result-header">
+        <div class="result-logo" id="rLogo"></div>
+        <div class="result-brand">
+          <div class="result-name" id="rNom">—</div>
+          <div class="result-slogan" id="rSlogan">—</div>
+          <div class="result-tags" id="rTags"></div>
+        </div>
+        <div class="result-actions">
+          <button class="btn-download" onclick="telechargerSite()">⬇ Télécharger le site</button>
+          <button class="btn-preview" onclick="togglePreview()">👁 Aperçu</button>
         </div>
       </div>
-    </div>
-    <div id="ecoContent">
-      <!-- filled by Claude API -->
-    </div>
-    <div style="display:flex;gap:10px;margin-top:20px;">
-      <button onclick="showScreen('screenReady')" style="flex:1;padding:13px;background:linear-gradient(135deg,var(--violet),#9333ea);color:var(--white);border:none;border-radius:12px;font-family:var(--font-display);font-weight:700;font-size:0.9rem;cursor:pointer;box-shadow:0 0 24px rgba(124,58,237,0.4);">🚀 Déployer mon site</button>
-      <button onclick="showScreen('screenReady')" style="padding:13px 16px;border-radius:12px;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;font-size:0.82rem;font-family:var(--font-body);transition:all 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--muted)'">Passer →</button>
-    </div>
-  </div>
 
-  <!-- NO DATA (si accès direct sans avoir validé) -->
-  <div class="screen" id="screenNoData">
-    <div class="nodata-wrap">
-      <div class="nodata-icon">⚠️</div>
-      <div class="nodata-title">Aucun projet trouvé</div>
-      <div class="nodata-sub">Tu dois d'abord créer et valider ton identité de marque sur la page d'accueil.</div>
-      <a href="genproia.html" class="btn-back">← Retour à l'accueil</a>
-    </div>
-  </div>
+      <!-- GRILLE RÉSULTATS -->
+      <div class="result-grid">
+        <div class="result-cell">
+          <div class="result-cell-label">Domaines suggérés</div>
+          <div class="domain-list" id="rDomains"></div>
+        </div>
+        <div class="result-cell">
+          <div class="result-cell-label">Identité visuelle</div>
+          <div class="color-preview" id="rColors"></div>
+        </div>
+        <div class="result-cell">
+          <div class="result-cell-label">Fonctionnalités générées</div>
+          <div class="features-list" id="rFeatures"></div>
+        </div>
+        <div class="result-cell">
+          <div class="result-cell-label">À propos du projet</div>
+          <div style="font-size:0.83rem;color:var(--muted);line-height:1.6" id="rDesc">—</div>
+          <div style="margin-top:10px;font-size:0.78rem;color:var(--muted2)">Cible : <span style="color:var(--white)" id="rCible">—</span></div>
+        </div>
+      </div>
 
+      <!-- APERÇU IFRAME -->
+      <div class="preview-section" id="previewSection">
+        <div class="preview-bar">
+          <div class="preview-dots">
+            <div class="preview-dot" style="background:#ef4444"></div>
+            <div class="preview-dot" style="background:#f59e0b"></div>
+            <div class="preview-dot" style="background:#10b981"></div>
+          </div>
+          <div class="preview-url" id="previewUrl">genproia.com/preview</div>
+          <button onclick="togglePreview()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.78rem;font-family:'Inter',sans-serif;">Fermer ✕</button>
+        </div>
+        <iframe id="previewFrame" class="preview-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
+      </div>
+
+      <!-- REGÉNÉRER -->
+      <button class="regen-btn" onclick="recommencer()">↺ Générer un nouveau projet</button>
+
+    </div>
+
+  </div>
 </div>
 
-<!-- TOAST -->
-<div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:12px 22px;font-size:0.85rem;z-index:999;transition:transform 0.35s;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.5);color:#6ee7b7;"></div>
+<script translate="no">
+const API_BASE = '';  // même domaine, Vercel gère le routing
 
-<script>
-let projectData = null;
+let currentType = 'ecommerce';
+let currentResult = null;
+let userToken = null;
 
-// ── INIT ── Charge les données depuis localStorage
-function init() {
-  const raw = localStorage.getItem('genproia_project');
-  if (!raw) {
-    showScreen('screenNoData');
+// ── AUTH ──
+function checkAuth() {
+  const token = localStorage.getItem('genproia_token');
+  const userRaw = localStorage.getItem('genproia_user');
+  if (!token || !userRaw) { window.location.href = '/index.html'; return; }
+  userToken = token;
+  const user = JSON.parse(userRaw);
+  const prenom = (user.nom || user.email || '').split(' ')[0].split('@')[0];
+  document.getElementById('userName').textContent = user.nom || user.email;
+  document.getElementById('userAvatar').textContent = (user.nom || user.email).substring(0,2).toUpperCase();
+  document.getElementById('userPlan').textContent = user.plan === 'pro' ? 'Pro' : user.plan === 'business' ? 'Business' : 'Free';
+}
+
+function logout() {
+  localStorage.removeItem('genproia_token');
+  localStorage.removeItem('genproia_user');
+  window.location.href = '/index.html';
+}
+
+// ── NAVIGATION ÉTAPES ──
+function showStep(n) {
+  ['step1','step2','step3','step4'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (id === 'step3') {
+      el.classList.toggle('visible', i+1 === n);
+      if (i+1 !== n) el.style.display = 'none'; else el.style.display = 'block';
+    } else {
+      el.style.display = i+1 === n ? 'block' : 'none';
+    }
+  });
+  // Indicateur
+  for (let i = 1; i <= 4; i++) {
+    const ind = document.getElementById('sind'+i);
+    ind.classList.remove('active','done');
+    if (i < n) ind.classList.add('done');
+    else if (i === n) ind.classList.add('active');
+  }
+}
+
+function goStep2() {
+  const idea = document.getElementById('ideaInput').value.trim();
+  if (idea.length < 10) {
+    showError('Décris ton idée en au moins 10 caractères.');
     return;
   }
-  try {
-    projectData = JSON.parse(raw);
-    populateRecap(projectData);
-    showScreen('screenRecap');
-  } catch(e) {
-    showScreen('screenNoData');
-  }
+  hideError();
+  showStep(2);
 }
 
-function populateRecap(data) {
-  const grad = `linear-gradient(135deg, ${data.couleurPrimaire||'#7c3aed'}, ${data.couleurSecondaire||'#ec4899'})`;
+function goBack(step) {
+  showStep(step - 1);
+}
 
-  const logoEl = document.getElementById('recapLogo');
-  logoEl.textContent = data.logoInitiales || data.nom?.substring(0,2).toUpperCase() || 'G';
-  logoEl.style.background = grad;
+function selectType(el, type) {
+  document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  currentType = type;
+}
 
-  document.getElementById('recapName').textContent = data.nom || '—';
-  document.getElementById('recapSlogan').textContent = '"' + (data.slogan || '—') + '"';
-
-  const domains = Array.isArray(data.domaines) ? data.domaines : (data.domaines||'').split('\n');
-  document.getElementById('recapDomain').textContent = domains[0] || '—';
-
-  const typeLabels = {
-    ecommerce: '🛒 E-commerce', saas: '⚙️ SaaS', vitrine: '🏢 Vitrine',
-    landing: '📱 Landing page', marketplace: '🏪 Marketplace', blog: '📰 Blog'
+function setIdea(el) {
+  const map = {
+    'Boutique streetwear': 'Je veux créer une boutique en ligne pour vendre des vêtements streetwear haut de gamme, ciblant les 18-35 ans urbains.',
+    'SaaS de facturation': 'Je veux lancer un SaaS de facturation et comptabilité simplifiée pour les freelances et petites entreprises.',
+    'Livraison de repas': 'Je veux créer une plateforme de livraison de repas locaux, en partenariat avec les restaurants de ma ville.',
+    'App de coaching fitness': 'Je veux lancer une app de coaching fitness personnalisé avec suivi des performances et plans alimentaires.',
+    'Agence immobilière luxe': 'Je veux créer le site d\'une agence immobilière spécialisée dans les propriétés de luxe sur la Côte d\'Azur.',
+    'Marketplace artisans': 'Je veux créer une marketplace pour mettre en relation des artisans locaux avec des clients qui cherchent des produits faits main.'
   };
-  document.getElementById('recapType').textContent = typeLabels[data.type] || '🌐 Site web complet';
+  document.getElementById('ideaInput').value = map[el.textContent.trim()] || el.textContent.trim();
 }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
+// ── GÉNÉRATION IA ──
+async function lancerGeneration() {
+  const idee = document.getElementById('ideaInput').value.trim();
+  hideError();
+  hideUpgrade();
+  showStep(3);
+  animateLoadingSteps();
 
-function goBack() {
-  window.location.href = 'genproia.html';
-}
+  try {
+    const response = await fetch(API_BASE + '/api/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + userToken
+      },
+      body: JSON.stringify({ idee, type: currentType })
+    });
 
-// ── BUILD ──
-async function startBuilding() {
-  showScreen('screenBuilding');
+    const data = await response.json();
 
-  const buildSteps = [
-    { id: 'bs1', pct: 15, label: 'Architecture & structure du site…' },
-    { id: 'bs2', pct: 30, label: 'Design & identité visuelle…' },
-    { id: 'bs3', pct: 50, label: 'Génération des fonctionnalités…' },
-    { id: 'bs4', pct: 68, label: 'Intégration Stripe & paiements…' },
-    { id: 'bs5', pct: 82, label: 'Dashboard admin & analytics…' },
-    { id: 'bs6', pct: 100, label: 'Finalisation & optimisation…' },
-  ];
+    if (!response.ok) {
+      if (data.upgrade) {
+        showStep(1);
+        showUpgrade();
+        return;
+      }
+      showStep(1);
+      showError(data.error || 'Erreur lors de la génération. Réessaie.');
+      return;
+    }
 
-  for (let i = 0; i < buildSteps.length; i++) {
-    const step = buildSteps[i];
+    currentResult = data.result;
+    afficherResultat(data.result);
+    showStep(4);
 
-    // Activate current
-    document.getElementById(step.id).classList.add('active');
-    document.getElementById('progressFill').style.width = step.pct + '%';
-    document.getElementById('progressLabel').textContent = step.pct + '% — ' + step.label;
-    document.getElementById('buildSub').textContent = step.label;
-
-    await new Promise(r => setTimeout(r, 900));
-
-    // Done
-    document.getElementById(step.id).classList.remove('active');
-    document.getElementById(step.id).classList.add('done');
+  } catch (err) {
+    console.error('Generation error:', err);
+    showStep(1);
+    showError('Erreur réseau. Vérifie ta connexion et réessaie.');
   }
-
-  await new Promise(r => setTimeout(r, 600));
-  showReady();
 }
 
-function showReady() {
-  const data = projectData;
-  const grad = `linear-gradient(135deg, ${data.couleurPrimaire||'#7c3aed'}, ${data.couleurSecondaire||'#ec4899'})`;
+function animateLoadingSteps() {
+  const steps = ['ls1','ls2','ls3','ls4','ls5'];
+  steps.forEach(id => {
+    const el = document.getElementById(id);
+    el.className = 'ls';
+    el.querySelector('.ls-dot').textContent = '';
+  });
 
-  const logo = document.getElementById('readyLogo');
-  logo.textContent = data.logoInitiales || data.nom?.substring(0,2).toUpperCase() || 'G';
-  logo.style.background = grad;
+  document.getElementById('ls1').className = 'ls done';
+  document.getElementById('ls1').querySelector('.ls-dot').textContent = '✓';
 
-  document.getElementById('readyName').textContent = data.nom || '—';
-  document.getElementById('readySlogan').textContent = data.slogan || '—';
-
-  const domains = Array.isArray(data.domaines) ? data.domaines : (data.domaines||'').split('\n');
-  document.getElementById('readyUrl').textContent = 'https://' + (data.domainChoisi || domains[0] || 'monsite.fr');
-
-  // Show ecosystem THEN ready
-  generateEcosystem(data);
+  let i = 1;
+  const interval = setInterval(() => {
+    if (i < steps.length) {
+      if (i > 0) {
+        document.getElementById(steps[i-1]).className = 'ls done';
+        document.getElementById(steps[i-1]).querySelector('.ls-dot').textContent = '✓';
+      }
+      document.getElementById(steps[i]).className = 'ls active';
+      i++;
+    } else {
+      clearInterval(interval);
+    }
+  }, 5000); // 5s par étape = ~25s total
 }
 
-async function generateEcosystem(data) {
-  showScreen('screenEco');
-  document.getElementById('ecoContent').innerHTML = `
-    <div class="eco-loading">
-      <div class="eco-spinner"></div>
-      <div style="font-size:0.85rem;color:var(--muted);">Claude analyse ton secteur et cherche tes fournisseurs…</div>
+function afficherResultat(r) {
+  // Logo
+  const logo = document.getElementById('rLogo');
+  logo.textContent = r.logo_initiales || r.nom?.substring(0,2).toUpperCase();
+  logo.style.background = `linear-gradient(135deg, ${r.couleur_primaire || '#7c3aed'}, ${r.couleur_secondaire || '#ec4899'})`;
+
+  // Nom & slogan
+  document.getElementById('rNom').textContent = r.nom;
+  document.getElementById('rSlogan').textContent = r.slogan;
+
+  // Tags
+  const tags = document.getElementById('rTags');
+  tags.innerHTML = [r.secteur, r.type, r.cible?.substring(0,30)].filter(Boolean).map(t =>
+    `<span class="result-tag">${t}</span>`
+  ).join('');
+
+  // Domaines
+  const domainsEl = document.getElementById('rDomains');
+  domainsEl.innerHTML = (r.domaines || []).map((d, i) =>
+    `<div class="domain-row ${i===0?'selected':''}" onclick="selectDomain(this)">
+      <div class="domain-dot"></div>
+      <span class="domain-name">${d}</span>
+      <span class="domain-check">✓</span>
+    </div>`
+  ).join('');
+
+  // Couleurs
+  const colorsEl = document.getElementById('rColors');
+  colorsEl.innerHTML = `
+    <div style="display:flex;gap:12px;align-items:center">
+      <div class="color-swatch" style="background:${r.couleur_primaire}"></div>
+      <div class="color-info"><div class="color-label">Primaire</div><div class="color-hex">${r.couleur_primaire}</div></div>
+    </div>
+    <div style="display:flex;gap:12px;align-items:center;margin-top:10px">
+      <div class="color-swatch" style="background:${r.couleur_secondaire}"></div>
+      <div class="color-info"><div class="color-label">Secondaire</div><div class="color-hex">${r.couleur_secondaire}</div></div>
     </div>`;
 
-  const prompt = `Tu es un expert en création d'entreprise et sourcing fournisseurs.
+  // Fonctionnalités
+  const featEl = document.getElementById('rFeatures');
+  featEl.innerHTML = (r.fonctionnalites || []).map(f =>
+    `<div class="feat-row"><span class="feat-check">✓</span><span style="font-size:0.83rem">${f}</span></div>`
+  ).join('');
 
-Un entrepreneur veut lancer : "${data.idee || data.nom}"
-Secteur détecté : ${data.secteur || 'commerce'}
-Type de projet : ${data.type || 'ecommerce'}
+  // Description & cible
+  document.getElementById('rDesc').textContent = r.description || '';
+  document.getElementById('rCible').textContent = r.cible || '';
 
-Génère un guide fournisseurs et écosystème business en JSON UNIQUEMENT, sans texte avant ou après, sans backticks :
-{
-  "secteurDetecte": "nom du secteur en 3 mots max",
-  "budgetMin": "budget minimum pour démarrer en €",
-  "budgetIdeal": "budget idéal pour bien démarrer en €",
-  "fournisseurs": [
-    {
-      "nom": "Nom du fournisseur ou plateforme",
-      "type": "type (ex: Fournisseur textile, Plateforme sourcing, Impression à la demande...)",
-      "description": "1 phrase sur ce qu'ils font et pourquoi c'est adapté",
-      "avantage": "avantage clé en 5 mots max",
-      "url": "site web (ex: alibaba.com)",
-      "tags": ["tag1", "tag2"],
-      "prix": "fourchette de prix indicative"
-    }
-  ],
-  "etapes": [
-    {"numero": 1, "titre": "titre de l'étape", "description": "explication courte", "duree": "ex: 1 semaine"},
-    {"numero": 2, "titre": "...", "description": "...", "duree": "..."},
-    {"numero": 3, "titre": "...", "description": "...", "duree": "..."},
-    {"numero": 4, "titre": "...", "description": "...", "duree": "..."}
-  ],
-  "conseilPrincipal": "1 conseil d'or pour ce secteur spécifique",
-  "piegeAEviter": "le piège numéro 1 à éviter dans ce secteur"
+  // URL preview
+  document.getElementById('previewUrl').textContent = (r.domaines?.[0] || r.nom?.toLowerCase() + '.fr') + ' — Aperçu';
+
+  // Sauvegarder en localStorage pour le dashboard
+  localStorage.setItem('genproia_last_project', JSON.stringify(r));
 }
 
-Sois TRÈS spécifique au secteur. Donne de vrais noms de plateformes/fournisseurs reconnus. Réponds UNIQUEMENT en JSON valide.`;
+function selectDomain(el) {
+  document.querySelectorAll('.domain-row').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+}
 
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-    const res = await response.json();
-    const raw = res.content.map(b => b.text||'').join('').replace(/```json|```/g,'').trim();
-    const eco = JSON.parse(raw);
-    renderEcosystem(eco, data);
-  } catch(e) {
-    // Fallback selon secteur
-    renderEcosystemFallback(data);
+function togglePreview() {
+  const section = document.getElementById('previewSection');
+  section.classList.toggle('visible');
+  if (section.classList.contains('visible') && currentResult?.site_html) {
+    const iframe = document.getElementById('previewFrame');
+    const blob = new Blob([currentResult.site_html], { type: 'text/html' });
+    iframe.src = URL.createObjectURL(blob);
   }
 }
 
-function renderEcosystem(eco, data) {
-  const tagColors = ['eco-tag-green','eco-tag-yellow','eco-tag-violet'];
-  document.getElementById('ecoContent').innerHTML = `
-
-    <!-- Budget -->
-    <div class="eco-budget" style="margin-bottom:12px;">
-      <span style="font-size:1.2rem;">💰</span>
-      <div>
-        <div style="font-weight:700;color:#6ee7b7;">Budget pour démarrer</div>
-        <div style="color:var(--muted);font-size:0.72rem;">Minimum : <strong style="color:var(--white)">${eco.budgetMin}</strong> · Idéal : <strong style="color:var(--white)">${eco.budgetIdeal}</strong></div>
-      </div>
-    </div>
-
-    <!-- Fournisseurs -->
-    <div class="eco-section">
-      <div class="eco-section-title">
-        <div class="eco-section-icon" style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.25);">🏭</div>
-        Fournisseurs recommandés
-      </div>
-      ${(eco.fournisseurs||[]).map(f => `
-        <div class="eco-item">
-          <div class="eco-item-dot" style="background:var(--violet-glow);"></div>
-          <div class="eco-item-main">
-            <div class="eco-item-name">${f.nom} <span style="font-size:0.65rem;color:var(--muted);font-weight:400;">— ${f.type}</span></div>
-            <div class="eco-item-desc">${f.description}</div>
-            <div style="margin-top:4px;">
-              ${(f.tags||[]).map((t,i) => `<span class="eco-tag ${tagColors[i%3]}">${t}</span>`).join('')}
-              ${f.prix ? `<span class="eco-tag eco-tag-yellow">${f.prix}</span>` : ''}
-            </div>
-            <a class="eco-item-link" href="https://${f.url}" target="_blank">Visiter ${f.url} →</a>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-
-    <!-- Étapes -->
-    <div class="eco-section">
-      <div class="eco-section-title">
-        <div class="eco-section-icon" style="background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.2);">🗺️</div>
-        Roadmap de lancement
-      </div>
-      ${(eco.etapes||[]).map(e => `
-        <div class="eco-item">
-          <div style="width:24px;height:24px;border-radius:50%;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:var(--violet-glow);flex-shrink:0;">${e.numero}</div>
-          <div class="eco-item-main">
-            <div class="eco-item-name">${e.titre} <span style="font-size:0.65rem;color:var(--yellow);background:rgba(245,158,11,0.1);padding:1px 6px;border-radius:4px;margin-left:4px;">${e.duree}</span></div>
-            <div class="eco-item-desc">${e.description}</div>
-          </div>
-        </div>
-      `).join('')}
-    </div>
-
-    <!-- Conseil + Piège -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-      <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:12px;">
-        <div style="font-size:0.72rem;color:#6ee7b7;font-weight:700;margin-bottom:5px;">💡 Conseil d'or</div>
-        <div style="font-size:0.75rem;color:var(--white);line-height:1.5;">${eco.conseilPrincipal}</div>
-      </div>
-      <div style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:12px;">
-        <div style="font-size:0.72rem;color:#fca5a5;font-weight:700;margin-bottom:5px;">⚠️ Piège à éviter</div>
-        <div style="font-size:0.75rem;color:var(--white);line-height:1.5;">${eco.piegeAEviter}</div>
-      </div>
-    </div>
-  `;
+function telechargerSite() {
+  if (!currentResult?.site_html) return;
+  const blob = new Blob([currentResult.site_html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (currentResult.nom || 'site').toLowerCase().replace(/\s+/g,'-') + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
-function renderEcosystemFallback(data) {
-  const idee = (data.idee || '').toLowerCase();
-  const isVetement = idee.includes('vêtement') || idee.includes('mode') || idee.includes('textile') || idee.includes('habit');
-  const isSport = idee.includes('sport') || idee.includes('fitness') || idee.includes('boisson') || idee.includes('nutrition');
-
-  document.getElementById('ecoContent').innerHTML = isVetement ? `
-    <div class="eco-section">
-      <div class="eco-section-title"><div class="eco-section-icon" style="background:rgba(124,58,237,0.15);">🏭</div>Fournisseurs vêtements</div>
-      <div class="eco-item"><div class="eco-item-dot" style="background:var(--violet-glow)"></div><div class="eco-item-main">
-        <div class="eco-item-name">Printful <span style="font-size:0.65rem;color:var(--muted)">— Impression à la demande</span></div>
-        <div class="eco-item-desc">Zéro stock, impression et livraison à ta place. Idéal pour démarrer.</div>
-        <a class="eco-item-link" href="https://printful.com" target="_blank">printful.com →</a>
-      </div></div>
-      <div class="eco-item"><div class="eco-item-dot" style="background:var(--cyan)"></div><div class="eco-item-main">
-        <div class="eco-item-name">Alibaba <span style="font-size:0.65rem;color:var(--muted)">— Sourcing Asie</span></div>
-        <div class="eco-item-desc">Fabricants à prix usine. Minimum 50-100 pièces généralement.</div>
-        <a class="eco-item-link" href="https://alibaba.com" target="_blank">alibaba.com →</a>
-      </div></div>
-      <div class="eco-item"><div class="eco-item-dot" style="background:var(--green)"></div><div class="eco-item-main">
-        <div class="eco-item-name">Ankorstore <span style="font-size:0.65rem;color:var(--muted)">— Fournisseurs Europe</span></div>
-        <div class="eco-item-desc">Marques et fournisseurs européens. Qualité premium, délais rapides.</div>
-        <a class="eco-item-link" href="https://ankorstore.com" target="_blank">ankorstore.com →</a>
-      </div></div>
-    </div>
-    <div class="eco-budget"><span>💰</span><div><div style="font-weight:700;color:#6ee7b7;">Budget estimé</div><div style="color:var(--muted);font-size:0.72rem;">Minimum : <strong style="color:var(--white)">500€</strong> · Idéal : <strong style="color:var(--white)">2 000-5 000€</strong></div></div></div>
-  ` : isSport ? `
-    <div class="eco-section">
-      <div class="eco-section-title"><div class="eco-section-icon" style="background:rgba(16,185,129,0.15);">🏭</div>Fournisseurs sport & nutrition</div>
-      <div class="eco-item"><div class="eco-item-dot" style="background:var(--green)"></div><div class="eco-item-main">
-        <div class="eco-item-name">Nutri-Science <span style="font-size:0.65rem;color:var(--muted)">— Fabrication OEM</span></div>
-        <div class="eco-item-desc">Fabrication de compléments et boissons sous ta marque.</div>
-        <a class="eco-item-link" href="https://nutri-science.fr" target="_blank">nutri-science.fr →</a>
-      </div></div>
-      <div class="eco-item"><div class="eco-item-dot" style="background:var(--cyan)"></div><div class="eco-item-main">
-        <div class="eco-item-name">Alibaba Health <span style="font-size:0.65rem;color:var(--muted)">— Sourcing international</span></div>
-        <div class="eco-item-desc">Laboratoires certifiés pour compléments alimentaires et boissons sport.</div>
-        <a class="eco-item-link" href="https://alibaba.com" target="_blank">alibaba.com →</a>
-      </div></div>
-    </div>
-    <div class="eco-budget"><span>💰</span><div><div style="font-weight:700;color:#6ee7b7;">Budget estimé</div><div style="color:var(--muted);font-size:0.72rem;">Minimum : <strong style="color:var(--white)">1 000€</strong> · Idéal : <strong style="color:var(--white)">5 000-10 000€</strong></div></div></div>
-  ` : `
-    <div class="eco-section">
-      <div class="eco-section-title"><div class="eco-section-icon" style="background:rgba(245,158,11,0.15);">🏭</div>Ressources générales</div>
-      <div class="eco-item"><div class="eco-item-dot" style="background:var(--yellow)"></div><div class="eco-item-main">
-        <div class="eco-item-name">Alibaba <span style="font-size:0.65rem;color:var(--muted)">— Sourcing mondial</span></div>
-        <div class="eco-item-desc">La plus grande plateforme de fournisseurs au monde.</div>
-        <a class="eco-item-link" href="https://alibaba.com" target="_blank">alibaba.com →</a>
-      </div></div>
-      <div class="eco-item"><div class="eco-item-dot" style="background:var(--violet-glow)"></div><div class="eco-item-main">
-        <div class="eco-item-name">Faire <span style="font-size:0.65rem;color:var(--muted)">— Grossistes Europe</span></div>
-        <div class="eco-item-desc">Marketplace de grossistes et fournisseurs européens de qualité.</div>
-        <a class="eco-item-link" href="https://faire.com" target="_blank">faire.com →</a>
-      </div></div>
-    </div>
-  `;
+function recommencer() {
+  currentResult = null;
+  document.getElementById('ideaInput').value = '';
+  hideError();
+  hideUpgrade();
+  showStep(1);
 }
 
-function deploy() {
-  showToast('🚀 Déploiement lancé ! Ton site sera en ligne dans 2 min.');
+// ── HELPERS ──
+function showError(msg) {
+  const el = document.getElementById('errorBox');
+  el.textContent = '⚠ ' + msg;
+  el.classList.add('visible');
 }
+function hideError() { document.getElementById('errorBox').classList.remove('visible'); }
+function showUpgrade() { document.getElementById('upgradeBox').classList.add('visible'); }
+function hideUpgrade() { document.getElementById('upgradeBox').classList.remove('visible'); }
 
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.style.transform = 'translateX(-50%) translateY(0)';
-  setTimeout(() => t.style.transform = 'translateX(-50%) translateY(100px)', 3500);
-}
-
-// ── Pour démo : injecte des données test si aucune n'existe ──
-function loadDemoData() {
-  const demo = {
-    nom: 'FitCore', slogan: 'Ton coach, ta transformation.',
-    logoInitiales: 'FC', couleurPrimaire: '#10b981', couleurSecondaire: '#f59e0b',
-    domaines: ['fitcore.fr', 'fitcore.app', 'fit-core.co'],
-    type: 'saas', idee: 'App de coaching fitness', validated: true
-  };
-  localStorage.setItem('genproia_project', JSON.stringify(demo));
-  init();
-}
-
-// Lance l'init
-init();
+// ── INIT ──
+checkAuth();
+showStep(1);
 </script>
 </body>
 </html>
