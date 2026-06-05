@@ -1608,7 +1608,10 @@ function selectPlan(el, plan) {
   const btn = document.getElementById('planBtn');
   if (plan === 'starter') {
     btn.textContent = 'Continuer gratuitement →';
-    btn.onclick = () => { closeSignup(); };
+    btn.onclick = () => {
+      closeSignup();
+      window.location.href = '/tableau de bord genproia.html';
+    };
   } else {
     btn.textContent = 'Continuer vers le paiement →';
     btn.onclick = goToPayment;
