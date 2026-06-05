@@ -6,6 +6,10 @@
       "dest": "/index.html"
     },
     {
+      "src": "/api/generate",
+      "dest": "/api/generate.js"
+    },
+    {
       "src": "/(.*\\.html)",
       "dest": "/$1"
     },
@@ -16,10 +20,6 @@
     {
       "src": "/sw.js",
       "dest": "/sw.js"
-    },
-    {
-      "src": "/(.*\\.js)",
-      "dest": "/$1"
     },
     {
       "src": "/(.*)",
