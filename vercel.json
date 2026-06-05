@@ -2,10 +2,6 @@
   "version": 2,
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/server.js"
-    },
-    {
       "src": "^/$",
       "dest": "/index.html"
     },
@@ -16,6 +12,10 @@
     {
       "src": "/(.*\\.json)",
       "dest": "/$1"
+    },
+    {
+      "src": "/sw.js",
+      "dest": "/sw.js"
     },
     {
       "src": "/(.*\\.js)",
