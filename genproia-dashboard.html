@@ -759,58 +759,12 @@
             <div class="section-title">Mes projets</div>
             <div class="section-action">Voir tout →</div>
           </div>
-          <div class="projects-list">
+          <div class="projects-list" id="projectsList">
 
-            <div class="project-item">
-              <div class="project-logo pl1">UT</div>
-              <div class="project-info">
-                <div class="project-name">UrbanThread</div>
-                <div class="project-type">E-commerce · Vêtements streetwear</div>
-              </div>
-              <div class="project-status ps-live">● Live</div>
-              <div class="project-actions">
-                <div class="proj-btn" title="Éditer">✏️</div>
-                <div class="proj-btn" title="Voir le site">↗</div>
-              </div>
-            </div>
-
-            <div class="project-item">
-              <div class="project-logo pl2">LP</div>
-              <div class="project-info">
-                <div class="project-name">LoyalPulse</div>
-                <div class="project-type">SaaS · Fidélité clients</div>
-              </div>
-              <div class="project-status ps-live">● Live</div>
-              <div class="project-actions">
-                <div class="proj-btn">✏️</div>
-                <div class="proj-btn">↗</div>
-              </div>
-            </div>
-
-            <div class="project-item">
-              <div class="project-logo pl3">RC</div>
-              <div class="project-info">
-                <div class="project-name">RestauConnect</div>
-                <div class="project-type">Marketplace · Livraison repas</div>
-              </div>
-              <div class="project-status ps-draft">◐ Brouillon</div>
-              <div class="project-actions">
-                <div class="proj-btn">✏️</div>
-                <div class="proj-btn">↗</div>
-              </div>
-            </div>
-
-            <div class="project-item">
-              <div class="project-logo pl4">CF</div>
-              <div class="project-info">
-                <div class="project-name">CoreFlow</div>
-                <div class="project-type">App · Coaching fitness</div>
-              </div>
-              <div class="project-status ps-gen">⟳ Génération</div>
-              <div class="project-actions">
-                <div class="proj-btn">✏️</div>
-                <div class="proj-btn">↗</div>
-              </div>
+            <div id="projectsEmpty" style="padding:32px;text-align:center;color:var(--muted);">
+              <div style="font-size:2.5rem;margin-bottom:12px;">✦</div>
+              <div style="font-family:var(--font-display);font-size:1rem;font-weight:700;margin-bottom:6px;color:var(--white)">Aucun projet pour l'instant</div>
+              <div style="font-size:0.82rem;">Crée ton premier projet et génère ton business !</div>
             </div>
 
             <div class="new-project-card" onclick="openGenModal()">
@@ -830,31 +784,9 @@
             <div class="section-title">Activité récente</div>
             <div class="section-action">Tout voir →</div>
           </div>
-          <div class="activity-list">
-            <div class="activity-item">
-              <div class="activity-dot ad-green"></div>
-              <div class="activity-text"><strong>UrbanThread</strong> a reçu une nouvelle commande — €89</div>
-              <div class="activity-time">2 min</div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot ad-violet"></div>
-              <div class="activity-text"><strong>CoreFlow</strong> — génération du site en cours…</div>
-              <div class="activity-time">14 min</div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot ad-pink"></div>
-              <div class="activity-text"><strong>LoyalPulse</strong> — 12 nouveaux abonnés aujourd'hui</div>
-              <div class="activity-time">1h</div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot ad-yellow"></div>
-              <div class="activity-text"><strong>RestauConnect</strong> — domaine restaurconnect.fr réservé</div>
-              <div class="activity-time">3h</div>
-            </div>
-            <div class="activity-item">
-              <div class="activity-dot ad-violet"></div>
-              <div class="activity-text"><strong>UrbanThread</strong> — logo et charte graphique générés</div>
-              <div class="activity-time">Hier</div>
+          <div class="activity-list" id="activityList">
+            <div style="padding:20px;text-align:center;color:var(--muted);font-size:0.82rem;">
+              Ton activité apparaîtra ici après ton premier projet.
             </div>
           </div>
         </div>
@@ -877,24 +809,24 @@
             <div class="section-title">Conseils rapides</div>
           </div>
           <div class="tip-item">
-            <div class="tip-icon">🎯</div>
+            <div class="tip-icon">✦</div>
             <div>
-              <div class="tip-text">Connecte Stripe à UrbanThread</div>
-              <div class="tip-sub">Active les paiements en 2 min</div>
+              <div class="tip-text">Crée ton premier projet</div>
+              <div class="tip-sub">Décris ton idée et génère tout</div>
+            </div>
+          </div>
+          <div class="tip-item">
+            <div class="tip-icon">💳</div>
+            <div>
+              <div class="tip-text">Connecte Stripe</div>
+              <div class="tip-sub">Active les paiements sur tes projets</div>
             </div>
           </div>
           <div class="tip-item">
             <div class="tip-icon">🌐</div>
             <div>
-              <div class="tip-text">Domaine loyalpulse.io disponible</div>
-              <div class="tip-sub">Réserve-le avant qu'il disparaisse</div>
-            </div>
-          </div>
-          <div class="tip-item">
-            <div class="tip-icon">📈</div>
-            <div>
-              <div class="tip-text">SEO de RestauConnect à optimiser</div>
-              <div class="tip-sub">3 suggestions disponibles</div>
+              <div class="tip-text">Choisis ton nom de domaine</div>
+              <div class="tip-sub">Disponible dès la génération</div>
             </div>
           </div>
         </div>
@@ -1221,6 +1153,73 @@ document.addEventListener('DOMContentLoaded', loadUserInfo);
   }
 
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeGen(); });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script translate="no">
+const SUPABASE_URL = 'https://fgkqobuomiuirwtvuuxz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_D8jaWGbn4G72A7eq8oBtqg_acLVSLBX';
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function loadDashboard() {
+  // Check auth
+  const token = localStorage.getItem('genproia_token');
+  const userRaw = localStorage.getItem('genproia_user');
+  if (!token || !userRaw) { window.location.href = '/index.html'; return; }
+  
+  const user = JSON.parse(userRaw);
+  
+  // Update greeting
+  const prenom = (user.nom || user.email || '').split(' ')[0].split('@')[0];
+  const greetEl = document.querySelector('.topbar-greeting');
+  if (greetEl) greetEl.textContent = 'Bonjour, ' + prenom + ' 👋';
+  
+  // Update plan badge
+  const planEl = document.querySelector('.user-plan');
+  if (planEl) planEl.textContent = user.plan === 'pro' ? 'Pro ⚡' : user.plan === 'business' ? 'Business' : 'Free';
+  
+  // Update name
+  const nameEl = document.querySelector('.user-name');
+  if (nameEl) nameEl.textContent = user.nom || user.email;
+
+  // Load projects from Supabase
+  const { data: projets } = await _sb
+    .from('projets')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false });
+
+  const list = document.getElementById('projectsList');
+  const empty = document.getElementById('projectsEmpty');
+  const statProjets = document.getElementById('statProjets');
+
+  if (projets && projets.length > 0) {
+    if (empty) empty.style.display = 'none';
+    if (statProjets) statProjets.textContent = projets.length;
+    
+    const colors = ['linear-gradient(135deg,#7c3aed,#ec4899)','linear-gradient(135deg,#06b6d4,#7c3aed)','linear-gradient(135deg,#10b981,#06b6d4)','linear-gradient(135deg,#f59e0b,#ec4899)'];
+    
+    projets.forEach(function(p, i) {
+      const initiales = (p.logo_initiales || p.nom.substring(0,2)).toUpperCase();
+      const div = document.createElement('div');
+      div.className = 'project-item';
+      div.innerHTML = '<div class="project-logo" style="background:' + colors[i%4] + '">' + initiales + '</div>' +
+        '<div class="project-info"><div class="project-name">' + p.nom + '</div><div class="project-type">' + (p.type || 'Projet') + ' · ' + (p.idee || '').substring(0,30) + '</div></div>' +
+        '<div class="project-status ps-draft">◐ Brouillon</div>' +
+        '<div class="project-actions"><div class="proj-btn">✏️</div><div class="proj-btn">↗</div></div>';
+      list.insertBefore(div, list.lastElementChild);
+    });
+  }
+}
+
+function logout() {
+  localStorage.removeItem('genproia_token');
+  localStorage.removeItem('genproia_user');
+  localStorage.removeItem('genproia_project');
+  window.location.href = '/index.html';
+}
+
+document.addEventListener('DOMContentLoaded', loadDashboard);
 </script>
 </body>
 </html>
