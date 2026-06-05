@@ -1591,13 +1591,46 @@ function showSignupSection(id) {
 // ── CONNEXION ──
 function openLogin() { document.getElementById('loginModal').classList.add('open'); }
 function closeLogin() { document.getElementById('loginModal').classList.remove('open'); }
-function processLogin() {
+async function processLogin() {
   const email = document.getElementById('loginEmail').value.trim();
   const pass = document.getElementById('loginPassword').value;
   const err = document.getElementById('loginError');
+
   if (!email || !pass) { err.textContent = '✗ Remplis tous les champs'; err.style.display='block'; return; }
   err.style.display = 'none';
-  closeLogin();
+
+  const btn = document.querySelector('#loginModal .submit-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Connexion...'; }
+
+  try {
+    const response = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password: pass })
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      err.textContent = '✗ ' + (data.error || 'Email ou mot de passe incorrect');
+      err.style.display = 'block';
+      if (btn) { btn.disabled = false; btn.textContent = 'Se connecter →'; }
+      return;
+    }
+
+    // Sauvegarde le token
+    localStorage.setItem('genproia_token', data.token);
+    localStorage.setItem('genproia_user', JSON.stringify(data.user));
+
+    closeLogin();
+
+    // Redirige vers le dashboard
+    window.location.href = '/genproia-dashboard.html';
+
+  } catch(err2) {
+    err.textContent = '✗ Erreur de connexion. Réessaie.';
+    err.style.display = 'block';
+    if (btn) { btn.disabled = false; btn.textContent = 'Se connecter →'; }
+  }
 }
 
 // ── LEGACY (keep for compatibility) ──
