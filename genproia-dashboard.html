@@ -172,7 +172,6 @@
   .si-violet{background:rgba(124,58,237,0.18)} .si-pink{background:rgba(236,72,153,0.14)}
   .si-cyan{background:rgba(6,182,212,0.14)} .si-green{background:rgba(16,185,129,0.14)}
 
-  /* Valeur des stats — Inter, blanc pur, pas de dégradé */
   .stat-value {
     font-family: 'Inter', sans-serif; font-size: 1.8rem; font-weight: 700;
     line-height: 1; margin-bottom: 5px; color: var(--white); letter-spacing: -0.04em;
@@ -431,7 +430,8 @@
     <div class="nav-section-label">Principal</div>
     <a class="nav-item active" onclick="setPage(this)"><span class="nav-icon">⊞</span> Vue d'ensemble</a>
     <a class="nav-item" onclick="setPage(this)"><span class="nav-icon">✦</span> Mes projets<span class="nav-badge">4</span></a>
-    <a class="nav-item" onclick="setPage(this)"><span class="nav-icon">⚡</span> Générer</a>
+    <!-- CHANGEMENT 1 : Générer redirige vers le moteur IA -->
+    <a class="nav-item" href="/genproia-moteur-ia.html"><span class="nav-icon">⚡</span> Générer</a>
     <div class="nav-section-label">Outils</div>
     <a class="nav-item" onclick="setPage(this)"><span class="nav-icon">🎨</span> Identité visuelle</a>
     <a class="nav-item" onclick="setPage(this)"><span class="nav-icon">🌐</span> Domaines</a>
@@ -462,7 +462,8 @@
     <div class="topbar-right">
       <div class="topbar-btn">🔍</div>
       <div class="topbar-btn">🔔<div class="notif-dot"></div></div>
-      <button class="new-project-btn" onclick="openGenModal()">+ Nouveau projet</button>
+      <!-- CHANGEMENT 2 : + Nouveau projet redirige vers le moteur IA -->
+      <button class="new-project-btn" onclick="window.location.href='/genproia-moteur-ia.html'">+ Nouveau projet</button>
     </div>
   </div>
 
@@ -503,7 +504,8 @@
               <div style="font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:600;margin-bottom:5px;color:var(--white)">Aucun projet pour l'instant</div>
               <div style="font-size:0.8rem;">Crée ton premier projet et génère ton business !</div>
             </div>
-            <div class="new-project-card" onclick="openGenModal()">
+            <!-- CHANGEMENT 3 : card redirige vers le moteur IA -->
+            <div class="new-project-card" onclick="window.location.href='/genproia-moteur-ia.html'">
               <div class="new-plus">+</div>
               <div>
                 <div class="new-project-label">Créer un nouveau projet</div>
@@ -531,7 +533,8 @@
           <div class="widget-title">Nouvelle idée ?</div>
           <div class="widget-sub">Décris ton projet en quelques mots et laisse Genproia faire le reste.</div>
           <textarea class="widget-textarea" placeholder="Ex : Je veux lancer un SaaS de gestion RH pour PME…"></textarea>
-          <button class="widget-generate-btn" onclick="openGenModal()">Générer mon projet</button>
+          <!-- CHANGEMENT 4 : bouton redirige vers le moteur IA -->
+          <button class="widget-generate-btn" onclick="window.location.href='/genproia-moteur-ia.html'">Générer mon projet</button>
         </div>
 
         <div class="tips-widget">
@@ -659,7 +662,7 @@ function setPage(el) {
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 
 let genStep = 1;
-function openGenModal() { document.getElementById('genModal').classList.add('open'); genStep = 1; showGenStep(1); }
+function openGenModal() { window.location.href = '/genproia-moteur-ia.html'; }
 function closeGen() { document.getElementById('genModal').classList.remove('open'); }
 function closeGenOutside(e) { if (e.target === document.getElementById('genModal')) closeGen(); }
 
