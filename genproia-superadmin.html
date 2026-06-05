@@ -486,7 +486,7 @@
     <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">💰</span> Revenus</div>
 
     <div class="sb-section">Utilisateurs</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">👥</span> Tous les users <span class="sb-badge violet">2 841</span></div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">👥</span> Tous les users <span class="sb-badge violet" id="sidebarUserCount">0</span></div>
     <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">⚡</span> Abonnés Pro</div>
     <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🏢</span> Business</div>
     <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🚫</span> Suspendus <span class="sb-badge red">3</span></div>
@@ -539,28 +539,28 @@
     <div class="kpi-row">
       <div class="kpi k1">
         <div class="kpi-top"><div class="kpi-label">Utilisateurs totaux</div><div class="kpi-icon">👥</div></div>
-        <div class="kpi-value">2 841</div>
-        <div class="kpi-delta up">↑ +124 ce mois</div>
+        <div class="kpi-value" id="kpiUsers">0</div>
+        <div class="kpi-delta neutral" id="kpiUsersDelta">Chargement...</div>
       </div>
       <div class="kpi k2">
         <div class="kpi-top"><div class="kpi-label">MRR</div><div class="kpi-icon">💰</div></div>
-        <div class="kpi-value">€18.4k</div>
-        <div class="kpi-delta up">↑ +12% vs mois dernier</div>
+        <div class="kpi-value" id="kpiMrr">€0</div>
+        <div class="kpi-delta neutral">Connecte Stripe</div>
       </div>
       <div class="kpi k3">
         <div class="kpi-top"><div class="kpi-label">Projets générés</div><div class="kpi-icon">✦</div></div>
-        <div class="kpi-value">9 302</div>
-        <div class="kpi-delta up">↑ +340 cette semaine</div>
+        <div class="kpi-value" id="kpiProjets">0</div>
+        <div class="kpi-delta neutral" id="kpiProjetsDelta">Chargement...</div>
       </div>
       <div class="kpi k4">
         <div class="kpi-top"><div class="kpi-label">Churn rate</div><div class="kpi-icon">📉</div></div>
-        <div class="kpi-value">2.1%</div>
-        <div class="kpi-delta up">↓ -0.4% (bien)</div>
+        <div class="kpi-value">N/A</div>
+        <div class="kpi-delta neutral">Bientôt disponible</div>
       </div>
       <div class="kpi k5">
         <div class="kpi-top"><div class="kpi-label">Sites déployés live</div><div class="kpi-icon">🌐</div></div>
-        <div class="kpi-value">1 247</div>
-        <div class="kpi-delta up">↑ +87 ce mois</div>
+        <div class="kpi-value" id="kpiSites">0</div>
+        <div class="kpi-delta neutral">Bientôt disponible</div>
       </div>
     </div>
 
@@ -605,38 +605,9 @@
             <div class="panel-title">🔔 Alertes système</div>
             <div class="panel-action">Tout voir →</div>
           </div>
-          <div class="alerts-list">
-            <div class="alert-item critical">
-              <div class="alert-icon ai-red">🚨</div>
-              <div style="flex:1">
-                <div class="alert-text">Pic de génération détecté</div>
-                <div class="alert-sub">+340% vs moyenne · API Claude</div>
-              </div>
-              <div class="alert-time">2 min</div>
-            </div>
-            <div class="alert-item warning">
-              <div class="alert-icon ai-yellow">⚠️</div>
-              <div style="flex:1">
-                <div class="alert-text">Paiement échoué × 3</div>
-                <div class="alert-sub">3 utilisateurs Pro · Stripe</div>
-              </div>
-              <div class="alert-time">18 min</div>
-            </div>
-            <div class="alert-item info">
-              <div class="alert-icon ai-cyan">ℹ️</div>
-              <div style="flex:1">
-                <div class="alert-text">Nouvel utilisateur Business</div>
-                <div class="alert-sub">RestauGroup SARL · €79/mois</div>
-              </div>
-              <div class="alert-time">1h</div>
-            </div>
-            <div class="alert-item info">
-              <div class="alert-icon ai-cyan">📊</div>
-              <div style="flex:1">
-                <div class="alert-text">Rapport mensuel généré</div>
-                <div class="alert-sub">Juin 2026 · 18 pages</div>
-              </div>
-              <div class="alert-time">3h</div>
+          <div class="alerts-list" id="alertsList">
+            <div style="padding:20px;text-align:center;color:var(--muted);font-size:0.82rem;">
+              Aucune alerte pour l'instant. Tout fonctionne normalement ✅
             </div>
           </div>
         </div>
@@ -683,29 +654,29 @@
         <div class="plans-breakdown">
           <div class="plan-row">
             <div class="plan-row-label" style="color:var(--violet-glow)">⚡ Pro</div>
-            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-violet" style="width:54%"></div></div>
-            <div class="plan-row-count">1 534 · 54%</div>
+            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-violet" id="barPro" style="width:0%"></div></div>
+            <div class="plan-row-count" id="countPro">0</div>
           </div>
           <div class="plan-row">
             <div class="plan-row-label" style="color:#fcd34d">🏢 Business</div>
-            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-yellow" style="width:12%"></div></div>
-            <div class="plan-row-count">341 · 12%</div>
+            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-yellow" id="barBusiness" style="width:0%"></div></div>
+            <div class="plan-row-count" id="countBusiness">0</div>
           </div>
           <div class="plan-row">
             <div class="plan-row-label" style="color:var(--muted)">Free</div>
-            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-gray" style="width:34%"></div></div>
-            <div class="plan-row-count">966 · 34%</div>
+            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-gray" id="barFree" style="width:100%"></div></div>
+            <div class="plan-row-count" id="countFree">0</div>
           </div>
 
           <div style="margin-top:18px; padding-top:16px; border-top:1px solid var(--border)">
             <div style="font-size:0.7rem; color:var(--muted); margin-bottom:10px; letter-spacing:0.05em; text-transform:uppercase;">MRR par plan</div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
               <div style="text-align:center;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.15);border-radius:9px;padding:10px 6px">
-                <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--violet-glow)">€44.5k</div>
+                <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--violet-glow)" id="mrrPro">€0</div>
                 <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Pro</div>
               </div>
               <div style="text-align:center;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:9px;padding:10px 6px">
-                <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:#fcd34d">€26.9k</div>
+                <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:#fcd34d" id="mrrBusiness">€0</div>
                 <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Business</div>
               </div>
               <div style="text-align:center;background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:9px;padding:10px 6px">
@@ -723,60 +694,9 @@
           <div class="panel-title">✦ Générations récentes</div>
           <div class="panel-action">Voir tout →</div>
         </div>
-        <div class="gen-log">
-          <div class="gen-log-item">
-            <div class="gen-type-icon gti-ecom">🛒</div>
-            <div class="gen-log-main">
-              <div class="gen-log-name">UrbanVibe — E-commerce mode</div>
-              <div class="gen-log-user">karim.b@gmail.com</div>
-            </div>
-            <div class="gen-status gs-done">✓ Done</div>
-            <div class="gen-log-time">2 min</div>
-          </div>
-          <div class="gen-log-item">
-            <div class="gen-type-icon gti-saas">⚙️</div>
-            <div class="gen-log-main">
-              <div class="gen-log-name">LoyalCore — SaaS fidélité</div>
-              <div class="gen-log-user">sofia.m@outlook.com</div>
-            </div>
-            <div class="gen-status gs-proc">⟳ En cours</div>
-            <div class="gen-log-time">5 min</div>
-          </div>
-          <div class="gen-log-item">
-            <div class="gen-type-icon gti-landing">📱</div>
-            <div class="gen-log-main">
-              <div class="gen-log-name">NestIQ — Agence immobilière</div>
-              <div class="gen-log-user">thomas.l@proton.me</div>
-            </div>
-            <div class="gen-status gs-done">✓ Done</div>
-            <div class="gen-log-time">22 min</div>
-          </div>
-          <div class="gen-log-item">
-            <div class="gen-type-icon gti-ecom">🛒</div>
-            <div class="gen-log-main">
-              <div class="gen-log-name">SwiftBite — Livraison repas</div>
-              <div class="gen-log-user">marco.r@gmail.com</div>
-            </div>
-            <div class="gen-status gs-fail">✕ Échec</div>
-            <div class="gen-log-time">1h</div>
-          </div>
-          <div class="gen-log-item">
-            <div class="gen-type-icon gti-saas">⚙️</div>
-            <div class="gen-log-main">
-              <div class="gen-log-name">CoreFlow — App fitness</div>
-              <div class="gen-log-user">amelie.d@yahoo.fr</div>
-            </div>
-            <div class="gen-status gs-done">✓ Done</div>
-            <div class="gen-log-time">2h</div>
-          </div>
-          <div class="gen-log-item">
-            <div class="gen-type-icon gti-landing">📱</div>
-            <div class="gen-log-main">
-              <div class="gen-log-name">BeautyBox — Cosmétiques</div>
-              <div class="gen-log-user">claire.v@gmail.com</div>
-            </div>
-            <div class="gen-status gs-done">✓ Done</div>
-            <div class="gen-log-time">3h</div>
+        <div class="gen-log" id="genLogList">
+          <div style="padding:20px;text-align:center;color:var(--muted);font-size:0.82rem;">
+            Les générations apparaîtront ici.
           </div>
         </div>
       </div>
@@ -905,14 +825,7 @@
 
 <script>
 // USERS DATA
-const users = [
-  { id:1, name:'Karim Benali', email:'karim.b@gmail.com', plan:'pro', projects:4, revenue:'€840', status:'active', date:'12 jan 2026', avatarClass:'ua1', initials:'KB' },
-  { id:2, name:'Sofia Martin', email:'sofia.m@outlook.com', plan:'business', projects:11, revenue:'€3 200', status:'active', date:'3 fév 2026', avatarClass:'ua2', initials:'SM' },
-  { id:3, name:'Thomas Leclerc', email:'thomas.l@proton.me', plan:'pro', projects:2, revenue:'€290', status:'active', date:'18 fév 2026', avatarClass:'ua3', initials:'TL' },
-  { id:4, name:'Marco Rossi', email:'marco.r@gmail.com', plan:'free', projects:1, revenue:'€0', status:'inactive', date:'1 mars 2026', avatarClass:'ua4', initials:'MR' },
-  { id:5, name:'Amélie Dubois', email:'amelie.d@yahoo.fr', plan:'pro', projects:6, revenue:'€1 450', status:'active', date:'7 mars 2026', avatarClass:'ua5', initials:'AD' },
-  { id:6, name:'Claire Vidal', email:'claire.v@gmail.com', plan:'business', projects:18, revenue:'€8 700', status:'suspended', date:'15 avr 2026', avatarClass:'ua6', initials:'CV' },
-];
+let users = [];
 
 let currentUser = null;
 
@@ -1029,10 +942,7 @@ function applyGiftPlan() {
 }
 
 // GIFT HISTORY
-const giftHistory = [
-  { userName: 'Sofia Martin', plan: 'business', duration: 'lifetime', note: 'Partenaire stratégique', date: '01/06/2026', initials: 'SM', avatarClass: 'ua2' },
-  { userName: 'Karim Benali', plan: 'pro', duration: '1year', note: 'Beta testeur', date: '15/05/2026', initials: 'KB', avatarClass: 'ua1' },
-];
+const giftHistory = [];
 
 // SIDEBAR MOBILE
 function toggleSidebar() {
@@ -1069,6 +979,91 @@ document.addEventListener('touchend', e => {
 }, { passive: true });
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); document.getElementById('confirmModal').classList.remove('open'); } });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script translate="no">
+const SADMIN_URL = 'https://fgkqobuomiuirwtvuuxz.supabase.co';
+const SADMIN_KEY = 'sb_publishable_D8jaWGbn4G72A7eq8oBtqg_acLVSLBX';
+const _sbAdmin = window.supabase.createClient(SADMIN_URL, SADMIN_KEY);
+
+// ADMIN EMAILS AUTORISÉS
+const ADMIN_EMAILS = ['alex.skp31@gmail.com'];
+
+async function checkAdminAccess() {
+  const userRaw = localStorage.getItem('genproia_user');
+  if (!userRaw) { window.location.href = '/index.html'; return false; }
+  const user = JSON.parse(userRaw);
+  if (!ADMIN_EMAILS.includes(user.email)) {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#05030f;color:#f0ecff;font-family:sans-serif;text-align:center"><div><div style="font-size:3rem;margin-bottom:16px">🚫</div><h1 style="font-size:1.5rem;margin-bottom:8px">Accès refusé</h1><p style="color:#7a6fa0">Tu n'as pas accès à cette page.</p><a href="/index.html" style="display:inline-block;margin-top:20px;padding:10px 24px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none">Retour</a></div></div>';
+    return false;
+  }
+  return true;
+}
+
+async function loadAdminData() {
+  const ok = await checkAdminAccess();
+  if (!ok) return;
+
+  // Load real users from Supabase
+  const { data: usersData } = await _sbAdmin.from('users').select('*').order('created_at', { ascending: false });
+
+  if (usersData) {
+    users = usersData.map(function(u, i) {
+      const avatarClasses = ['ua1','ua2','ua3','ua4','ua5','ua6'];
+      return {
+        id: u.id,
+        name: u.nom || u.email,
+        email: u.email,
+        plan: u.plan || 'free',
+        projects: u.projets_count || 0,
+        revenue: '€0',
+        status: u.statut || 'active',
+        date: new Date(u.created_at).toLocaleDateString('fr-FR'),
+        avatarClass: avatarClasses[i % 6],
+        initials: (u.nom || u.email).substring(0,2).toUpperCase()
+      };
+    });
+
+    // Update KPIs
+    const total = users.length;
+    const pro = users.filter(function(u) { return u.plan === 'pro'; }).length;
+    const business = users.filter(function(u) { return u.plan === 'business'; }).length;
+    const free = users.filter(function(u) { return u.plan === 'free'; }).length;
+
+    document.getElementById('kpiUsers').textContent = total;
+    document.getElementById('kpiUsersDelta').textContent = total + ' inscrits';
+    document.getElementById('sidebarUserCount').textContent = total;
+
+    // Plans breakdown
+    if (total > 0) {
+      document.getElementById('barPro').style.width = Math.round(pro/total*100) + '%';
+      document.getElementById('barBusiness').style.width = Math.round(business/total*100) + '%';
+      document.getElementById('barFree').style.width = Math.round(free/total*100) + '%';
+    }
+    document.getElementById('countPro').textContent = pro;
+    document.getElementById('countBusiness').textContent = business;
+    document.getElementById('countFree').textContent = free;
+
+    // MRR
+    const mrr = (pro * 29) + (business * 79);
+    document.getElementById('kpiMrr').textContent = '€' + mrr;
+    document.getElementById('mrrPro').textContent = '€' + (pro * 29);
+    document.getElementById('mrrBusiness').textContent = '€' + (business * 79);
+
+    renderUsers(users);
+    renderGiftHistory();
+  }
+
+  // Load projets count
+  const { count } = await _sbAdmin.from('projets').select('*', { count: 'exact', head: true });
+  if (count !== null) {
+    document.getElementById('kpiProjets').textContent = count;
+    document.getElementById('kpiProjetsDelta').textContent = count + ' projets créés';
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadAdminData);
 </script>
 </body>
 </html>
