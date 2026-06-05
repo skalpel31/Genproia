@@ -1555,7 +1555,7 @@ async function processLogin() {
     closeLogin();
     window.location.href = '/genproia-dashboard.html';
 
-  } catch(err) {
+  } catch(e) {
     errEl.textContent = '✗ Erreur de connexion. Réessaie.';
     errEl.style.display = 'block';
     if (btn) { btn.disabled = false; btn.textContent = 'Se connecter →'; }
