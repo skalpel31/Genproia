@@ -11,13 +11,11 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ── SUPABASE ──
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY
 );
 
-// ── MIDDLEWARE ──
 app.use(express.json());
 app.use(cors({
   origin: [
@@ -38,7 +36,6 @@ app.use('/api/auth', authLimiter);
 app.use('/api/generate', aiLimiter);
 app.use('/api', apiLimiter);
 
-// ── HELPER : vérifier token ──
 async function verifyToken(req, res, next) {
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Token manquant' });
@@ -58,7 +55,6 @@ app.post('/api/generate', verifyToken, async (req, res) => {
     return res.status(400).json({ error: 'Décris ton idée en au moins 10 caractères.' });
   }
 
-  // Vérifier plan
   const { data: user } = await supabase.from('users').select('plan, projets_count').eq('id', req.user.id).single();
   if (user?.plan === 'free' && user?.projets_count >= 1) {
     return res.status(403).json({
@@ -91,23 +87,22 @@ Génère un business complet et cohérent. Réponds UNIQUEMENT en JSON valide, s
   "slogan": "Slogan percutant en français (5-8 mots max)",
   "description": "Description du business en 2 phrases",
   "type": "${type || 'ecommerce'}",
-  "couleur_primaire": "#hexcode (couleur principale de la marque)",
-  "couleur_secondaire": "#hexcode (couleur secondaire complémentaire)",
+  "couleur_primaire": "#hexcode",
+  "couleur_secondaire": "#hexcode",
   "logo_initiales": "2-3 lettres pour le logo",
   "domaines": ["domaine1.fr", "domaine1.com", "domaine1.io"],
   "secteur": "secteur d'activité en 2-3 mots",
   "cible": "cible client en 1 phrase courte",
   "fonctionnalites": ["Fonctionnalité clé 1", "Fonctionnalité clé 2", "Fonctionnalité clé 3", "Fonctionnalité clé 4"],
-  "site_html": "CODE HTML COMPLET du site — voir instructions ci-dessous"
+  "site_html": "CODE HTML COMPLET du site"
 }
 
 Pour site_html, génère un vrai site HTML complet avec :
-- Design professionnel dark/light selon le secteur
+- Design professionnel cohérent avec le secteur
 - Couleurs cohérentes avec couleur_primaire et couleur_secondaire
-- Navigation, hero section avec le nom et slogan, section features, section pricing (3 plans), footer
-- CSS inline dans un tag <style>, JavaScript minimal
-- Responsive mobile
-- Le tout en français
+- Navigation, hero section, section features, section pricing (3 plans), footer
+- CSS dans un tag style, JavaScript minimal
+- Responsive mobile, tout en français
 - Minimum 200 lignes de HTML
 
 Sois créatif, professionnel et cohérent avec l'idée de l'utilisateur.`;
@@ -138,15 +133,16 @@ Sois créatif, professionnel et cohérent avec l'idée de l'utilisateur.`;
 
     let result;
     try {
-      // Nettoyer les éventuels blocs markdown
-      const clean = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
-      result = JSON.parse(clean);
+      // ✅ CORRECTION : extraire le JSON même s'il y a du texte autour
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('No JSON found in response');
+      result = JSON.parse(jsonMatch[0]);
     } catch (e) {
-      console.error('JSON parse error:', e, 'Raw:', text.substring(0, 200));
+      console.error('JSON parse error:', e.message, '— Raw:', text.substring(0, 300));
       return res.status(500).json({ error: 'Erreur de format IA. Réessaie.' });
     }
 
-    // Sauvegarder le projet dans Supabase
+    // Sauvegarder dans Supabase
     const { data: projet, error: projetError } = await supabase.from('projets').insert({
       user_id: req.user.id,
       nom: result.nom,
@@ -164,7 +160,6 @@ Sois créatif, professionnel et cohérent avec l'idée de l'utilisateur.`;
 
     if (!projetError && projet) {
       result.projet_id = projet.id;
-      // Incrémenter compteur
       await supabase.from('users').update({
         projets_count: (user?.projets_count || 0) + 1
       }).eq('id', req.user.id);
@@ -178,7 +173,6 @@ Sois créatif, professionnel et cohérent avec l'idée de l'utilisateur.`;
   }
 });
 
-// ── RÉCUPÉRER LE HTML D'UN PROJET ──
 app.get('/api/projets/:id/html', verifyToken, async (req, res) => {
   const { data, error } = await supabase
     .from('projets')
@@ -186,13 +180,12 @@ app.get('/api/projets/:id/html', verifyToken, async (req, res) => {
     .eq('id', req.params.id)
     .eq('user_id', req.user.id)
     .single();
-
   if (error || !data) return res.status(404).json({ error: 'Projet introuvable' });
   res.json({ success: true, nom: data.nom, html: data.site_html });
 });
 
 // ══════════════════════════════════════════
-// ROUTES AUTH (inchangées)
+// ROUTES AUTH
 // ══════════════════════════════════════════
 
 app.post('/api/auth/signup', async (req, res) => {
@@ -200,7 +193,6 @@ app.post('/api/auth/signup', async (req, res) => {
   if (!nom || !email || !password) return res.status(400).json({ error: 'Tous les champs sont requis' });
   if (password.length < 8) return res.status(400).json({ error: 'Mot de passe trop court (8 caractères minimum)' });
   if (!email.includes('@')) return res.status(400).json({ error: 'Email invalide' });
-
   try {
     const { data, error } = await supabase.auth.admin.createUser({
       email, password, email_confirm: false,
