@@ -1,0 +1,39 @@
+{
+  "name": "Genproia — Crée ton business avec l'IA",
+  "short_name": "Genproia",
+  "description": "Génère ton business complet en minutes avec l'IA. Nom, logo, site web, paiement — tout inclus.",
+  "start_url": "/genproia.html",
+  "display": "standalone",
+  "background_color": "#05030f",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": ["business", "productivity", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Générer un projet",
+      "url": "/genproia.html#demo",
+      "description": "Lance une nouvelle génération de projet"
+    },
+    {
+      "name": "Mon dashboard",
+      "url": "/genproia-dashboard.html",
+      "description": "Accède à ton espace"
+    }
+  ]
+}

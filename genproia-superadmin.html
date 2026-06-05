@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genproia — Super Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #03020a;
+    --deep: #07050f;
+    --surface: #0c0919;
+    --card: #100d22;
+    --card2: #141028;
+    --border: rgba(139,92,246,0.13);
+    --border2: rgba(255,255,255,0.05);
+    --violet: #7c3aed;
+    --violet-bright: #8b5cf6;
+    --violet-glow: #a78bfa;
+    --pink: #ec4899;
+    --cyan: #06b6d4;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --red: #ef4444;
+    --orange: #f97316;
+    --white: #ede9ff;
+    --muted: #6b5f90;
+    --muted2: #3d3460;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+    --sidebar-w: 240px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body { background: var(--void); color: var(--white); font-family: var(--font-body); display: flex; }
+
+  /* NOISE */
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    width: var(--sidebar-w); min-height: 100vh;
+    background: var(--deep);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    position: fixed; left: 0; top: 0; bottom: 0; z-index: 50;
+  }
+
+  .sb-top {
+    padding: 22px 18px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sb-logo {
+    display: flex; align-items: center; gap: 9px; margin-bottom: 12px;
+  }
+  .sb-logo-icon {
+    width: 32px; height: 32px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--violet), var(--pink));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 0.8rem; font-weight: 800;
+    box-shadow: 0 0 14px rgba(124,58,237,0.4);
+  }
+  .sb-logo-text {
+    font-family: var(--font-display); font-size: 1rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--violet-glow), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .sb-admin-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 6px; padding: 3px 10px;
+    font-size: 0.65rem; font-weight: 700; color: #fca5a5;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .sb-admin-badge::before { content: '●'; color: var(--red); font-size: 0.5rem; }
+
+  .sb-nav {
+    flex: 1; padding: 14px 10px;
+    display: flex; flex-direction: column; gap: 2px;
+    overflow-y: auto;
+  }
+  .sb-section { font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); padding: 10px 10px 4px; font-weight: 600; }
+
+  .sb-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: 9px;
+    cursor: pointer; color: var(--muted); font-size: 0.82rem; font-weight: 500;
+    transition: background 0.2s, color 0.2s; position: relative;
+    border: 1px solid transparent;
+  }
+  .sb-item:hover { background: rgba(139,92,246,0.07); color: var(--white); }
+  .sb-item.active {
+    background: rgba(139,92,246,0.13); color: var(--white);
+    border-color: rgba(139,92,246,0.2);
+  }
+  .sb-item.active::before {
+    content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+    width: 3px; height: 55%; background: var(--violet-bright); border-radius: 0 3px 3px 0;
+  }
+  .sb-icon { width: 16px; text-align: center; font-size: 0.9rem; flex-shrink: 0; }
+  .sb-badge {
+    margin-left: auto; font-size: 0.62rem; font-weight: 700;
+    padding: 1px 6px; border-radius: 100px;
+  }
+  .sb-badge.red { background: rgba(239,68,68,0.2); color: #fca5a5; }
+  .sb-badge.violet { background: rgba(124,58,237,0.2); color: var(--violet-glow); }
+  .sb-badge.green { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+
+  .sb-bottom {
+    padding: 12px 10px;
+    border-top: 1px solid var(--border);
+  }
+  .sb-admin-user {
+    display: flex; align-items: center; gap: 9px;
+    padding: 8px 10px; border-radius: 9px;
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border2);
+    cursor: pointer; transition: background 0.2s;
+  }
+  .sb-admin-user:hover { background: rgba(255,255,255,0.06); }
+  .admin-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 0.75rem; flex-shrink: 0;
+  }
+  .admin-name { font-size: 0.78rem; font-weight: 600; }
+  .admin-role { font-size: 0.65rem; color: #fca5a5; }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: var(--sidebar-w); flex: 1;
+    display: flex; flex-direction: column;
+    min-height: 100vh; overflow-y: auto;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    position: sticky; top: 0; z-index: 40;
+    background: rgba(3,2,10,0.85); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    height: 58px; padding: 0 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .tb-breadcrumb {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.82rem; color: var(--muted);
+  }
+  .tb-breadcrumb strong { color: var(--white); font-weight: 600; }
+  .tb-breadcrumb span { color: var(--muted2); }
+  .tb-right { display: flex; align-items: center; gap: 10px; }
+  .tb-icon-btn {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 0.9rem; transition: background 0.2s;
+    position: relative;
+  }
+  .tb-icon-btn:hover { background: rgba(255,255,255,0.08); }
+  .tb-notif { position: absolute; top: 5px; right: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--red); border: 1px solid var(--void); }
+  .sys-status {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.72rem; color: var(--green);
+    background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2);
+    padding: 4px 12px; border-radius: 100px;
+  }
+  .sys-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── CONTENT ── */
+  .content { padding: 24px 28px; }
+
+  /* KPI ROW */
+  .kpi-row {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 14px; margin-bottom: 22px;
+  }
+  .kpi {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px 18px;
+    position: relative; overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
+    animation: fadeUp 0.4s ease both;
+  }
+  .kpi:nth-child(1){animation-delay:.04s} .kpi:nth-child(2){animation-delay:.08s}
+  .kpi:nth-child(3){animation-delay:.12s} .kpi:nth-child(4){animation-delay:.16s}
+  .kpi:nth-child(5){animation-delay:.20s}
+  .kpi:hover { transform: translateY(-2px); border-color: rgba(139,92,246,0.28); }
+  .kpi::after {
+    content: ''; position: absolute; bottom: -16px; right: -16px;
+    width: 60px; height: 60px; border-radius: 50%; opacity: 0.18; pointer-events: none;
+  }
+  .kpi.k1::after{background:var(--violet)} .kpi.k2::after{background:var(--green)}
+  .kpi.k3::after{background:var(--cyan)} .kpi.k4::after{background:var(--pink)}
+  .kpi.k5::after{background:var(--yellow)}
+  .kpi-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+  .kpi-label { font-size: 0.7rem; color: var(--muted); font-weight: 500; }
+  .kpi-icon { font-size: 1rem; }
+  .kpi-value { font-family: var(--font-display); font-size: 1.7rem; font-weight: 800; line-height: 1; margin-bottom: 5px; }
+  .kpi-delta { font-size: 0.68rem; display: flex; align-items: center; gap: 3px; }
+  .kpi-delta.up { color: var(--green); } .kpi-delta.down { color: var(--red); } .kpi-delta.neutral { color: var(--muted); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  /* MAIN GRID */
+  .grid-main { display: grid; grid-template-columns: 1fr 320px; gap: 18px; margin-bottom: 18px; }
+  .grid-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+
+  /* PANEL */
+  .panel {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden;
+    animation: fadeUp 0.4s 0.2s ease both;
+  }
+  .panel-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .panel-title { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .panel-action { font-size: 0.75rem; color: var(--violet-glow); cursor: pointer; transition: color 0.2s; }
+  .panel-action:hover { color: var(--white); }
+
+  /* REVENUE CHART */
+  .chart-area { padding: 16px 20px 8px; }
+  .chart-tabs { display: flex; gap: 0; margin-bottom: 16px; background: rgba(255,255,255,0.03); border-radius: 8px; padding: 3px; width: fit-content; }
+  .ct { padding: 5px 14px; border-radius: 6px; font-size: 0.73rem; font-weight: 500; cursor: pointer; color: var(--muted); transition: all 0.2s; }
+  .ct.active { background: var(--violet); color: var(--white); box-shadow: 0 0 12px rgba(124,58,237,0.35); }
+
+  .chart-svg-wrap { position: relative; height: 140px; }
+  svg.chart { width: 100%; height: 100%; overflow: visible; }
+  .chart-labels { display: flex; justify-content: space-between; padding: 6px 0 0; }
+  .chart-label { font-size: 0.65rem; color: var(--muted); }
+
+  /* USERS TABLE */
+  .users-table { width: 100%; border-collapse: collapse; }
+  .users-table thead tr { border-bottom: 1px solid var(--border); }
+  .users-table th { padding: 10px 16px; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; text-align: left; }
+  .users-table td { padding: 10px 16px; font-size: 0.8rem; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .users-table tr:last-child td { border-bottom: none; }
+  .users-table tr:hover td { background: rgba(255,255,255,0.015); }
+  .user-cell { display: flex; align-items: center; gap: 9px; }
+  .u-avatar { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.7rem; flex-shrink: 0; }
+  .ua1{background:linear-gradient(135deg,#7c3aed,#ec4899)} .ua2{background:linear-gradient(135deg,#06b6d4,#7c3aed)}
+  .ua3{background:linear-gradient(135deg,#10b981,#06b6d4)} .ua4{background:linear-gradient(135deg,#f59e0b,#ef4444)}
+  .ua5{background:linear-gradient(135deg,#ec4899,#f97316)} .ua6{background:linear-gradient(135deg,#8b5cf6,#10b981)}
+  .u-name { font-weight: 500; } .u-email { font-size: 0.72rem; color: var(--muted); }
+  .plan-tag { font-size: 0.65rem; padding: 2px 8px; border-radius: 100px; font-weight: 600; }
+  .pt-pro { background: rgba(124,58,237,0.18); color: var(--violet-glow); border: 1px solid rgba(124,58,237,0.25); }
+  .pt-business { background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+  .pt-free { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border2); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+  .sd-active { background: var(--green); box-shadow: 0 0 5px rgba(16,185,129,0.5); }
+  .sd-inactive { background: var(--muted2); }
+  .sd-suspended { background: var(--red); }
+  .action-btn { background: transparent; border: 1px solid var(--border2); color: var(--muted); padding: 3px 10px; border-radius: 6px; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; }
+  .action-btn:hover { border-color: var(--violet-bright); color: var(--violet-glow); background: rgba(139,92,246,0.08); }
+
+  /* RIGHT: ALERTS + QUICK ACTIONS */
+  .alerts-list { padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+  .alert-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px; border-radius: 10px;
+    border: 1px solid transparent; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .alert-item:hover { background: rgba(255,255,255,0.02); }
+  .alert-item.critical { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.15); }
+  .alert-item.warning { background: rgba(245,158,11,0.05); border-color: rgba(245,158,11,0.12); }
+  .alert-item.info { background: rgba(6,182,212,0.05); border-color: rgba(6,182,212,0.1); }
+  .alert-icon { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; flex-shrink: 0; }
+  .ai-red { background: rgba(239,68,68,0.15); }
+  .ai-yellow { background: rgba(245,158,11,0.12); }
+  .ai-cyan { background: rgba(6,182,212,0.1); }
+  .alert-text { font-size: 0.78rem; font-weight: 500; margin-bottom: 2px; }
+  .alert-sub { font-size: 0.68rem; color: var(--muted); }
+  .alert-time { font-size: 0.65rem; color: var(--muted2); margin-left: auto; white-space: nowrap; padding-top: 1px; }
+
+  /* QUICK ACTIONS */
+  .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 14px; }
+  .qa-btn {
+    background: rgba(255,255,255,0.03); border: 1px solid var(--border2);
+    border-radius: 10px; padding: 12px 10px; text-align: center;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .qa-btn:hover { background: rgba(139,92,246,0.1); border-color: var(--border); }
+  .qa-icon { font-size: 1.2rem; margin-bottom: 5px; }
+  .qa-label { font-size: 0.72rem; font-weight: 600; }
+  .qa-desc { font-size: 0.65rem; color: var(--muted); margin-top: 2px; }
+
+  /* PLANS BREAKDOWN */
+  .plans-breakdown { padding: 16px 20px; }
+  .plan-row { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .plan-row:last-child { margin-bottom: 0; }
+  .plan-row-label { font-size: 0.78rem; font-weight: 500; width: 80px; flex-shrink: 0; }
+  .plan-bar-wrap { flex: 1; height: 6px; background: rgba(255,255,255,0.05); border-radius: 100px; overflow: hidden; }
+  .plan-bar-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
+  .pbf-violet { background: linear-gradient(90deg, var(--violet), var(--violet-glow)); }
+  .pbf-yellow { background: linear-gradient(90deg, #d97706, var(--yellow)); }
+  .pbf-gray { background: rgba(255,255,255,0.15); }
+  .plan-row-count { font-size: 0.72rem; color: var(--muted); width: 60px; text-align: right; flex-shrink: 0; }
+
+  /* GENERATIONS LOG */
+  .gen-log { padding: 0; }
+  .gen-log-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 9px 20px; border-bottom: 1px solid rgba(255,255,255,0.025);
+    transition: background 0.2s;
+  }
+  .gen-log-item:last-child { border-bottom: none; }
+  .gen-log-item:hover { background: rgba(255,255,255,0.015); }
+  .gen-type-icon { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
+  .gti-ecom { background: rgba(124,58,237,0.15); }
+  .gti-saas { background: rgba(6,182,212,0.12); }
+  .gti-landing { background: rgba(236,72,153,0.12); }
+  .gen-log-main { flex: 1; min-width: 0; }
+  .gen-log-name { font-size: 0.78rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .gen-log-user { font-size: 0.68rem; color: var(--muted); }
+  .gen-log-time { font-size: 0.65rem; color: var(--muted2); white-space: nowrap; }
+  .gen-status { font-size: 0.62rem; padding: 2px 7px; border-radius: 100px; font-weight: 600; }
+  .gs-done { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+  .gs-proc { background: rgba(139,92,246,0.15); color: var(--violet-glow); }
+  .gs-fail { background: rgba(239,68,68,0.12); color: #fca5a5; }
+
+  /* USER MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(3,2,10,0.88); backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; animation: fadeIn 0.25s ease; }
+  .modal {
+    background: var(--card2); border: 1px solid rgba(139,92,246,0.25);
+    border-radius: 20px; width: 100%; max-width: 520px;
+    overflow: hidden; animation: fadeUp 0.3s ease;
+    box-shadow: 0 0 60px rgba(124,58,237,0.18);
+  }
+  .modal-top {
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    position: relative;
+  }
+  .modal-top::before { content: ''; position: absolute; top:0; left:0; right:0; height:2px; background: linear-gradient(90deg, var(--violet), var(--pink)); }
+  .modal-title { font-family: var(--font-display); font-size: 1rem; font-weight: 800; }
+  .modal-close { width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border2); color: var(--muted); cursor: pointer; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .modal-close:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+  .modal-body { padding: 20px 24px; }
+  .modal-user-hero { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; padding: 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: 12px; }
+  .modal-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; }
+  .modal-user-name { font-family: var(--font-display); font-size: 1rem; font-weight: 700; }
+  .modal-user-email { font-size: 0.78rem; color: var(--muted); }
+  .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .modal-cell { background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 14px; }
+  .modal-cell-label { font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .modal-cell-value { font-size: 0.85rem; font-weight: 600; }
+  .modal-actions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .modal-action-btn { padding: 9px; border-radius: 9px; border: 1px solid var(--border2); background: transparent; color: var(--white); font-family: var(--font-body); font-size: 0.78rem; cursor: pointer; transition: all 0.2s; }
+  .modal-action-btn:hover { background: rgba(139,92,246,0.1); border-color: var(--border); }
+  .modal-action-btn.danger { border-color: rgba(239,68,68,0.25); color: #fca5a5; }
+  .modal-action-btn.danger:hover { background: rgba(239,68,68,0.1); }
+  .modal-action-btn.primary { background: linear-gradient(135deg, var(--violet), #9333ea); border-color: transparent; box-shadow: 0 0 14px rgba(124,58,237,0.3); }
+  .modal-action-btn.primary:hover { opacity: 0.9; }
+
+  /* CONFIRM MODAL */
+  .confirm-modal {
+    background: var(--card2); border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 16px; width: 100%; max-width: 360px;
+    padding: 24px; text-align: center;
+    box-shadow: 0 0 40px rgba(239,68,68,0.1);
+    animation: fadeUp 0.3s ease;
+  }
+  .confirm-icon { font-size: 2.5rem; margin-bottom: 12px; }
+  .confirm-title { font-family: var(--font-display); font-size: 1rem; font-weight: 800; margin-bottom: 6px; }
+  .confirm-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 20px; }
+  .confirm-btns { display: flex; gap: 10px; }
+  .confirm-btn { flex: 1; padding: 10px; border-radius: 9px; font-family: var(--font-body); font-size: 0.82rem; cursor: pointer; transition: all 0.2s; }
+  .cb-cancel { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
+  .cb-cancel:hover { color: var(--white); border-color: var(--border); }
+  .cb-confirm { background: linear-gradient(135deg, #ef4444, #dc2626); border: none; color: var(--white); box-shadow: 0 0 16px rgba(239,68,68,0.3); }
+  .cb-confirm:hover { opacity: 0.9; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 24px; right: 24px; z-index: 999;
+    background: var(--card2); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 18px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.82rem; box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    transform: translateY(80px); opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-color: rgba(16,185,129,0.3); }
+  .toast.error { border-color: rgba(239,68,68,0.3); }
+
+  /* ── MOBILE ── */
+  @media (max-width: 900px) {
+
+    /* Sidebar cachée par défaut, slide depuis la gauche */
+    .sidebar {
+      transform: translateX(-100%);
+      transition: transform 0.32s cubic-bezier(0.4,0,0.2,1);
+      z-index: 300;
+      box-shadow: 6px 0 40px rgba(0,0,0,0.7);
+    }
+    .sidebar.open { transform: translateX(0); }
+
+    /* Overlay sombre derrière la sidebar */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 299;
+      background: rgba(3,2,10,0.75);
+      backdrop-filter: blur(3px);
+    }
+    .sidebar-overlay.open { display: block; }
+
+    /* Main prend toute la largeur */
+    .main { margin-left: 0; }
+
+    /* Bouton hamburger visible */
+    .mobile-hamburger {
+      display: flex !important;
+    }
+
+    /* KPI en colonne unique, bien grandes */
+    .kpi-row {
+      grid-template-columns: 1fr !important;
+      gap: 12px;
+    }
+    .kpi {
+      padding: 22px 20px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .kpi-value { font-size: 2.4rem !important; }
+    .kpi-label { font-size: 0.82rem !important; }
+    .kpi-delta { font-size: 0.78rem !important; }
+    .kpi-top { flex-direction: column; align-items: flex-start; margin-bottom: 0; }
+    .kpi-icon { font-size: 1.6rem; }
+
+    /* Grilles en colonne */
+    .grid-main { grid-template-columns: 1fr !important; }
+    .grid-bottom { grid-template-columns: 1fr !important; }
+
+    /* Topbar */
+    .topbar { padding: 0 14px; gap: 8px; }
+    .sys-status { display: none; }
+    .tb-breadcrumb { font-size: 0.78rem; }
+
+    /* Content */
+    .content { padding: 14px; }
+
+    /* Table scroll horizontal */
+    .panel { overflow-x: auto; }
+  }
+
+
+  .gift-plan-opt {
+    flex: 1; border: 1px solid var(--border2); border-radius: 9px;
+    padding: 9px 8px; text-align: center; cursor: pointer;
+    transition: all 0.2s; background: rgba(255,255,255,0.03);
+  }
+  .gift-plan-opt:hover { border-color: rgba(139,92,246,0.3); background: rgba(139,92,246,0.07); }
+  .gift-plan-opt.selected { border-color: var(--violet-bright); background: rgba(139,92,246,0.15); }
+
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-top">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">G</div>
+      <div class="sb-logo-text">Genproia</div>
+    </div>
+    <div class="sb-admin-badge">Super Admin</div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-section">Tableau de bord</div>
+    <div class="sb-item active" onclick="setNav(this)"><span class="sb-icon">⊞</span> Vue d'ensemble</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">📊</span> Analytics <span class="sb-badge violet">Live</span></div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">💰</span> Revenus</div>
+
+    <div class="sb-section">Utilisateurs</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">👥</span> Tous les users <span class="sb-badge violet">2 841</span></div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">⚡</span> Abonnés Pro</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🏢</span> Business</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🚫</span> Suspendus <span class="sb-badge red">3</span></div>
+
+    <div class="sb-section">Projets</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">✦</span> Générations <span class="sb-badge green">En cours</span></div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🌐</span> Sites déployés</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🛒</span> E-commerces</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">⚙️</span> SaaS générés</div>
+
+    <div class="sb-section">Système</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🔔</span> Alertes <span class="sb-badge red">2</span></div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🔑</span> API & Clés</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">📧</span> Emails</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">⚙️</span> Paramètres</div>
+    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">📋</span> Logs</div>
+  </nav>
+
+  <div class="sb-bottom">
+    <div class="sb-admin-user">
+      <div class="admin-avatar">SA</div>
+      <div>
+        <div class="admin-name">Super Admin</div>
+        <div class="admin-role">● Accès total</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="tb-breadcrumb">
+      <span>Genproia</span>
+      <span>›</span>
+      <strong>Vue d'ensemble</strong>
+      <span style="margin-left:8px; font-size:0.65rem; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.2); color:#fca5a5; padding:2px 8px; border-radius:4px;">ADMIN</span>
+    </div>
+    <div class="tb-right"><button class="mobile-hamburger" id="hamburger" onclick="toggleSidebar()" style="display:none;width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.08);color:white;font-size:1.1rem;cursor:pointer;align-items:center;justify-content:center;">☰</button>
+      <div class="sys-status"><div class="sys-dot"></div> Tous systèmes opérationnels</div>
+      <div class="tb-icon-btn">🔍</div>
+      <div class="tb-icon-btn">🔔<div class="tb-notif"></div></div>
+      <div class="tb-icon-btn">⚙️</div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- KPI ROW -->
+    <div class="kpi-row">
+      <div class="kpi k1">
+        <div class="kpi-top"><div class="kpi-label">Utilisateurs totaux</div><div class="kpi-icon">👥</div></div>
+        <div class="kpi-value">2 841</div>
+        <div class="kpi-delta up">↑ +124 ce mois</div>
+      </div>
+      <div class="kpi k2">
+        <div class="kpi-top"><div class="kpi-label">MRR</div><div class="kpi-icon">💰</div></div>
+        <div class="kpi-value">€18.4k</div>
+        <div class="kpi-delta up">↑ +12% vs mois dernier</div>
+      </div>
+      <div class="kpi k3">
+        <div class="kpi-top"><div class="kpi-label">Projets générés</div><div class="kpi-icon">✦</div></div>
+        <div class="kpi-value">9 302</div>
+        <div class="kpi-delta up">↑ +340 cette semaine</div>
+      </div>
+      <div class="kpi k4">
+        <div class="kpi-top"><div class="kpi-label">Churn rate</div><div class="kpi-icon">📉</div></div>
+        <div class="kpi-value">2.1%</div>
+        <div class="kpi-delta up">↓ -0.4% (bien)</div>
+      </div>
+      <div class="kpi k5">
+        <div class="kpi-top"><div class="kpi-label">Sites déployés live</div><div class="kpi-icon">🌐</div></div>
+        <div class="kpi-value">1 247</div>
+        <div class="kpi-delta up">↑ +87 ce mois</div>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
+    <div class="grid-main">
+
+      <!-- USERS TABLE -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            👥 Utilisateurs récents
+            <span style="font-size:0.65rem; background:rgba(139,92,246,0.12); border:1px solid rgba(139,92,246,0.2); color:var(--violet-glow); padding:2px 8px; border-radius:100px;">2 841 total</span>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <input type="text" placeholder="Rechercher…" style="background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:7px;padding:5px 10px;color:var(--white);font-size:0.75rem;outline:none;width:140px;" oninput="filterUsers(this.value)">
+            <div class="panel-action">Voir tout →</div>
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="users-table" id="usersTable">
+            <thead>
+              <tr>
+                <th>Utilisateur</th>
+                <th>Plan</th>
+                <th>Projets</th>
+                <th>Revenus</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="usersBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- RIGHT: ALERTS + PLANS -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <!-- ALERTS -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">🔔 Alertes système</div>
+            <div class="panel-action">Tout voir →</div>
+          </div>
+          <div class="alerts-list">
+            <div class="alert-item critical">
+              <div class="alert-icon ai-red">🚨</div>
+              <div style="flex:1">
+                <div class="alert-text">Pic de génération détecté</div>
+                <div class="alert-sub">+340% vs moyenne · API Claude</div>
+              </div>
+              <div class="alert-time">2 min</div>
+            </div>
+            <div class="alert-item warning">
+              <div class="alert-icon ai-yellow">⚠️</div>
+              <div style="flex:1">
+                <div class="alert-text">Paiement échoué × 3</div>
+                <div class="alert-sub">3 utilisateurs Pro · Stripe</div>
+              </div>
+              <div class="alert-time">18 min</div>
+            </div>
+            <div class="alert-item info">
+              <div class="alert-icon ai-cyan">ℹ️</div>
+              <div style="flex:1">
+                <div class="alert-text">Nouvel utilisateur Business</div>
+                <div class="alert-sub">RestauGroup SARL · €79/mois</div>
+              </div>
+              <div class="alert-time">1h</div>
+            </div>
+            <div class="alert-item info">
+              <div class="alert-icon ai-cyan">📊</div>
+              <div style="flex:1">
+                <div class="alert-text">Rapport mensuel généré</div>
+                <div class="alert-sub">Juin 2026 · 18 pages</div>
+              </div>
+              <div class="alert-time">3h</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">⚡ Actions rapides</div></div>
+          <div class="qa-grid">
+            <div class="qa-btn" onclick="showToast('Email envoyé à tous les utilisateurs','success')">
+              <div class="qa-icon">📧</div>
+              <div class="qa-label">Envoyer email</div>
+              <div class="qa-desc">Broadcast all</div>
+            </div>
+            <div class="qa-btn" onclick="showToast('Export en cours…','success')">
+              <div class="qa-icon">📤</div>
+              <div class="qa-label">Exporter CSV</div>
+              <div class="qa-desc">Tous les users</div>
+            </div>
+            <div class="qa-btn" onclick="showToast('Mode maintenance activé','error')">
+              <div class="qa-icon">🔧</div>
+              <div class="qa-label">Maintenance</div>
+              <div class="qa-desc">Activer le mode</div>
+            </div>
+            <div class="qa-btn" onclick="showToast('Rapport généré','success')">
+              <div class="qa-icon">📋</div>
+              <div class="qa-label">Rapport MRR</div>
+              <div class="qa-desc">Ce mois-ci</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="grid-bottom">
+
+      <!-- PLANS BREAKDOWN -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">📊 Répartition des plans</div>
+          <div class="panel-action">Détails →</div>
+        </div>
+        <div class="plans-breakdown">
+          <div class="plan-row">
+            <div class="plan-row-label" style="color:var(--violet-glow)">⚡ Pro</div>
+            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-violet" style="width:54%"></div></div>
+            <div class="plan-row-count">1 534 · 54%</div>
+          </div>
+          <div class="plan-row">
+            <div class="plan-row-label" style="color:#fcd34d">🏢 Business</div>
+            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-yellow" style="width:12%"></div></div>
+            <div class="plan-row-count">341 · 12%</div>
+          </div>
+          <div class="plan-row">
+            <div class="plan-row-label" style="color:var(--muted)">Free</div>
+            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-gray" style="width:34%"></div></div>
+            <div class="plan-row-count">966 · 34%</div>
+          </div>
+
+          <div style="margin-top:18px; padding-top:16px; border-top:1px solid var(--border)">
+            <div style="font-size:0.7rem; color:var(--muted); margin-bottom:10px; letter-spacing:0.05em; text-transform:uppercase;">MRR par plan</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+              <div style="text-align:center;background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.15);border-radius:9px;padding:10px 6px">
+                <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--violet-glow)">€44.5k</div>
+                <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Pro</div>
+              </div>
+              <div style="text-align:center;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:9px;padding:10px 6px">
+                <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:#fcd34d">€26.9k</div>
+                <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Business</div>
+              </div>
+              <div style="text-align:center;background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:9px;padding:10px 6px">
+                <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;color:var(--muted)">€0</div>
+                <div style="font-size:0.62rem;color:var(--muted);margin-top:2px">Free</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECENT GENERATIONS -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">✦ Générations récentes</div>
+          <div class="panel-action">Voir tout →</div>
+        </div>
+        <div class="gen-log">
+          <div class="gen-log-item">
+            <div class="gen-type-icon gti-ecom">🛒</div>
+            <div class="gen-log-main">
+              <div class="gen-log-name">UrbanVibe — E-commerce mode</div>
+              <div class="gen-log-user">karim.b@gmail.com</div>
+            </div>
+            <div class="gen-status gs-done">✓ Done</div>
+            <div class="gen-log-time">2 min</div>
+          </div>
+          <div class="gen-log-item">
+            <div class="gen-type-icon gti-saas">⚙️</div>
+            <div class="gen-log-main">
+              <div class="gen-log-name">LoyalCore — SaaS fidélité</div>
+              <div class="gen-log-user">sofia.m@outlook.com</div>
+            </div>
+            <div class="gen-status gs-proc">⟳ En cours</div>
+            <div class="gen-log-time">5 min</div>
+          </div>
+          <div class="gen-log-item">
+            <div class="gen-type-icon gti-landing">📱</div>
+            <div class="gen-log-main">
+              <div class="gen-log-name">NestIQ — Agence immobilière</div>
+              <div class="gen-log-user">thomas.l@proton.me</div>
+            </div>
+            <div class="gen-status gs-done">✓ Done</div>
+            <div class="gen-log-time">22 min</div>
+          </div>
+          <div class="gen-log-item">
+            <div class="gen-type-icon gti-ecom">🛒</div>
+            <div class="gen-log-main">
+              <div class="gen-log-name">SwiftBite — Livraison repas</div>
+              <div class="gen-log-user">marco.r@gmail.com</div>
+            </div>
+            <div class="gen-status gs-fail">✕ Échec</div>
+            <div class="gen-log-time">1h</div>
+          </div>
+          <div class="gen-log-item">
+            <div class="gen-type-icon gti-saas">⚙️</div>
+            <div class="gen-log-main">
+              <div class="gen-log-name">CoreFlow — App fitness</div>
+              <div class="gen-log-user">amelie.d@yahoo.fr</div>
+            </div>
+            <div class="gen-status gs-done">✓ Done</div>
+            <div class="gen-log-time">2h</div>
+          </div>
+          <div class="gen-log-item">
+            <div class="gen-type-icon gti-landing">📱</div>
+            <div class="gen-log-main">
+              <div class="gen-log-name">BeautyBox — Cosmétiques</div>
+              <div class="gen-log-user">claire.v@gmail.com</div>
+            </div>
+            <div class="gen-status gs-done">✓ Done</div>
+            <div class="gen-log-time">3h</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- USER MODAL -->
+<div class="modal-overlay" id="userModal" onclick="closeModalOut(event)">
+  <div class="modal">
+    <div class="modal-top">
+      <div class="modal-title" id="modalTitle">Détails utilisateur</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-user-hero">
+        <div class="modal-avatar ua1" id="modalAvatar">KD</div>
+        <div>
+          <div class="modal-user-name" id="modalName">—</div>
+          <div class="modal-user-email" id="modalEmail">—</div>
+        </div>
+        <div style="margin-left:auto" id="modalPlanTag"></div>
+      </div>
+      <div class="modal-grid">
+        <div class="modal-cell"><div class="modal-cell-label">Inscrit le</div><div class="modal-cell-value" id="modalDate">—</div></div>
+        <div class="modal-cell"><div class="modal-cell-label">Projets</div><div class="modal-cell-value" id="modalProjects">—</div></div>
+        <div class="modal-cell"><div class="modal-cell-label">Revenus générés</div><div class="modal-cell-value" id="modalRevenue">—</div></div>
+        <div class="modal-cell"><div class="modal-cell-label">Statut</div><div class="modal-cell-value" id="modalStatus">—</div></div>
+      </div>
+      <!-- GIFT PLAN SECTION -->
+      <div style="background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.2);border-radius:12px;padding:16px;margin-bottom:14px;">
+        <div style="font-size:0.72rem;color:var(--violet-glow);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:10px;">🎁 Attribuer un abonnement gratuit</div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <div class="gift-plan-opt selected" onclick="selectGiftPlan(this,'free')" data-plan="free">
+            <div style="font-size:0.65rem;color:var(--muted)">Free</div>
+            <div style="font-size:0.82rem;font-weight:700">Gratuit</div>
+          </div>
+          <div class="gift-plan-opt" onclick="selectGiftPlan(this,'pro')" data-plan="pro">
+            <div style="font-size:0.65rem;color:var(--violet-glow)">Pro ⚡</div>
+            <div style="font-size:0.82rem;font-weight:700">29€/mois</div>
+          </div>
+          <div class="gift-plan-opt" onclick="selectGiftPlan(this,'business')" data-plan="business">
+            <div style="font-size:0.65rem;color:#fcd34d">Business</div>
+            <div style="font-size:0.82rem;font-weight:700">79€/mois</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:10px;">
+          <select id="giftDuration" style="flex:1;background:rgba(255,255,255,0.05);border:1px solid var(--border2);border-radius:8px;padding:8px 10px;color:var(--white);font-size:0.78rem;outline:none;">
+            <option value="lifetime">♾️ À vie (sans expiration)</option>
+            <option value="1month">📅 1 mois</option>
+            <option value="3months">📅 3 mois</option>
+            <option value="6months">📅 6 mois</option>
+            <option value="1year">📅 1 an</option>
+          </select>
+        </div>
+        <div style="margin-bottom:10px;">
+          <input type="text" id="giftNote" placeholder="Note interne (ex: conjoint, partenaire...)" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;color:var(--white);font-size:0.78rem;outline:none;font-family:var(--font-body);">
+        </div>
+        <button onclick="applyGiftPlan()" style="width:100%;padding:10px;background:linear-gradient(135deg,var(--violet),#9333ea);color:var(--white);border:none;border-radius:9px;font-family:var(--font-display);font-weight:700;font-size:0.82rem;cursor:pointer;box-shadow:0 0 16px rgba(124,58,237,0.35);">
+          🎁 Appliquer gratuitement
+        </button>
+      </div>
+
+      <div class="modal-actions-grid">
+        <button class="modal-action-btn primary" onclick="showToast('Email envoyé !','success');closeModal()">📧 Envoyer email</button>
+        <button class="modal-action-btn" onclick="showToast('Mot de passe réinitialisé','success');closeModal()">🔑 Reset mdp</button>
+        <button class="modal-action-btn danger" onclick="closeModal();showConfirm()">🚫 Suspendre</button>
+        <button class="modal-action-btn" onclick="closeModal()">✏️ Éditer profil</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="confirm-modal">
+    <div class="confirm-icon">🚫</div>
+    <div class="confirm-title">Suspendre cet utilisateur ?</div>
+    <div class="confirm-sub">L'accès sera révoqué immédiatement. L'abonnement sera mis en pause.</div>
+    <div class="confirm-btns">
+      <button class="confirm-btn cb-cancel" onclick="document.getElementById('confirmModal').classList.remove('open')">Annuler</button>
+      <button class="confirm-btn cb-confirm" onclick="document.getElementById('confirmModal').classList.remove('open');showToast('Utilisateur suspendu','error')">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- QUICK GIFT MODAL -->
+<div class="modal-overlay" id="quickGiftModal" onclick="if(event.target.id==='quickGiftModal')document.getElementById('quickGiftModal').classList.remove('open')">
+  <div class="modal">
+    <div class="modal-top">
+      <div class="modal-title">🎁 Offrir un abonnement</div>
+      <button class="modal-close" onclick="document.getElementById('quickGiftModal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:14px">
+        <label style="font-size:0.75rem;color:var(--muted);display:block;margin-bottom:6px;">Email de l'utilisateur</label>
+        <input type="email" id="quickGiftEmail" placeholder="exemple@email.com" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid rgba(139,92,246,0.2);border-radius:10px;padding:11px 14px;color:var(--white);font-family:var(--font-body);font-size:0.88rem;outline:none;">
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <div class="gift-plan-opt selected" onclick="selectGiftPlan(this,'free')"><div style="font-size:0.65rem;color:var(--muted)">Free</div><div style="font-size:0.82rem;font-weight:700">Gratuit</div></div>
+        <div class="gift-plan-opt" onclick="selectGiftPlan(this,'pro')"><div style="font-size:0.65rem;color:var(--violet-glow)">Pro ⚡</div><div style="font-size:0.82rem;font-weight:700">29€/mois</div></div>
+        <div class="gift-plan-opt" onclick="selectGiftPlan(this,'business')"><div style="font-size:0.65rem;color:#fcd34d">Business</div><div style="font-size:0.82rem;font-weight:700">79€/mois</div></div>
+      </div>
+      <select id="quickGiftDuration" style="width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--white);font-size:0.82rem;outline:none;margin-bottom:12px;">
+        <option value="lifetime">♾️ À vie</option>
+        <option value="1month">📅 1 mois</option>
+        <option value="3months">📅 3 mois</option>
+        <option value="6months">📅 6 mois</option>
+        <option value="1year">📅 1 an</option>
+      </select>
+      <input type="text" id="quickGiftNote" placeholder="Note interne (ex: ma femme, partenaire...)" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:8px;padding:9px 12px;color:var(--white);font-size:0.82rem;outline:none;font-family:var(--font-body);margin-bottom:14px;">
+      <button onclick="applyQuickGift()" style="width:100%;padding:12px;background:linear-gradient(135deg,var(--violet),#9333ea);color:var(--white);border:none;border-radius:10px;font-family:var(--font-display);font-weight:700;font-size:0.9rem;cursor:pointer;box-shadow:0 0 20px rgba(124,58,237,0.4);">
+        🎁 Offrir gratuitement
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span id="toastIcon">✓</span>
+  <span id="toastMsg">Action effectuée</span>
+</div>
+
+<script>
+// USERS DATA
+const users = [
+  { id:1, name:'Karim Benali', email:'karim.b@gmail.com', plan:'pro', projects:4, revenue:'€840', status:'active', date:'12 jan 2026', avatarClass:'ua1', initials:'KB' },
+  { id:2, name:'Sofia Martin', email:'sofia.m@outlook.com', plan:'business', projects:11, revenue:'€3 200', status:'active', date:'3 fév 2026', avatarClass:'ua2', initials:'SM' },
+  { id:3, name:'Thomas Leclerc', email:'thomas.l@proton.me', plan:'pro', projects:2, revenue:'€290', status:'active', date:'18 fév 2026', avatarClass:'ua3', initials:'TL' },
+  { id:4, name:'Marco Rossi', email:'marco.r@gmail.com', plan:'free', projects:1, revenue:'€0', status:'inactive', date:'1 mars 2026', avatarClass:'ua4', initials:'MR' },
+  { id:5, name:'Amélie Dubois', email:'amelie.d@yahoo.fr', plan:'pro', projects:6, revenue:'€1 450', status:'active', date:'7 mars 2026', avatarClass:'ua5', initials:'AD' },
+  { id:6, name:'Claire Vidal', email:'claire.v@gmail.com', plan:'business', projects:18, revenue:'€8 700', status:'suspended', date:'15 avr 2026', avatarClass:'ua6', initials:'CV' },
+];
+
+let currentUser = null;
+
+function renderUsers(data) {
+  const planLabels = { pro:'Pro ⚡', business:'Business', free:'Free' };
+  const planClasses = { pro:'pt-pro', business:'pt-business', free:'pt-free' };
+  const statusMap = { active:'<span class="status-dot sd-active"></span>Actif', inactive:'<span class="status-dot sd-inactive"></span>Inactif', suspended:'<span class="status-dot sd-suspended"></span>Suspendu' };
+
+  document.getElementById('usersBody').innerHTML = data.map(u => `
+    <tr>
+      <td>
+        <div class="user-cell">
+          <div class="u-avatar ${u.avatarClass}">${u.initials}</div>
+          <div>
+            <div class="u-name">${u.name}</div>
+            <div class="u-email">${u.email}</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="plan-tag ${planClasses[u.plan]}">${planLabels[u.plan]}</span></td>
+      <td style="color:var(--violet-glow);font-weight:600">${u.projects}</td>
+      <td style="color:var(--green);font-weight:600">${u.revenue}</td>
+      <td style="font-size:0.75rem">${statusMap[u.status]}</td>
+      <td><button class="action-btn" onclick="openUser(${u.id})">Gérer →</button></td>
+    </tr>
+  `).join('');
+}
+
+renderUsers(users);
+renderGiftHistory();
+
+function filterUsers(q) {
+  const filtered = users.filter(u => u.name.toLowerCase().includes(q.toLowerCase()) || u.email.toLowerCase().includes(q.toLowerCase()));
+  renderUsers(filtered);
+}
+
+function openUser(id) {
+  currentUser = users.find(u => u.id === id);
+  if (!currentUser) return;
+  document.getElementById('modalName').textContent = currentUser.name;
+  document.getElementById('modalEmail').textContent = currentUser.email;
+  document.getElementById('modalDate').textContent = currentUser.date;
+  document.getElementById('modalProjects').textContent = currentUser.projects;
+  document.getElementById('modalRevenue').textContent = currentUser.revenue;
+  document.getElementById('modalStatus').textContent = currentUser.status === 'active' ? '✅ Actif' : currentUser.status === 'suspended' ? '🚫 Suspendu' : '⚪ Inactif';
+  const av = document.getElementById('modalAvatar');
+  av.className = 'modal-avatar ' + currentUser.avatarClass;
+  av.textContent = currentUser.initials;
+  const planClasses = { pro:'pt-pro', business:'pt-business', free:'pt-free' };
+  const planLabels = { pro:'Pro ⚡', business:'Business', free:'Free' };
+  document.getElementById('modalPlanTag').innerHTML = `<span class="plan-tag ${planClasses[currentUser.plan]}">${planLabels[currentUser.plan]}</span>`;
+  document.getElementById('userModal').classList.add('open');
+}
+
+function closeModal() { document.getElementById('userModal').classList.remove('open'); }
+function closeModalOut(e) { if (e.target.id === 'userModal') closeModal(); }
+function showConfirm() { document.getElementById('confirmModal').classList.add('open'); }
+
+// NAV
+function setNav(el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// TOAST
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastIcon').textContent = type === 'success' ? '✓' : '⚠';
+  t.className = 'toast ' + type;
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+
+
+// GIFT PLAN
+let selectedGiftPlan = 'free';
+
+function selectGiftPlan(el, plan) {
+  document.querySelectorAll('.gift-plan-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedGiftPlan = plan;
+}
+
+function applyGiftPlan() {
+  if (!currentUser) return;
+  const duration = document.getElementById('giftDuration').value;
+  const note = document.getElementById('giftNote').value;
+  const planLabels = { free: 'Free', pro: 'Pro ⚡', business: 'Business' };
+  const durationLabels = { lifetime: 'à vie', '1month': '1 mois', '3months': '3 mois', '6months': '6 mois', '1year': '1 an' };
+
+  // Update user in array
+  const user = users.find(u => u.id === currentUser.id);
+  if (user) {
+    user.plan = selectedGiftPlan;
+    user.giftNote = note || 'Offert par admin';
+  }
+
+  // Add to gift history
+  giftHistory.unshift({
+    userName: currentUser.name,
+    plan: selectedGiftPlan,
+    duration: duration,
+    note: note || '—',
+    date: new Date().toLocaleDateString('fr-FR'),
+    initials: currentUser.initials,
+    avatarClass: currentUser.avatarClass
+  });
+
+  renderUsers(users);
+  closeModal();
+  showToast(`🎁 Plan ${planLabels[selectedGiftPlan]} offert à ${currentUser.name} (${durationLabels[duration]}) !`, 'success');
+}
+
+// GIFT HISTORY
+const giftHistory = [
+  { userName: 'Sofia Martin', plan: 'business', duration: 'lifetime', note: 'Partenaire stratégique', date: '01/06/2026', initials: 'SM', avatarClass: 'ua2' },
+  { userName: 'Karim Benali', plan: 'pro', duration: '1year', note: 'Beta testeur', date: '15/05/2026', initials: 'KB', avatarClass: 'ua1' },
+];
+
+// SIDEBAR MOBILE
+function toggleSidebar() {
+  const sb = document.getElementById('sidebar');
+  const ov = document.getElementById('sidebarOverlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebarOverlay').classList.remove('open');
+}
+
+// SWIPE to open/close sidebar
+let touchStartX = 0;
+let touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
+  if (dy > 60) return; // mostly vertical swipe, ignore
+  const sb = document.getElementById('sidebar');
+  if (dx > 60 && touchStartX < 40) {
+    // Swipe right from left edge → open
+    sb.classList.add('open');
+    document.getElementById('sidebarOverlay').classList.add('open');
+  } else if (dx < -60 && sb.classList.contains('open')) {
+    // Swipe left → close
+    closeSidebar();
+  }
+}, { passive: true });
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); document.getElementById('confirmModal').classList.remove('open'); } });
+</script>
+</body>
+</html>

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genproia — Construction de ton site</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #05030f;
+    --deep: #0a0618;
+    --card: #13102a;
+    --border: rgba(139,92,246,0.15);
+    --border2: rgba(255,255,255,0.06);
+    --violet: #7c3aed;
+    --violet-bright: #8b5cf6;
+    --violet-glow: #a78bfa;
+    --pink: #ec4899;
+    --cyan: #06b6d4;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --white: #f0ecff;
+    --muted: #7a6fa0;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--void); color: var(--white);
+    font-family: var(--font-body); min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; padding: 24px;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  }
+  .orb { position: fixed; border-radius: 50%; pointer-events: none; filter: blur(90px); }
+  .orb1 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(124,58,237,0.2), transparent 70%); top: -100px; left: -150px; }
+  .orb2 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(236,72,153,0.12), transparent 70%); bottom: -80px; right: -100px; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 32px;
+    background: rgba(5,3,15,0.85); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--violet-glow), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+  /* WRAP */
+  .wrap { width: 100%; max-width: 560px; position: relative; z-index: 1; margin-top: 70px; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  @keyframes pulse { 0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(124,58,237,0.4)} 50%{transform:scale(1.06);box-shadow:0 0 60px rgba(124,58,237,0.65)} }
+
+  /* ── SCREEN: RECAP ── */
+  .screen { display: none; animation: fadeUp 0.5s ease; }
+  .screen.active { display: block; }
+
+  .recap-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; overflow: hidden;
+  }
+  .recap-card::before { content:''; display:block; height:2px; background:linear-gradient(90deg,var(--violet),var(--pink)); }
+
+  .recap-head { padding: 22px 24px; border-bottom: 1px solid var(--border); }
+  .recap-label { font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .recap-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; }
+  .recap-sub { font-size: 0.8rem; color: var(--muted); margin-top: 2px; }
+
+  .recap-identity {
+    display: flex; align-items: center; gap: 16px;
+    padding: 20px 24px; border-bottom: 1px solid var(--border);
+    background: rgba(124,58,237,0.05);
+  }
+  .recap-logo {
+    width: 56px; height: 56px; border-radius: 14px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1.3rem; font-weight: 800;
+    box-shadow: 0 0 20px rgba(124,58,237,0.3);
+  }
+  .recap-brand-name { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; margin-bottom: 3px; }
+  .recap-slogan { font-size: 0.82rem; color: var(--muted); font-style: italic; }
+
+  .recap-details { padding: 16px 24px; display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid var(--border); }
+  .recap-row { display: flex; justify-content: space-between; align-items: center; }
+  .recap-row-label { font-size: 0.72rem; color: var(--muted); }
+  .recap-row-value { font-size: 0.78rem; font-weight: 600; color: var(--cyan); }
+
+  .recap-actions { padding: 18px 24px; display: flex; gap: 10px; }
+  .btn-build {
+    flex: 1; padding: 13px;
+    background: linear-gradient(135deg, var(--violet), #9333ea);
+    color: var(--white); border: none; cursor: pointer;
+    border-radius: 12px; font-family: var(--font-display);
+    font-weight: 700; font-size: 0.95rem;
+    box-shadow: 0 0 28px rgba(124,58,237,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-build:hover { transform: translateY(-1px); box-shadow: 0 0 40px rgba(124,58,237,0.6); }
+  .btn-restart {
+    padding: 13px 16px; border-radius: 12px;
+    background: transparent; border: 1px solid var(--border2);
+    color: var(--muted); cursor: pointer;
+    font-family: var(--font-body); font-size: 0.82rem;
+    transition: all 0.2s;
+  }
+  .btn-restart:hover { color: var(--white); border-color: var(--border); }
+
+  /* ── SCREEN: BUILDING ── */
+  .building-wrap { text-align: center; }
+  .build-orb {
+    width: 96px; height: 96px; border-radius: 50%; margin: 0 auto 24px;
+    background: linear-gradient(135deg, var(--violet), var(--pink));
+    animation: pulse 2s ease-in-out infinite;
+  }
+  .build-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+  .build-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 28px; line-height: 1.6; }
+
+  .build-steps { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; text-align: left; }
+  .build-step {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 16px; border-radius: 11px;
+    background: rgba(255,255,255,0.02); border: 1px solid transparent;
+    transition: all 0.3s;
+  }
+  .build-step.active { background: rgba(124,58,237,0.08); border-color: rgba(124,58,237,0.2); }
+  .build-step.done { background: rgba(16,185,129,0.05); border-color: rgba(16,185,129,0.15); }
+  .build-step-icon {
+    width: 30px; height: 30px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border2); transition: all 0.3s;
+  }
+  .build-step.active .build-step-icon { background: rgba(124,58,237,0.15); border-color: rgba(124,58,237,0.3); }
+  .build-step.done .build-step-icon { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.25); }
+  .build-step-label { font-size: 0.82rem; flex: 1; transition: color 0.3s; }
+  .build-step.active .build-step-label { color: var(--white); font-weight: 500; }
+  .build-step.done .build-step-label { color: var(--muted); }
+  .build-step-check { font-size: 0.75rem; color: var(--green); opacity: 0; transition: opacity 0.3s; }
+  .build-step.done .build-step-check { opacity: 1; }
+
+  .progress-bar { height: 5px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; margin-bottom: 8px; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--violet), var(--pink)); border-radius: 100px; transition: width 0.6s ease; }
+  .progress-label { font-size: 0.75rem; color: var(--muted); }
+
+  /* ── SCREEN: READY ── */
+  .ready-card {
+    background: var(--card); border: 1px solid rgba(16,185,129,0.3);
+    border-radius: 20px; overflow: hidden;
+    box-shadow: 0 0 50px rgba(16,185,129,0.1);
+  }
+  .ready-card::before { content:''; display:block; height:2px; background:linear-gradient(90deg,var(--green),var(--cyan)); }
+
+  .ready-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 100px; padding: 4px 14px; margin: 20px 24px 0;
+    font-size: 0.72rem; color: #6ee7b7; font-weight: 600;
+  }
+  .ready-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: blink 1.5s infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .site-preview-wrap { margin: 16px 24px; }
+  .site-browser {
+    background: var(--deep); border: 1px solid var(--border);
+    border-radius: 14px; overflow: hidden;
+  }
+  .browser-bar {
+    background: rgba(255,255,255,0.04); padding: 9px 14px;
+    display: flex; align-items: center; gap: 7px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bdot { width: 8px; height: 8px; border-radius: 50%; }
+  .browser-url-field {
+    flex: 1; background: rgba(255,255,255,0.06); border-radius: 6px;
+    padding: 4px 12px; font-size: 0.7rem; color: #6ee7b7;
+    margin: 0 8px; font-family: monospace;
+  }
+  .browser-content {
+    height: 180px; padding: 24px 20px;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center;
+    background: linear-gradient(160deg, #0f0b20, #1a1040);
+  }
+  .preview-logo {
+    width: 52px; height: 52px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1.3rem; font-weight: 800;
+    margin: 0 auto 10px;
+  }
+  .preview-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
+  .preview-slogan { font-size: 0.75rem; color: var(--muted); }
+
+  .ready-features {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    padding: 16px 24px;
+  }
+  .ready-feat {
+    display: flex; align-items: center; gap: 7px;
+    font-size: 0.75rem; color: #6ee7b7;
+  }
+  .ready-feat-icon { font-size: 0.85rem; }
+
+  .ready-actions { padding: 16px 24px 20px; }
+  .btn-deploy {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--violet), #9333ea);
+    color: var(--white); border: none; cursor: pointer;
+    border-radius: 12px; font-family: var(--font-display);
+    font-weight: 700; font-size: 1rem;
+    box-shadow: 0 0 28px rgba(124,58,237,0.45);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 10px;
+  }
+  .btn-deploy:hover { transform: translateY(-1px); box-shadow: 0 0 40px rgba(124,58,237,0.65); }
+  .deploy-sub { font-size: 0.75rem; color: var(--muted); text-align: center; }
+
+  /* NO DATA */
+  .nodata-wrap { text-align: center; padding: 40px 24px; }
+  .nodata-icon { font-size: 3rem; margin-bottom: 16px; }
+  .nodata-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
+  .nodata-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; }
+  .btn-back {
+    display: inline-block; padding: 12px 28px;
+    background: linear-gradient(135deg, var(--violet), #9333ea);
+    color: var(--white); text-decoration: none; border-radius: 11px;
+    font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;
+    box-shadow: 0 0 24px rgba(124,58,237,0.4);
+  }
+
+  @media (max-width: 480px) {
+    nav { padding: 14px 16px; }
+    body { padding: 16px; }
+    .recap-actions { flex-direction: column; }
+    .ready-features { grid-template-columns: 1fr; }
+  }
+
+  /* ECOSYSTEM */
+  .eco-section {
+    background: rgba(255,255,255,0.02); border: 1px solid var(--border2);
+    border-radius: 14px; padding: 16px; margin-bottom: 12px;
+  }
+  .eco-section-title {
+    display: flex; align-items: center; gap: 8px;
+    font-family: var(--font-display); font-size: 0.88rem; font-weight: 700;
+    margin-bottom: 12px; color: var(--white);
+  }
+  .eco-section-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center; font-size: 0.85rem;
+  }
+  .eco-item {
+    display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start;
+  }
+  .eco-item:last-child { margin-bottom: 0; }
+  .eco-item-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    flex-shrink: 0; margin-top: 6px;
+  }
+  .eco-item-main { flex: 1; min-width: 0; }
+  .eco-item-name { font-size: 0.82rem; font-weight: 600; margin-bottom: 2px; }
+  .eco-item-desc { font-size: 0.72rem; color: var(--muted); line-height: 1.5; }
+  .eco-item-link {
+    font-size: 0.68rem; color: var(--cyan); text-decoration: none;
+    border: 1px solid rgba(6,182,212,0.25); padding: 2px 8px; border-radius: 4px;
+    white-space: nowrap; flex-shrink: 0; transition: all 0.2s;
+    display: inline-block; margin-top: 3px;
+  }
+  .eco-item-link:hover { background: rgba(6,182,212,0.1); }
+  .eco-tag {
+    display: inline-block; font-size: 0.62rem; padding: 2px 7px;
+    border-radius: 100px; font-weight: 600; margin-right: 4px; margin-top: 3px;
+  }
+  .eco-tag-green { background: rgba(16,185,129,0.12); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.2); }
+  .eco-tag-yellow { background: rgba(245,158,11,0.1); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+  .eco-tag-violet { background: rgba(124,58,237,0.12); color: var(--violet-glow); border: 1px solid rgba(124,58,237,0.2); }
+  .eco-budget {
+    background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 10px; padding: 12px 14px; margin-top: 4px;
+    display: flex; align-items: center; gap: 8px; font-size: 0.8rem;
+  }
+  .eco-loading {
+    text-align: center; padding: 32px 0;
+  }
+  .eco-spinner {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 3px solid rgba(245,158,11,0.2); border-top-color: var(--yellow);
+    animation: spin 0.9s linear infinite; margin: 0 auto 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<nav>
+  <div class="logo">Genproia</div>
+  <div style="font-size:0.7rem;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.25);color:#6ee7b7;padding:4px 12px;border-radius:100px;font-weight:600;">⚡ Moteur IA</div>
+</nav>
+
+<div class="wrap">
+
+  <!-- SCREEN 1: RECAP + CONFIRM -->
+  <div class="screen active" id="screenRecap">
+    <div class="recap-card">
+      <div class="recap-head">
+        <div class="recap-label">✦ Prêt à construire</div>
+        <div class="recap-title">Ton identité est validée !</div>
+        <div class="recap-sub">Voici ce qu'on va construire pour toi</div>
+      </div>
+
+      <div class="recap-identity">
+        <div class="recap-logo" id="recapLogo">—</div>
+        <div>
+          <div class="recap-brand-name" id="recapName">—</div>
+          <div class="recap-slogan" id="recapSlogan">—</div>
+        </div>
+      </div>
+
+      <div class="recap-details">
+        <div class="recap-row">
+          <div class="recap-row-label">🌐 Domaine principal</div>
+          <div class="recap-row-value" id="recapDomain">—</div>
+        </div>
+        <div class="recap-row">
+          <div class="recap-row-label">⚙️ Type de site</div>
+          <div class="recap-row-value" id="recapType">—</div>
+        </div>
+        <div class="recap-row">
+          <div class="recap-row-label">💳 Paiement</div>
+          <div class="recap-row-value">Stripe intégré</div>
+        </div>
+        <div class="recap-row">
+          <div class="recap-row-label">📊 Dashboard admin</div>
+          <div class="recap-row-value">Inclus</div>
+        </div>
+      </div>
+
+      <div class="recap-actions">
+        <button class="btn-build" onclick="startBuilding()">⚡ Construire mon site maintenant</button>
+        <button class="btn-restart" onclick="goBack()">← Modifier</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: BUILDING -->
+  <div class="screen" id="screenBuilding">
+    <div class="building-wrap">
+      <div class="build-orb"></div>
+      <div class="build-title">Construction en cours…</div>
+      <div class="build-sub" id="buildSub">Claude génère ton site complet<br>avec toutes les fonctionnalités</div>
+
+      <div class="build-steps">
+        <div class="build-step" id="bs1">
+          <div class="build-step-icon">🏗️</div>
+          <div class="build-step-label">Architecture & structure du site</div>
+          <div class="build-step-check">✓</div>
+        </div>
+        <div class="build-step" id="bs2">
+          <div class="build-step-icon">🎨</div>
+          <div class="build-step-label">Design & identité visuelle</div>
+          <div class="build-step-check">✓</div>
+        </div>
+        <div class="build-step" id="bs3">
+          <div class="build-step-icon">⚙️</div>
+          <div class="build-step-label">Fonctionnalités & pages</div>
+          <div class="build-step-check">✓</div>
+        </div>
+        <div class="build-step" id="bs4">
+          <div class="build-step-icon">💳</div>
+          <div class="build-step-label">Intégration Stripe & paiements</div>
+          <div class="build-step-check">✓</div>
+        </div>
+        <div class="build-step" id="bs5">
+          <div class="build-step-icon">📊</div>
+          <div class="build-step-label">Dashboard admin & analytics</div>
+          <div class="build-step-check">✓</div>
+        </div>
+        <div class="build-step" id="bs6">
+          <div class="build-step-icon">🚀</div>
+          <div class="build-step-label">Optimisation SEO & déploiement</div>
+          <div class="build-step-check">✓</div>
+        </div>
+      </div>
+
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">0% — Initialisation…</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: READY -->
+  <div class="screen" id="screenReady">
+    <div class="ready-card">
+      <div class="ready-badge">
+        <div class="ready-badge-dot"></div>
+        Ton site est prêt à être déployé
+      </div>
+
+      <div class="site-preview-wrap">
+        <div class="site-browser">
+          <div class="browser-bar">
+            <div class="bdot" style="background:#ef4444"></div>
+            <div class="bdot" style="background:#f59e0b"></div>
+            <div class="bdot" style="background:#10b981"></div>
+            <div class="browser-url-field" id="readyUrl">https://monsite.fr</div>
+          </div>
+          <div class="browser-content">
+            <div class="preview-logo" id="readyLogo">—</div>
+            <div class="preview-name" id="readyName">—</div>
+            <div class="preview-slogan" id="readySlogan">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ready-features">
+        <div class="ready-feat"><div class="ready-feat-icon">✓</div> Stripe configuré</div>
+        <div class="ready-feat"><div class="ready-feat-icon">✓</div> Dashboard admin</div>
+        <div class="ready-feat"><div class="ready-feat-icon">✓</div> SSL automatique</div>
+        <div class="ready-feat"><div class="ready-feat-icon">✓</div> SEO optimisé</div>
+        <div class="ready-feat"><div class="ready-feat-icon">✓</div> Mobile responsive</div>
+        <div class="ready-feat"><div class="ready-feat-icon">✓</div> Analytics inclus</div>
+      </div>
+
+      <div class="ready-actions">
+        <button class="btn-deploy" onclick="deploy()">🚀 Déployer mon site en ligne</button>
+        <div class="deploy-sub">Disponible en ligne dans moins de 2 minutes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: ECOSYSTEM -->
+  <div class="screen" id="screenEco">
+    <div style="margin-bottom:16px;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+        <div style="width:36px;height:36px;border-radius:10px;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);display:flex;align-items:center;justify-content:center;font-size:1rem;">🏭</div>
+        <div>
+          <div style="font-family:var(--font-display);font-size:1rem;font-weight:800;">Ton écosystème business</div>
+          <div style="font-size:0.75rem;color:var(--muted);">Fournisseurs, contacts et roadmap pour lancer</div>
+        </div>
+      </div>
+    </div>
+    <div id="ecoContent">
+      <!-- filled by Claude API -->
+    </div>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button onclick="showScreen('screenReady')" style="flex:1;padding:13px;background:linear-gradient(135deg,var(--violet),#9333ea);color:var(--white);border:none;border-radius:12px;font-family:var(--font-display);font-weight:700;font-size:0.9rem;cursor:pointer;box-shadow:0 0 24px rgba(124,58,237,0.4);">🚀 Déployer mon site</button>
+      <button onclick="showScreen('screenReady')" style="padding:13px 16px;border-radius:12px;background:transparent;border:1px solid var(--border2);color:var(--muted);cursor:pointer;font-size:0.82rem;font-family:var(--font-body);transition:all 0.2s;" onmouseover="this.style.color='white'" onmouseout="this.style.color='var(--muted)'">Passer →</button>
+    </div>
+  </div>
+
+  <!-- NO DATA (si accès direct sans avoir validé) -->
+  <div class="screen" id="screenNoData">
+    <div class="nodata-wrap">
+      <div class="nodata-icon">⚠️</div>
+      <div class="nodata-title">Aucun projet trouvé</div>
+      <div class="nodata-sub">Tu dois d'abord créer et valider ton identité de marque sur la page d'accueil.</div>
+      <a href="genproia.html" class="btn-back">← Retour à l'accueil</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--card);border:1px solid rgba(16,185,129,0.3);border-radius:12px;padding:12px 22px;font-size:0.85rem;z-index:999;transition:transform 0.35s;white-space:nowrap;box-shadow:0 8px 32px rgba(0,0,0,0.5);color:#6ee7b7;"></div>
+
+<script>
+let projectData = null;
+
+// ── INIT ── Charge les données depuis localStorage
+function init() {
+  const raw = localStorage.getItem('genproia_project');
+  if (!raw) {
+    showScreen('screenNoData');
+    return;
+  }
+  try {
+    projectData = JSON.parse(raw);
+    populateRecap(projectData);
+    showScreen('screenRecap');
+  } catch(e) {
+    showScreen('screenNoData');
+  }
+}
+
+function populateRecap(data) {
+  const grad = `linear-gradient(135deg, ${data.couleurPrimaire||'#7c3aed'}, ${data.couleurSecondaire||'#ec4899'})`;
+
+  const logoEl = document.getElementById('recapLogo');
+  logoEl.textContent = data.logoInitiales || data.nom?.substring(0,2).toUpperCase() || 'G';
+  logoEl.style.background = grad;
+
+  document.getElementById('recapName').textContent = data.nom || '—';
+  document.getElementById('recapSlogan').textContent = '"' + (data.slogan || '—') + '"';
+
+  const domains = Array.isArray(data.domaines) ? data.domaines : (data.domaines||'').split('\n');
+  document.getElementById('recapDomain').textContent = domains[0] || '—';
+
+  const typeLabels = {
+    ecommerce: '🛒 E-commerce', saas: '⚙️ SaaS', vitrine: '🏢 Vitrine',
+    landing: '📱 Landing page', marketplace: '🏪 Marketplace', blog: '📰 Blog'
+  };
+  document.getElementById('recapType').textContent = typeLabels[data.type] || '🌐 Site web complet';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function goBack() {
+  window.location.href = 'genproia.html';
+}
+
+// ── BUILD ──
+async function startBuilding() {
+  showScreen('screenBuilding');
+
+  const buildSteps = [
+    { id: 'bs1', pct: 15, label: 'Architecture & structure du site…' },
+    { id: 'bs2', pct: 30, label: 'Design & identité visuelle…' },
+    { id: 'bs3', pct: 50, label: 'Génération des fonctionnalités…' },
+    { id: 'bs4', pct: 68, label: 'Intégration Stripe & paiements…' },
+    { id: 'bs5', pct: 82, label: 'Dashboard admin & analytics…' },
+    { id: 'bs6', pct: 100, label: 'Finalisation & optimisation…' },
+  ];
+
+  for (let i = 0; i < buildSteps.length; i++) {
+    const step = buildSteps[i];
+
+    // Activate current
+    document.getElementById(step.id).classList.add('active');
+    document.getElementById('progressFill').style.width = step.pct + '%';
+    document.getElementById('progressLabel').textContent = step.pct + '% — ' + step.label;
+    document.getElementById('buildSub').textContent = step.label;
+
+    await new Promise(r => setTimeout(r, 900));
+
+    // Done
+    document.getElementById(step.id).classList.remove('active');
+    document.getElementById(step.id).classList.add('done');
+  }
+
+  await new Promise(r => setTimeout(r, 600));
+  showReady();
+}
+
+function showReady() {
+  const data = projectData;
+  const grad = `linear-gradient(135deg, ${data.couleurPrimaire||'#7c3aed'}, ${data.couleurSecondaire||'#ec4899'})`;
+
+  const logo = document.getElementById('readyLogo');
+  logo.textContent = data.logoInitiales || data.nom?.substring(0,2).toUpperCase() || 'G';
+  logo.style.background = grad;
+
+  document.getElementById('readyName').textContent = data.nom || '—';
+  document.getElementById('readySlogan').textContent = data.slogan || '—';
+
+  const domains = Array.isArray(data.domaines) ? data.domaines : (data.domaines||'').split('\n');
+  document.getElementById('readyUrl').textContent = 'https://' + (data.domainChoisi || domains[0] || 'monsite.fr');
+
+  // Show ecosystem THEN ready
+  generateEcosystem(data);
+}
+
+async function generateEcosystem(data) {
+  showScreen('screenEco');
+  document.getElementById('ecoContent').innerHTML = `
+    <div class="eco-loading">
+      <div class="eco-spinner"></div>
+      <div style="font-size:0.85rem;color:var(--muted);">Claude analyse ton secteur et cherche tes fournisseurs…</div>
+    </div>`;
+
+  const prompt = `Tu es un expert en création d'entreprise et sourcing fournisseurs.
+
+Un entrepreneur veut lancer : "${data.idee || data.nom}"
+Secteur détecté : ${data.secteur || 'commerce'}
+Type de projet : ${data.type || 'ecommerce'}
+
+Génère un guide fournisseurs et écosystème business en JSON UNIQUEMENT, sans texte avant ou après, sans backticks :
+{
+  "secteurDetecte": "nom du secteur en 3 mots max",
+  "budgetMin": "budget minimum pour démarrer en €",
+  "budgetIdeal": "budget idéal pour bien démarrer en €",
+  "fournisseurs": [
+    {
+      "nom": "Nom du fournisseur ou plateforme",
+      "type": "type (ex: Fournisseur textile, Plateforme sourcing, Impression à la demande...)",
+      "description": "1 phrase sur ce qu'ils font et pourquoi c'est adapté",
+      "avantage": "avantage clé en 5 mots max",
+      "url": "site web (ex: alibaba.com)",
+      "tags": ["tag1", "tag2"],
+      "prix": "fourchette de prix indicative"
+    }
+  ],
+  "etapes": [
+    {"numero": 1, "titre": "titre de l'étape", "description": "explication courte", "duree": "ex: 1 semaine"},
+    {"numero": 2, "titre": "...", "description": "...", "duree": "..."},
+    {"numero": 3, "titre": "...", "description": "...", "duree": "..."},
+    {"numero": 4, "titre": "...", "description": "...", "duree": "..."}
+  ],
+  "conseilPrincipal": "1 conseil d'or pour ce secteur spécifique",
+  "piegeAEviter": "le piège numéro 1 à éviter dans ce secteur"
+}
+
+Sois TRÈS spécifique au secteur. Donne de vrais noms de plateformes/fournisseurs reconnus. Réponds UNIQUEMENT en JSON valide.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const res = await response.json();
+    const raw = res.content.map(b => b.text||'').join('').replace(/```json|```/g,'').trim();
+    const eco = JSON.parse(raw);
+    renderEcosystem(eco, data);
+  } catch(e) {
+    // Fallback selon secteur
+    renderEcosystemFallback(data);
+  }
+}
+
+function renderEcosystem(eco, data) {
+  const tagColors = ['eco-tag-green','eco-tag-yellow','eco-tag-violet'];
+  document.getElementById('ecoContent').innerHTML = `
+
+    <!-- Budget -->
+    <div class="eco-budget" style="margin-bottom:12px;">
+      <span style="font-size:1.2rem;">💰</span>
+      <div>
+        <div style="font-weight:700;color:#6ee7b7;">Budget pour démarrer</div>
+        <div style="color:var(--muted);font-size:0.72rem;">Minimum : <strong style="color:var(--white)">${eco.budgetMin}</strong> · Idéal : <strong style="color:var(--white)">${eco.budgetIdeal}</strong></div>
+      </div>
+    </div>
+
+    <!-- Fournisseurs -->
+    <div class="eco-section">
+      <div class="eco-section-title">
+        <div class="eco-section-icon" style="background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.25);">🏭</div>
+        Fournisseurs recommandés
+      </div>
+      ${(eco.fournisseurs||[]).map(f => `
+        <div class="eco-item">
+          <div class="eco-item-dot" style="background:var(--violet-glow);"></div>
+          <div class="eco-item-main">
+            <div class="eco-item-name">${f.nom} <span style="font-size:0.65rem;color:var(--muted);font-weight:400;">— ${f.type}</span></div>
+            <div class="eco-item-desc">${f.description}</div>
+            <div style="margin-top:4px;">
+              ${(f.tags||[]).map((t,i) => `<span class="eco-tag ${tagColors[i%3]}">${t}</span>`).join('')}
+              ${f.prix ? `<span class="eco-tag eco-tag-yellow">${f.prix}</span>` : ''}
+            </div>
+            <a class="eco-item-link" href="https://${f.url}" target="_blank">Visiter ${f.url} →</a>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Étapes -->
+    <div class="eco-section">
+      <div class="eco-section-title">
+        <div class="eco-section-icon" style="background:rgba(6,182,212,0.12);border:1px solid rgba(6,182,212,0.2);">🗺️</div>
+        Roadmap de lancement
+      </div>
+      ${(eco.etapes||[]).map(e => `
+        <div class="eco-item">
+          <div style="width:24px;height:24px;border-radius:50%;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:var(--violet-glow);flex-shrink:0;">${e.numero}</div>
+          <div class="eco-item-main">
+            <div class="eco-item-name">${e.titre} <span style="font-size:0.65rem;color:var(--yellow);background:rgba(245,158,11,0.1);padding:1px 6px;border-radius:4px;margin-left:4px;">${e.duree}</span></div>
+            <div class="eco-item-desc">${e.description}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <!-- Conseil + Piège -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:12px;">
+        <div style="font-size:0.72rem;color:#6ee7b7;font-weight:700;margin-bottom:5px;">💡 Conseil d'or</div>
+        <div style="font-size:0.75rem;color:var(--white);line-height:1.5;">${eco.conseilPrincipal}</div>
+      </div>
+      <div style="background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.15);border-radius:10px;padding:12px;">
+        <div style="font-size:0.72rem;color:#fca5a5;font-weight:700;margin-bottom:5px;">⚠️ Piège à éviter</div>
+        <div style="font-size:0.75rem;color:var(--white);line-height:1.5;">${eco.piegeAEviter}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderEcosystemFallback(data) {
+  const idee = (data.idee || '').toLowerCase();
+  const isVetement = idee.includes('vêtement') || idee.includes('mode') || idee.includes('textile') || idee.includes('habit');
+  const isSport = idee.includes('sport') || idee.includes('fitness') || idee.includes('boisson') || idee.includes('nutrition');
+
+  document.getElementById('ecoContent').innerHTML = isVetement ? `
+    <div class="eco-section">
+      <div class="eco-section-title"><div class="eco-section-icon" style="background:rgba(124,58,237,0.15);">🏭</div>Fournisseurs vêtements</div>
+      <div class="eco-item"><div class="eco-item-dot" style="background:var(--violet-glow)"></div><div class="eco-item-main">
+        <div class="eco-item-name">Printful <span style="font-size:0.65rem;color:var(--muted)">— Impression à la demande</span></div>
+        <div class="eco-item-desc">Zéro stock, impression et livraison à ta place. Idéal pour démarrer.</div>
+        <a class="eco-item-link" href="https://printful.com" target="_blank">printful.com →</a>
+      </div></div>
+      <div class="eco-item"><div class="eco-item-dot" style="background:var(--cyan)"></div><div class="eco-item-main">
+        <div class="eco-item-name">Alibaba <span style="font-size:0.65rem;color:var(--muted)">— Sourcing Asie</span></div>
+        <div class="eco-item-desc">Fabricants à prix usine. Minimum 50-100 pièces généralement.</div>
+        <a class="eco-item-link" href="https://alibaba.com" target="_blank">alibaba.com →</a>
+      </div></div>
+      <div class="eco-item"><div class="eco-item-dot" style="background:var(--green)"></div><div class="eco-item-main">
+        <div class="eco-item-name">Ankorstore <span style="font-size:0.65rem;color:var(--muted)">— Fournisseurs Europe</span></div>
+        <div class="eco-item-desc">Marques et fournisseurs européens. Qualité premium, délais rapides.</div>
+        <a class="eco-item-link" href="https://ankorstore.com" target="_blank">ankorstore.com →</a>
+      </div></div>
+    </div>
+    <div class="eco-budget"><span>💰</span><div><div style="font-weight:700;color:#6ee7b7;">Budget estimé</div><div style="color:var(--muted);font-size:0.72rem;">Minimum : <strong style="color:var(--white)">500€</strong> · Idéal : <strong style="color:var(--white)">2 000-5 000€</strong></div></div></div>
+  ` : isSport ? `
+    <div class="eco-section">
+      <div class="eco-section-title"><div class="eco-section-icon" style="background:rgba(16,185,129,0.15);">🏭</div>Fournisseurs sport & nutrition</div>
+      <div class="eco-item"><div class="eco-item-dot" style="background:var(--green)"></div><div class="eco-item-main">
+        <div class="eco-item-name">Nutri-Science <span style="font-size:0.65rem;color:var(--muted)">— Fabrication OEM</span></div>
+        <div class="eco-item-desc">Fabrication de compléments et boissons sous ta marque.</div>
+        <a class="eco-item-link" href="https://nutri-science.fr" target="_blank">nutri-science.fr →</a>
+      </div></div>
+      <div class="eco-item"><div class="eco-item-dot" style="background:var(--cyan)"></div><div class="eco-item-main">
+        <div class="eco-item-name">Alibaba Health <span style="font-size:0.65rem;color:var(--muted)">— Sourcing international</span></div>
+        <div class="eco-item-desc">Laboratoires certifiés pour compléments alimentaires et boissons sport.</div>
+        <a class="eco-item-link" href="https://alibaba.com" target="_blank">alibaba.com →</a>
+      </div></div>
+    </div>
+    <div class="eco-budget"><span>💰</span><div><div style="font-weight:700;color:#6ee7b7;">Budget estimé</div><div style="color:var(--muted);font-size:0.72rem;">Minimum : <strong style="color:var(--white)">1 000€</strong> · Idéal : <strong style="color:var(--white)">5 000-10 000€</strong></div></div></div>
+  ` : `
+    <div class="eco-section">
+      <div class="eco-section-title"><div class="eco-section-icon" style="background:rgba(245,158,11,0.15);">🏭</div>Ressources générales</div>
+      <div class="eco-item"><div class="eco-item-dot" style="background:var(--yellow)"></div><div class="eco-item-main">
+        <div class="eco-item-name">Alibaba <span style="font-size:0.65rem;color:var(--muted)">— Sourcing mondial</span></div>
+        <div class="eco-item-desc">La plus grande plateforme de fournisseurs au monde.</div>
+        <a class="eco-item-link" href="https://alibaba.com" target="_blank">alibaba.com →</a>
+      </div></div>
+      <div class="eco-item"><div class="eco-item-dot" style="background:var(--violet-glow)"></div><div class="eco-item-main">
+        <div class="eco-item-name">Faire <span style="font-size:0.65rem;color:var(--muted)">— Grossistes Europe</span></div>
+        <div class="eco-item-desc">Marketplace de grossistes et fournisseurs européens de qualité.</div>
+        <a class="eco-item-link" href="https://faire.com" target="_blank">faire.com →</a>
+      </div></div>
+    </div>
+  `;
+}
+
+function deploy() {
+  showToast('🚀 Déploiement lancé ! Ton site sera en ligne dans 2 min.');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  setTimeout(() => t.style.transform = 'translateX(-50%) translateY(100px)', 3500);
+}
+
+// ── Pour démo : injecte des données test si aucune n'existe ──
+function loadDemoData() {
+  const demo = {
+    nom: 'FitCore', slogan: 'Ton coach, ta transformation.',
+    logoInitiales: 'FC', couleurPrimaire: '#10b981', couleurSecondaire: '#f59e0b',
+    domaines: ['fitcore.fr', 'fitcore.app', 'fit-core.co'],
+    type: 'saas', idee: 'App de coaching fitness', validated: true
+  };
+  localStorage.setItem('genproia_project', JSON.stringify(demo));
+  init();
+}
+
+// Lance l'init
+init();
+</script>
+</body>
+</html>
