@@ -1,1 +1,1846 @@
-<meta http-equiv="refresh" content="0; url=/genproia.html">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Genproia — Transforme ton idée en business en minutes</title>
+<meta name="description" content="Génère ton business complet en minutes avec l'IA. Nom, logo, site web, paiement — tout inclus.">
+<meta name="theme-color" content="#7c3aed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Genproia">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #05030f;
+    --deep: #0a0618;
+    --surface: #110d22;
+    --card: #16102e;
+    --border: rgba(139,92,246,0.18);
+    --violet: #7c3aed;
+    --violet-bright: #8b5cf6;
+    --violet-glow: #a78bfa;
+    --pink: #ec4899;
+    --cyan: #06b6d4;
+    --white: #f8f4ff;
+    --muted: #8b7fa8;
+    --font-display: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--void);
+    color: var(--white);
+    font-family: var(--font-body);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--violet-glow);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    width: 40px; height: 40px;
+    border: 1px solid rgba(139,92,246,0.5);
+    border-radius: 50%;
+    position: fixed; pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.15s ease-out, width 0.2s, height 0.2s;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 60px;
+    background: rgba(5,3,15,0.7);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--violet-glow), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: var(--violet-bright); -webkit-text-fill-color: var(--violet-bright); }
+  nav ul { display: flex; gap: 36px; list-style: none; }
+  nav ul a {
+    color: var(--muted); text-decoration: none;
+    font-size: 0.875rem; font-weight: 500; letter-spacing: 0.02em;
+    transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--white); }
+
+  .nav-auth-btns { display: flex; align-items: center; gap: 8px; }
+  .nav-btn-login {
+    color: var(--white); text-decoration: none;
+    font-size: 0.875rem; font-weight: 600;
+    padding: 9px 20px; border-radius: 8px;
+    border: 1px solid rgba(139,92,246,0.35);
+    background: rgba(139,92,246,0.08);
+    transition: all 0.2s;
+    font-family: var(--font-display);
+  }
+  .nav-btn-login:hover { border-color: rgba(139,92,246,0.6); background: rgba(139,92,246,0.18); }
+  .nav-btn-signup {
+    background: linear-gradient(135deg, var(--violet), #9333ea);
+    color: var(--white) !important; text-decoration: none;
+    font-size: 0.875rem; font-weight: 700;
+    padding: 9px 20px; border-radius: 8px;
+    box-shadow: 0 0 20px rgba(124,58,237,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-family: var(--font-display);
+  }
+  .nav-btn-signup:hover { transform: translateY(-1px); box-shadow: 0 0 30px rgba(124,58,237,0.6); }
+  @media (max-width: 768px) {
+    .nav-auth-btns { gap: 6px; }
+    .nav-btn-login { font-size: 0.78rem; padding: 8px 13px; }
+    .nav-btn-signup { font-size: 0.78rem; padding: 8px 13px; }
+  }
+
+  .nav-cta {
+    background: linear-gradient(135deg, var(--violet), #6d28d9);
+    color: var(--white) !important;
+    padding: 10px 24px; border-radius: 8px;
+    font-weight: 600 !important;
+    transition: opacity 0.2s, transform 0.2s !important;
+    box-shadow: 0 0 20px rgba(124,58,237,0.4);
+  }
+  .nav-cta:hover { opacity: 0.9; transform: translateY(-1px) !important; color: var(--white) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 120px 60px 80px;
+    position: relative; text-align: center;
+  }
+
+  /* BG ORBS */
+  .orb {
+    position: absolute; border-radius: 50%;
+    filter: blur(80px); pointer-events: none;
+  }
+  .orb-1 {
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%);
+    top: -100px; left: -200px;
+    animation: drift1 8s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(236,72,153,0.2) 0%, transparent 70%);
+    top: 100px; right: -150px;
+    animation: drift2 10s ease-in-out infinite;
+  }
+  .orb-3 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(6,182,212,0.15) 0%, transparent 70%);
+    bottom: -50px; left: 50%;
+    animation: drift3 12s ease-in-out infinite;
+  }
+  @keyframes drift1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,30px)} }
+  @keyframes drift2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,40px)} }
+  @keyframes drift3 { 0%,100%{transform:translate(-50%,0)} 50%{transform:translate(-50%,-20px)} }
+
+  /* GRID BG */
+  .grid-bg {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(139,92,246,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(139,92,246,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+  }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.4);
+    border-radius: 100px;
+    padding: 6px 16px; margin-bottom: 28px;
+    font-size: 0.8rem; font-weight: 500; color: var(--violet-glow);
+    animation: fadeDown 0.8s ease both;
+  }
+  .badge-dot { width: 6px; height: 6px; background: var(--violet-glow); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 24px;
+    max-width: 900px;
+    animation: fadeUp 0.9s 0.2s ease both;
+  }
+  .hero h1 .gradient-text {
+    background: linear-gradient(135deg, var(--violet-glow) 0%, var(--pink) 50%, var(--cyan) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero p {
+    font-size: 1.15rem; color: var(--muted); max-width: 560px;
+    line-height: 1.7; margin-bottom: 40px;
+    animation: fadeUp 0.9s 0.35s ease both;
+  }
+
+  .hero-ctas {
+    display: flex; gap: 16px; align-items: center; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.9s 0.5s ease both;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--violet) 0%, #9333ea 100%);
+    color: var(--white); padding: 14px 32px;
+    border-radius: 10px; text-decoration: none;
+    font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+    box-shadow: 0 0 30px rgba(124,58,237,0.5), 0 0 60px rgba(124,58,237,0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+    letter-spacing: 0.01em;
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 40px rgba(124,58,237,0.7), 0 0 80px rgba(124,58,237,0.3);
+  }
+
+  .btn-ghost {
+    color: var(--muted); padding: 14px 28px;
+    border-radius: 10px; text-decoration: none;
+    border: 1px solid var(--border);
+    font-weight: 500; font-size: 0.95rem;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn-ghost:hover { color: var(--white); border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
+
+  .hero-stats {
+    display: flex; gap: 48px; margin-top: 64px;
+    animation: fadeIn 1s 0.7s ease both;
+  }
+  .stat { text-align: center; }
+  .stat-value {
+    font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--violet-glow), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 4px; }
+
+  /* DEMO INPUT */
+  .demo-section {
+    padding: 100px 60px;
+    display: flex; flex-direction: column; align-items: center;
+    position: relative;
+  }
+  .section-label {
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--violet-glow);
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 800; text-align: center;
+    line-height: 1.15; letter-spacing: -0.02em;
+    max-width: 700px; margin-bottom: 16px;
+  }
+  .section-sub {
+    color: var(--muted); text-align: center;
+    max-width: 520px; line-height: 1.7;
+    margin-bottom: 56px;
+  }
+
+  .idea-box {
+    width: 100%; max-width: 800px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 0 60px rgba(124,58,237,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+    position: relative; overflow: hidden;
+  }
+  .idea-box::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--violet-bright), transparent);
+  }
+
+  .idea-input-wrap {
+    display: flex; gap: 12px; margin-bottom: 20px;
+  }
+  .idea-input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    color: var(--white);
+    font-family: var(--font-body); font-size: 0.95rem;
+    outline: none; resize: none; height: 140px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    display: block;
+  }
+  .idea-input::placeholder { color: var(--muted); }
+  .idea-input:focus {
+    border-color: var(--violet-bright);
+    box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+  }
+
+  .cell-actions {
+    display: flex; gap: 8px; margin-top: 12px;
+  }
+  .cell-regen {
+    flex: 1; padding: 7px 10px; border-radius: 8px;
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted); font-size: 0.75rem; cursor: pointer;
+    font-family: var(--font-body); transition: all 0.2s;
+  }
+  .cell-regen:hover { border-color: rgba(139,92,246,0.4); color: var(--violet-glow); background: rgba(139,92,246,0.06); }
+  .cell-validate {
+    flex: 1; padding: 7px 10px; border-radius: 8px;
+    background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);
+    color: #6ee7b7; font-size: 0.75rem; cursor: pointer;
+    font-family: var(--font-body); font-weight: 600; transition: all 0.2s;
+  }
+  .cell-validate:hover { background: rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.4); }
+  .cell-validate.validated {
+    background: rgba(16,185,129,0.2); border-color: rgba(16,185,129,0.5);
+    color: #6ee7b7; cursor: default; opacity: 0.7;
+  }
+
+  .generate-btn {
+    background: linear-gradient(135deg, var(--violet), #9333ea);
+    color: var(--white); border: none; cursor: pointer;
+    padding: 0 28px; border-radius: 12px;
+    font-family: var(--font-display); font-weight: 700;
+    font-size: 0.9rem; letter-spacing: 0.02em;
+    box-shadow: 0 0 24px rgba(124,58,237,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+  }
+  .generate-btn:hover { transform: translateY(-1px); box-shadow: 0 0 32px rgba(124,58,237,0.6); }
+
+  .idea-examples {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .example-chip {
+    background: rgba(139,92,246,0.08);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 100px; padding: 6px 14px;
+    font-size: 0.78rem; color: var(--violet-glow);
+    cursor: pointer; transition: background 0.2s, border-color 0.2s;
+  }
+  .example-chip:hover { background: rgba(139,92,246,0.2); border-color: var(--violet-bright); }
+
+  /* OUTPUT PREVIEW */
+  .output-preview {
+    width: 100%; max-width: 800px; margin-top: 20px; box-sizing: border-box;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    display: none;
+  }
+  .output-preview.visible { display: block; animation: fadeUp 0.5s ease; }
+  .output-bar {
+    background: rgba(139,92,246,0.12);
+    padding: 12px 20px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem; color: var(--violet-glow); font-weight: 600;
+  }
+  .output-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--violet-glow); animation: pulse 1.5s infinite; }
+  .output-grid {
+    width: 100%;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background: var(--border);
+  }
+  .output-cell {
+    background: var(--deep);
+    padding: 16px 14px;
+    min-width: 0; overflow: hidden; box-sizing: border-box;
+  }
+  .output-cell-label { font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .output-cell-value { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; color: var(--white); word-break: break-word; overflow-wrap: break-word; }
+  .output-cell-sub { font-size: 0.7rem; color: var(--muted); margin-top: 4px; word-break: break-word; }
+  .output-logo-preview {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--violet), var(--pink));
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1.2rem; font-weight: 800;
+  }
+  .cell-actions {
+    display: flex; gap: 6px; margin-top: 10px;
+  }
+  .cell-regen {
+    flex: 1; padding: 8px 4px; border-radius: 8px;
+    background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3);
+    color: var(--violet-glow); font-size: 0.7rem; cursor: pointer;
+    font-family: var(--font-body); font-weight: 500;
+    transition: all 0.2s; text-align: center;
+  }
+  .cell-regen:hover { background: rgba(139,92,246,0.2); border-color: var(--violet-bright); }
+  .cell-validate {
+    flex: 1; padding: 8px 4px; border-radius: 8px;
+    background: rgba(245,158,11,0.13); border: 1px solid rgba(245,158,11,0.4);
+    color: #fcd34d; font-size: 0.7rem; cursor: pointer;
+    font-family: var(--font-body); font-weight: 700;
+    transition: all 0.2s; text-align: center;
+  }
+  .cell-validate:hover { background: rgba(245,158,11,0.25); }
+  .cell-validate.validated {
+    background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.45);
+    color: #6ee7b7; cursor: default; pointer-events: none;
+  }
+  @media (max-width: 600px) {
+    .output-grid { grid-template-columns: 1fr; }
+    .output-preview { width: 100% !important; max-width: 100% !important; }
+    .idea-box { padding: 16px; }
+  }
+
+  /* HOW IT WORKS */
+  .how-section {
+    padding: 100px 60px;
+    position: relative;
+  }
+  .how-section .center { text-align: center; display: flex; flex-direction: column; align-items: center; }
+
+  .steps {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 24px; margin-top: 64px; max-width: 1100px; margin-left: auto; margin-right: auto;
+  }
+  .step-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 24px;
+    position: relative; overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
+  }
+  .step-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(139,92,246,0.4);
+    box-shadow: 0 20px 60px rgba(124,58,237,0.15);
+  }
+  .step-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--violet), var(--pink));
+    opacity: 0; transition: opacity 0.3s;
+  }
+  .step-card:hover::before { opacity: 1; }
+  .step-num {
+    font-family: var(--font-display); font-size: 3rem; font-weight: 800;
+    background: linear-gradient(135deg, rgba(139,92,246,0.3), rgba(236,72,153,0.2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    line-height: 1; margin-bottom: 16px;
+  }
+  .step-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; margin-bottom: 16px;
+  }
+  .step-title {
+    font-family: var(--font-display); font-size: 1.05rem; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .step-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* FEATURES */
+  .features-section {
+    padding: 100px 60px;
+    max-width: 1200px; margin: 0 auto;
+  }
+  .features-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 32px; margin-top: 64px;
+  }
+  .feature-big {
+    grid-column: 1; grid-row: 1 / 3;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px; padding: 40px;
+    position: relative; overflow: hidden;
+  }
+  .feature-big::after {
+    content: '';
+    position: absolute; bottom: -60px; right: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(124,58,237,0.3), transparent 70%);
+  }
+  .feature-small {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px; padding: 32px;
+    transition: transform 0.3s, border-color 0.3s;
+  }
+  .feature-small:hover { transform: translateY(-3px); border-color: rgba(139,92,246,0.3); }
+  .feature-icon-wrap {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 20px;
+  }
+  .feat-violet { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); }
+  .feat-pink { background: rgba(236,72,153,0.12); border: 1px solid rgba(236,72,153,0.25); }
+  .feat-cyan { background: rgba(6,182,212,0.12); border: 1px solid rgba(6,182,212,0.25); }
+  .feature-title {
+    font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; margin-bottom: 10px;
+  }
+  .feature-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.7; }
+  .feature-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+  .ftag {
+    font-size: 0.72rem; padding: 4px 10px; border-radius: 100px;
+    background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2);
+    color: var(--violet-glow);
+  }
+
+  /* PRICING */
+  .pricing-section {
+    padding: 100px 60px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; margin-top: 64px; width: 100%; max-width: 1000px;
+  }
+  .pricing-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 24px; padding: 36px 28px;
+    position: relative; transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .pricing-card:hover { transform: translateY(-4px); }
+  .pricing-card.featured {
+    border-color: rgba(139,92,246,0.5);
+    background: linear-gradient(160deg, rgba(124,58,237,0.12) 0%, var(--card) 60%);
+    box-shadow: 0 0 60px rgba(124,58,237,0.2);
+  }
+  .pricing-popular {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--violet), var(--pink));
+    color: var(--white); font-size: 0.72rem; font-weight: 700;
+    padding: 4px 16px; border-radius: 100px; letter-spacing: 0.05em;
+    text-transform: uppercase; white-space: nowrap;
+  }
+  .pricing-plan {
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--violet-glow); font-weight: 600; margin-bottom: 12px;
+  }
+  .pricing-price {
+    font-family: var(--font-display); font-size: 3rem; font-weight: 800;
+    line-height: 1; margin-bottom: 4px;
+  }
+  .pricing-price sup { font-size: 1.2rem; vertical-align: top; margin-top: 8px; }
+  .pricing-period { color: var(--muted); font-size: 0.85rem; margin-bottom: 24px; }
+  .pricing-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .pricing-features li {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 0.875rem; color: var(--muted);
+  }
+  .pricing-features li .check {
+    color: var(--violet-glow); font-size: 0.8rem; margin-top: 2px; flex-shrink: 0;
+  }
+  .pricing-features li.active { color: var(--white); }
+  .pricing-btn {
+    width: 100%; padding: 14px;
+    border-radius: 10px; border: none; cursor: pointer;
+    font-family: var(--font-display); font-weight: 700; font-size: 0.9rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .pricing-btn-ghost {
+    background: transparent; color: var(--white);
+    border: 1px solid var(--border);
+  }
+  .pricing-btn-ghost:hover { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
+  .pricing-btn-primary {
+    background: linear-gradient(135deg, var(--violet), #9333ea);
+    color: var(--white);
+    box-shadow: 0 0 24px rgba(124,58,237,0.4);
+  }
+  .pricing-btn-primary:hover { transform: translateY(-1px); box-shadow: 0 0 36px rgba(124,58,237,0.6); }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 1000;
+    background: rgba(5,3,15,0.85);
+    backdrop-filter: blur(8px);
+    display: none; align-items: center; justify-content: center;
+  }
+  .modal-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
+  .modal {
+    background: var(--card);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 24px;
+    width: 100%; max-width: 480px;
+    padding: 40px;
+    position: relative;
+    box-shadow: 0 0 80px rgba(124,58,237,0.25);
+    animation: fadeUp 0.3s ease;
+  }
+  .modal::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, var(--violet), var(--pink));
+    border-radius: 24px 24px 0 0;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); border: 1px solid var(--border);
+    color: var(--muted); cursor: pointer; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s, color 0.2s;
+  }
+  .modal-close:hover { background: rgba(255,255,255,0.1); color: var(--white); }
+  .modal-logo { font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; margin-bottom: 8px;
+    background: linear-gradient(135deg, var(--violet-glow), var(--pink));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+  .modal-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
+  .modal-sub { color: var(--muted); font-size: 0.875rem; margin-bottom: 28px; }
+
+  .tabs { display: flex; gap: 0; margin-bottom: 24px; background: rgba(255,255,255,0.04); border-radius: 10px; padding: 4px; }
+  .tab-btn {
+    flex: 1; padding: 10px; border-radius: 8px; border: none; cursor: pointer;
+    font-family: var(--font-body); font-size: 0.875rem; font-weight: 500;
+    background: transparent; color: var(--muted); transition: all 0.2s;
+  }
+  .tab-btn.active { background: var(--violet); color: var(--white); box-shadow: 0 0 16px rgba(124,58,237,0.4); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+  .form-group { margin-bottom: 16px; }
+  .form-label { display: block; font-size: 0.8rem; font-weight: 500; color: var(--muted); margin-bottom: 6px; }
+  .form-input {
+    width: 100%; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(139,92,246,0.2);
+    border-radius: 10px; padding: 12px 16px;
+    color: var(--white); font-family: var(--font-body); font-size: 0.9rem;
+    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .form-input:focus { border-color: var(--violet-bright); box-shadow: 0 0 0 3px rgba(139,92,246,0.12); }
+  .form-input::placeholder { color: rgba(139,127,168,0.5); }
+
+  .plan-select {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px; margin-bottom: 20px;
+  }
+  .plan-opt {
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 8px; text-align: center; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .plan-opt:hover, .plan-opt.selected {
+    border-color: var(--violet-bright);
+    background: rgba(139,92,246,0.1);
+  }
+  .plan-opt-name { font-size: 0.75rem; color: var(--muted); margin-bottom: 4px; }
+  .plan-opt-price { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--white); }
+
+  .payment-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+  }
+
+  .card-visual {
+    background: linear-gradient(135deg, #1e1040, #2d1b69);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 14px; padding: 20px;
+    margin-bottom: 20px; position: relative; overflow: hidden;
+  }
+  .card-visual::before {
+    content: '';
+    position: absolute; top: -30px; right: -30px;
+    width: 100px; height: 100px;
+    background: radial-gradient(circle, rgba(139,92,246,0.4), transparent);
+  }
+  .card-chip { width: 32px; height: 24px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 5px; margin-bottom: 16px; }
+  .card-number-display { font-family: var(--font-display); font-size: 0.9rem; letter-spacing: 0.15em; color: rgba(255,255,255,0.7); margin-bottom: 12px; }
+  .card-info { display: flex; justify-content: space-between; font-size: 0.72rem; color: rgba(255,255,255,0.5); }
+
+  .submit-btn {
+    width: 100%; padding: 14px;
+    background: linear-gradient(135deg, var(--violet), #9333ea);
+    color: var(--white); border: none; cursor: pointer;
+    border-radius: 12px;
+    font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+    box-shadow: 0 0 24px rgba(124,58,237,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-top: 8px;
+  }
+  .submit-btn:hover { transform: translateY(-1px); box-shadow: 0 0 36px rgba(124,58,237,0.6); }
+
+  .secure-badge {
+    display: flex; align-items: center; gap: 6px;
+    justify-content: center; margin-top: 12px;
+    font-size: 0.75rem; color: var(--muted);
+  }
+
+  /* TESTIMONIALS */
+  .testimonials-section {
+    padding: 80px 60px;
+    display: flex; flex-direction: column; align-items: center;
+  }
+  .testi-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 20px; margin-top: 56px; max-width: 1100px;
+  }
+  .testi-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px;
+    transition: transform 0.3s;
+  }
+  .testi-card:hover { transform: translateY(-3px); }
+  .testi-stars { color: #fbbf24; font-size: 0.9rem; margin-bottom: 14px; }
+  .testi-text { font-size: 0.875rem; color: var(--muted); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+  .testi-author { display: flex; align-items: center; gap: 12px; }
+  .testi-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 0.9rem; color: var(--white);
+  }
+  .av1 { background: linear-gradient(135deg, #7c3aed, #ec4899); }
+  .av2 { background: linear-gradient(135deg, #06b6d4, #7c3aed); }
+  .av3 { background: linear-gradient(135deg, #ec4899, #f59e0b); }
+  .testi-name { font-weight: 600; font-size: 0.875rem; }
+  .testi-role { font-size: 0.78rem; color: var(--muted); }
+
+  /* CTA FINAL */
+  .cta-section {
+    padding: 100px 60px;
+    display: flex; justify-content: center;
+  }
+  .cta-box {
+    background: linear-gradient(135deg, rgba(124,58,237,0.2) 0%, rgba(236,72,153,0.1) 100%);
+    border: 1px solid rgba(139,92,246,0.3);
+    border-radius: 32px; padding: 80px 60px;
+    text-align: center; max-width: 800px; width: 100%;
+    position: relative; overflow: hidden;
+  }
+  .cta-box::before {
+    content: '';
+    position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-box h2 {
+    font-family: var(--font-display); font-size: clamp(1.8rem, 3vw, 2.8rem);
+    font-weight: 800; margin-bottom: 16px; letter-spacing: -0.02em;
+  }
+  .cta-box p { color: var(--muted); margin-bottom: 36px; max-width: 400px; margin-left: auto; margin-right: auto; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    color: var(--muted); font-size: 0.82rem;
+  }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--white); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    nav ul { display: none; }
+    .hero { padding: 100px 24px 60px; }
+    .demo-section, .how-section, .features-section, .pricing-section, .testimonials-section, .cta-section { padding: 60px 24px; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .features-grid { grid-template-columns: 1fr; }
+    .feature-big { grid-column: 1; grid-row: auto; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .testi-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 24px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; }
+    .cta-box { padding: 48px 24px; }
+  }
+
+  /* LOADING STATE */
+  .loading-dots { display: flex; gap: 4px; align-items: center; justify-content: center; }
+  .loading-dots span {
+    width: 6px; height: 6px; background: var(--white); border-radius: 50%;
+    animation: bounce 1.2s infinite;
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
+
+  .domain-option {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 8px; cursor: pointer;
+    border: 1px solid transparent; margin-bottom: 5px;
+    transition: all 0.2s; background: rgba(255,255,255,0.02);
+  }
+  .domain-option:hover { background: rgba(139,92,246,0.08); border-color: rgba(139,92,246,0.2); }
+  .domain-option.selected { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.35); }
+  .domain-dot { color: var(--muted); font-size: 0.5rem; flex-shrink: 0; }
+  .domain-option.selected .domain-dot { color: var(--violet-glow); }
+  .domain-name { font-size: 0.82rem; font-weight: 600; flex: 1; color: var(--white); }
+  .domain-check { font-size: 0.7rem; color: var(--green); opacity: 0; transition: opacity 0.2s; flex-shrink: 0; }
+  .domain-option.selected .domain-check { opacity: 1; }
+  .domain-verify {
+    font-size: 0.65rem; color: var(--cyan); text-decoration: none;
+    opacity: 0; transition: opacity 0.2s; white-space: nowrap; flex-shrink: 0;
+    border: 1px solid rgba(6,182,212,0.3); padding: 2px 7px; border-radius: 4px;
+  }
+  .domain-option:hover .domain-verify, .domain-option.selected .domain-verify { opacity: 1; }
+
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Genpr<span>oia</span></div>
+  <ul>
+    <li><a href="#demo">Démo</a></li>
+    <li><a href="#comment">Comment ça marche</a></li>
+    <li><a href="#features">Fonctionnalités</a></li>
+    <li><a href="#pricing">Tarifs</a></li>
+  </ul>
+  <div class="nav-auth-btns">
+    <a href="#" class="nav-btn-signup" onclick="openModal('signup'); return false;">Inscription</a>
+    <a href="#" class="nav-btn-login" onclick="openModal('login'); return false;">Connexion</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+  <div class="grid-bg"></div>
+
+  <div class="badge">
+    <div class="badge-dot"></div>
+    by Genproia v2.3
+  </div>
+
+  <h1>
+    Ton idée devient un<br>
+    <span class="gradient-text">business complet</span><br>
+    en quelques minutes
+  </h1>
+
+  <p>
+    Entre ton idée de projet. Genproia génère automatiquement ton nom de marque, ton logo, ton slogan, ton nom de domaine et ton site web complet — prêt à encaisser des paiements.
+  </p>
+
+  <div class="hero-ctas">
+    <a href="#demo" class="btn-primary">✦ Générer mon projet gratuitement</a>
+    <a href="#comment" class="btn-ghost">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>
+      Voir comment ça marche
+    </a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-value">2 min</div>
+      <div class="stat-label">De l'idée au site en ligne</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">12k+</div>
+      <div class="stat-label">Projets générés</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value">98%</div>
+      <div class="stat-label">Taux de satisfaction</div>
+    </div>
+  </div>
+</section>
+
+<!-- DEMO SECTION -->
+<section class="demo-section" id="demo">
+  <div class="section-label">✦ Essaie maintenant</div>
+  <h2 class="section-title">Décris ton idée, on fait le reste</h2>
+  <p class="section-sub">Pas besoin d'être développeur ni designer. Juste ton idée.</p>
+
+  <div class="idea-box">
+    <textarea class="idea-input" id="ideaInput" placeholder="Ex : Je veux ouvrir une boutique e-commerce pour vendre des vêtements streetwear..."></textarea>
+    <div class="idea-examples" style="margin-top:12px;">
+      <span class="example-chip" onclick="fillIdea(this)">🛍️ Boutique de vêtements</span>
+      <span class="example-chip" onclick="fillIdea(this)">💆 SaaS de fidélité</span>
+      <span class="example-chip" onclick="fillIdea(this)">🍕 Livraison de repas</span>
+      <span class="example-chip" onclick="fillIdea(this)">📱 App de coaching fitness</span>
+      <span class="example-chip" onclick="fillIdea(this)">🏠 Agence immobilière</span>
+    </div>
+    <button class="generate-btn" style="width:100%;padding:15px;margin-top:14px;border-radius:12px;font-size:1rem;" onclick="generateIdea()">
+      <span id="genBtnText">Générer ✦</span>
+    </button>
+  </div>
+
+  <div class="output-preview" id="outputPreview">
+    <div class="output-bar">
+      <div class="dot"></div>
+      Génération terminée — Valide ou régénère chaque élément
+    </div>
+    <div class="output-grid">
+
+      <div class="output-cell">
+        <div class="output-cell-label">Nom de marque</div>
+        <div class="output-cell-value" id="outName">—</div>
+        <div class="output-cell-sub" id="outAlt">—</div>
+        <div class="cell-actions">
+          <button class="cell-regen" onclick="regenCell('name')">↺ Régénérer</button>
+          <button class="cell-validate" id="valName" onclick="validateCell('name')">✓ Valider</button>
+        </div>
+      </div>
+
+      <div class="output-cell">
+        <div class="output-cell-label">Slogan</div>
+        <div class="output-cell-value" style="font-size:0.95rem" id="outSlogan">—</div>
+        <div class="cell-actions">
+          <button class="cell-regen" onclick="regenCell('slogan')">↺ Régénérer</button>
+          <button class="cell-validate" id="valSlogan" onclick="validateCell('slogan')">✓ Valider</button>
+        </div>
+      </div>
+
+      <div class="output-cell">
+        <div class="output-cell-label">Logo préview</div>
+        <div class="output-logo-preview" id="outLogo">—</div>
+        <div class="cell-actions">
+          <button class="cell-regen" onclick="regenCell('logo')">↺ Régénérer</button>
+          <button class="cell-validate" id="valLogo" onclick="validateCell('logo')">✓ Valider</button>
+        </div>
+      </div>
+
+      <div class="output-cell">
+        <div class="output-cell-label">Domaines suggérés</div>
+        <div class="output-cell-value" style="font-size:0.85rem" id="outDomains">—</div>
+        <div class="cell-actions">
+          <button class="cell-regen" onclick="regenCell('domains')">↺ Régénérer</button>
+          <button class="cell-validate" id="valDomains" onclick="validateCell('domains')">✓ Valider</button>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="validateHint" style="padding:16px 24px; border-top:1px solid var(--border); font-size:0.82rem; color:var(--muted); text-align:center;">
+      ☝️ Valide chaque élément ci-dessus pour débloquer la génération du site
+    </div>
+    <div id="buildSiteBar" style="display:none; padding:20px 24px; border-top:1px solid var(--border); gap:12px; align-items:center; flex-wrap:wrap;">
+      <button class="btn-primary" style="font-size:0.9rem; padding:12px 28px;" onclick="goToMoteur()">
+        🚀 Générer mon site complet
+      </button>
+      <span style="font-size:0.8rem; color:var(--muted);">Tous les éléments validés · Ton site va être construit !</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section" id="comment">
+  <div class="center">
+    <div class="section-label">✦ Le processus</div>
+    <h2 class="section-title">Du concept au business en 4 étapes</h2>
+    <p class="section-sub">Genproia automatise tout ce qui prend normalement des semaines et des milliers d'euros.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div class="step-icon">💡</div>
+      <div class="step-title">Décris ton idée</div>
+      <div class="step-desc">En une phrase ou un paragraphe. Notre IA comprend le contexte, le marché et tes besoins.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div class="step-icon">🎨</div>
+      <div class="step-title">Génération de l'identité</div>
+      <div class="step-desc">Nom, logo, couleurs, slogan, nom de domaine. Tout généré en cohérence avec ton marché.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">03</div>
+      <div class="step-icon">⚡</div>
+      <div class="step-title">Site web complet</div>
+      <div class="step-desc">E-commerce, SaaS, vitrine. Avec paiement Stripe, super admin, dashboard — selon ton besoin.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">04</div>
+      <div class="step-icon">🚀</div>
+      <div class="step-title">En ligne en 1 clic</div>
+      <div class="step-desc">Déploiement automatique. Ton site est live, sécurisé et prêt à recevoir tes premiers clients.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div style="text-align:center; display:flex; flex-direction:column; align-items:center;">
+    <div class="section-label">✦ Ce qu'on génère pour toi</div>
+    <h2 class="section-title">Tout ce dont tu as besoin, d'un coup</h2>
+    <p class="section-sub" style="margin-bottom:0">Du nom de domaine jusqu'au système de paiement.</p>
+  </div>
+
+  <div class="features-grid">
+    <div class="feature-big">
+      <div class="feature-icon-wrap feat-violet">🏪</div>
+      <div class="feature-title">E-commerce complet</div>
+      <div class="feature-desc">
+        Pour une boutique en ligne, Genproia génère un site e-commerce optimisé avec catalogue produits, panier, paiement Stripe, gestion des commandes et tableau de bord admin — le tout dans le style de ta marque.
+      </div>
+      <div class="feature-tags">
+        <span class="ftag">Stripe intégré</span>
+        <span class="ftag">Catalogue produits</span>
+        <span class="ftag">Gestion stocks</span>
+        <span class="ftag">Dashboard admin</span>
+        <span class="ftag">Responsive</span>
+        <span class="ftag">SEO optimisé</span>
+      </div>
+    </div>
+
+    <div class="feature-small">
+      <div class="feature-icon-wrap feat-pink">🤝</div>
+      <div class="feature-title">SaaS clé en main</div>
+      <div class="feature-desc">Authentification, abonnements, super admin, tableau de bord utilisateur. Tout ce qu'il faut pour lancer ton SaaS.</div>
+    </div>
+
+    <div class="feature-small">
+      <div class="feature-icon-wrap feat-cyan">🎨</div>
+      <div class="feature-title">Identité de marque complète</div>
+      <div class="feature-desc">Nom, logo SVG, palette couleurs, typographie — générés en cohérence avec ton secteur.</div>
+    </div>
+
+    <div class="feature-small">
+      <div class="feature-icon-wrap feat-violet">🌐</div>
+      <div class="feature-title">Nom de domaine & hébergement</div>
+      <div class="feature-desc">Suggestions de domaines disponibles et déploiement automatique. Ton site en ligne en moins de 2 minutes.</div>
+    </div>
+
+    <div class="feature-small">
+      <div class="feature-icon-wrap feat-pink">📊</div>
+      <div class="feature-title">Analytics & Dashboard</div>
+      <div class="feature-desc">Tableau de bord complet avec ventes, visiteurs, conversions. Tout visible en temps réel.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-label">✦ Tarifs simples</div>
+  <h2 class="section-title">Pas de surprise, pas de frais cachés</h2>
+  <p class="section-sub">Commence gratuitement, évolue quand tu es prêt.</p>
+
+  <div class="pricing-grid">
+    <div class="pricing-card">
+      <div class="pricing-plan">Starter</div>
+      <div class="pricing-price"><sup>€</sup>0</div>
+      <div class="pricing-period">Pour toujours</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li class="active"><span class="check">✓</span> 1 projet généré</li>
+        <li class="active"><span class="check">✓</span> Nom + Slogan + Logo</li>
+        <li class="active"><span class="check">✓</span> Suggestions de domaine</li>
+        <li><span class="check" style="color:var(--border)">✕</span> Site web complet</li>
+        <li><span class="check" style="color:var(--border)">✕</span> Paiement intégré</li>
+        <li><span class="check" style="color:var(--border)">✕</span> Déploiement</li>
+      </ul>
+      <button class="pricing-btn pricing-btn-ghost" onclick="openModal('signup')">Commencer gratuitement</button>
+    </div>
+
+    <div class="pricing-card featured">
+      <div class="pricing-popular">⚡ Le plus populaire</div>
+      <div class="pricing-plan">Pro</div>
+      <div class="pricing-price"><sup>€</sup>29</div>
+      <div class="pricing-period">par mois · sans engagement</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li class="active"><span class="check">✓</span> Projets illimités</li>
+        <li class="active"><span class="check">✓</span> Site web complet généré</li>
+        <li class="active"><span class="check">✓</span> Paiement Stripe intégré</li>
+        <li class="active"><span class="check">✓</span> Déploiement automatique</li>
+        <li class="active"><span class="check">✓</span> Dashboard admin</li>
+        <li class="active"><span class="check">✓</span> Support prioritaire</li>
+      </ul>
+      <button class="pricing-btn pricing-btn-primary" onclick="openModal('pay', 'pro')">Choisir Pro →</button>
+    </div>
+
+    <div class="pricing-card">
+      <div class="pricing-plan">Business</div>
+      <div class="pricing-price"><sup>€</sup>79</div>
+      <div class="pricing-period">par mois · sans engagement</div>
+      <div class="pricing-divider"></div>
+      <ul class="pricing-features">
+        <li class="active"><span class="check">✓</span> Tout du plan Pro</li>
+        <li class="active"><span class="check">✓</span> Marque blanche</li>
+        <li class="active"><span class="check">✓</span> Multi-projets team</li>
+        <li class="active"><span class="check">✓</span> Intégrations API</li>
+        <li class="active"><span class="check">✓</span> Super admin multi-tenant</li>
+        <li class="active"><span class="check">✓</span> Onboarding dédié</li>
+      </ul>
+      <button class="pricing-btn pricing-btn-ghost" onclick="openModal('pay', 'business')">Choisir Business →</button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section">
+  <div class="section-label">✦ Ils ont lancé avec Genproia</div>
+  <h2 class="section-title">Des entrepreneurs comme toi</h2>
+
+  <div class="testi-grid">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"J'ai lancé ma boutique de streetwear en 3 heures chrono. Le site généré était tellement beau que mes clients pensaient que j'avais une agence derrière moi."</div>
+      <div class="testi-author">
+        <div class="testi-avatar av1">K</div>
+        <div>
+          <div class="testi-name">Karim B.</div>
+          <div class="testi-role">Fondateur · UrbanThreads</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Mon SaaS de fidélité était en ligne en 2 jours. L'authentification, les abonnements Stripe, le super admin — tout était déjà là. Incroyable."</div>
+      <div class="testi-author">
+        <div class="testi-avatar av2">S</div>
+        <div>
+          <div class="testi-name">Sofia M.</div>
+          <div class="testi-role">CEO · LoyaltyPulse</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Le nom de marque, le logo, les couleurs — tout était parfait au premier essai. J'aurais payé une agence 5000€ pour ça. Genproia me l'a donné en 2 minutes."</div>
+      <div class="testi-author">
+        <div class="testi-avatar av3">T</div>
+        <div>
+          <div class="testi-name">Thomas L.</div>
+          <div class="testi-role">Entrepreneur · RestauConnect</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA FINAL -->
+<section class="cta-section">
+  <div class="cta-box">
+    <div class="section-label">✦ Prêt à lancer ?</div>
+    <h2>Ton prochain business<br>commence ici.</h2>
+    <p>Rejoins 12,000+ entrepreneurs qui ont transformé leur idée en business avec Genproia.</p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <a href="#" class="btn-primary" onclick="openModal('signup')">✦ Créer mon compte gratuit</a>
+      <a href="#pricing" class="btn-ghost">Voir les tarifs</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo" style="font-size:1.1rem">Genproia</div>
+  <div class="footer-links">
+    <a href="#">À propos</a>
+    <a href="#">Blog</a>
+    <a href="#">Confidentialité</a>
+    <a href="#">CGU</a>
+    <a href="#">Contact</a>
+  </div>
+  <div style="font-size:0.8rem">© 2025 Genproia. Tous droits réservés.</div>
+</footer>
+
+<!-- MODAL INSCRIPTION -->
+<div class="modal-overlay" id="signupModal" onclick="if(event.target.id==='signupModal')closeSignup()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeSignup()">✕</button>
+    <div class="modal-logo">Genproia</div>
+    <div id="signupSection">
+      <div class="modal-title">Créer un compte 🚀</div>
+      <div class="modal-sub">Rejoins Genproia et lance ton business en minutes.</div>
+      <div class="form-group">
+        <label class="form-label">Prénom & Nom</label>
+        <input type="text" id="signupName" class="form-input" placeholder="Jean Dupont">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="signupEmail" class="form-input" placeholder="jean@example.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mot de passe</label>
+        <input type="password" id="signupPassword" class="form-input" placeholder="8 caractères minimum" oninput="checkPasswordMatch()">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirmer le mot de passe</label>
+        <input type="password" id="signupPasswordConfirm" class="form-input" placeholder="Répète ton mot de passe" oninput="checkPasswordMatch()">
+        <div id="passwordMatchMsg" style="font-size:0.72rem;margin-top:5px;display:none;"></div>
+      </div>
+      <button class="submit-btn" id="signupSubmitBtn" onclick="validateSignup()">Continuer →</button>
+      <div class="secure-badge">🔒 Données chiffrées · Paiement sécurisé SSL</div>
+      <div style="text-align:center;margin-top:14px;font-size:0.78rem;color:var(--muted)">
+        Déjà un compte ? <a href="#" onclick="closeSignup();openLogin();return false;" style="color:var(--violet-glow);text-decoration:none;font-weight:600;">Se connecter</a>
+      </div>
+    </div>
+    <div id="signupPlanSection" style="display:none">
+      <div class="modal-title">Choisis ton plan ✦</div>
+      <div class="modal-sub">Change ou annule à tout moment, sans engagement.</div>
+      <div class="plan-select">
+        <div class="plan-opt" onclick="selectPlan(this, 'starter')">
+          <div class="plan-opt-name">Starter</div>
+          <div class="plan-opt-price">Gratuit</div>
+        </div>
+        <div class="plan-opt selected" onclick="selectPlan(this, 'pro')">
+          <div class="plan-opt-name">Pro ⚡</div>
+          <div class="plan-opt-price">€29/mo</div>
+        </div>
+        <div class="plan-opt" onclick="selectPlan(this, 'business')">
+          <div class="plan-opt-name">Business</div>
+          <div class="plan-opt-price">€79/mo</div>
+        </div>
+      </div>
+      <button class="submit-btn" id="planBtn" onclick="goToPayment()">Continuer vers le paiement →</button>
+      <div class="secure-badge">✓ Essai 14 jours · Satisfait ou remboursé</div>
+    </div>
+    <div id="signupPaySection" style="display:none">
+      <div class="modal-title">Paiement sécurisé 🔐</div>
+      <div class="modal-sub">Abonnement Pro · 29€/mois · Annulable à tout moment</div>
+      <div class="card-visual">
+        <div class="card-chip"></div>
+        <div class="card-number-display" id="cardNumDisplay">•••• •••• •••• ••••</div>
+        <div class="card-info">
+          <span>NOM DU TITULAIRE</span>
+          <span id="cardExpDisplay">MM/AA</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Numéro de carte</label>
+        <input type="text" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
+      </div>
+      <div class="payment-row">
+        <div class="form-group">
+          <label class="form-label">Expiration</label>
+          <input type="text" class="form-input" placeholder="MM/AA" maxlength="5" oninput="formatExp(this)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CVV</label>
+          <input type="text" class="form-input" placeholder="•••" maxlength="3">
+        </div>
+      </div>
+      <button class="submit-btn" onclick="processPayment()">
+        <span id="payBtnText">Payer 29€ et lancer mon projet →</span>
+      </button>
+      <div class="secure-badge">🔒 Paiement chiffré · Powered by Stripe</div>
+    </div>
+    <div id="signupSuccessSection" style="display:none; text-align:center">
+      <div style="font-size:3rem; margin-bottom:16px">🎉</div>
+      <div class="modal-title">Bienvenue sur Genproia !</div>
+      <div class="modal-sub" style="margin-bottom:24px">Ton compte est actif. Tu peux maintenant générer ton premier business complet.</div>
+      <button class="submit-btn" onclick="closeSignup()">Commencer à générer →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CONNEXION -->
+<div class="modal-overlay" id="loginModal" onclick="if(event.target.id==='loginModal')closeLogin()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeLogin()">✕</button>
+    <div class="modal-logo">Genproia</div>
+    <div class="modal-title">Content de te revoir 👋</div>
+    <div class="modal-sub">Connecte-toi à ton espace Genproia.</div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input type="email" id="loginEmail" class="form-input" placeholder="jean@example.com">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mot de passe</label>
+      <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
+      <div style="text-align:right;margin-top:5px;">
+        <a href="#" style="font-size:0.72rem;color:var(--violet-glow);text-decoration:none;">Mot de passe oublié ?</a>
+      </div>
+    </div>
+    <div id="loginError" style="font-size:0.75rem;color:#fca5a5;margin-bottom:10px;display:none;"></div>
+    <button class="submit-btn" onclick="processLogin()">Se connecter →</button>
+    <div class="secure-badge">🔒 Connexion sécurisée</div>
+    <div style="text-align:center;margin-top:14px;font-size:0.78rem;color:var(--muted)">
+      Pas encore de compte ? <a href="#" onclick="closeLogin();openSignup();return false;" style="color:var(--violet-glow);text-decoration:none;font-weight:600;">S'inscrire gratuitement</a>
+    </div>
+  </div>
+</div>
+
+<!-- LEGACY MODAL (kept for plan/payment flow) -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-logo">Genproia</div>
+    <div id="authSection" style="display:none">
+
+    <!-- PLAN -->
+    <div id="planSection" style="display:none">
+      <div class="modal-title">Choisis ton plan ✦</div>
+      <div class="modal-sub">Change ou annule à tout moment, sans engagement.</div>
+      <div class="plan-select">
+        <div class="plan-opt" onclick="selectPlan(this, 'starter')">
+          <div class="plan-opt-name">Starter</div>
+          <div class="plan-opt-price">Gratuit</div>
+        </div>
+        <div class="plan-opt selected" onclick="selectPlan(this, 'pro')">
+          <div class="plan-opt-name">Pro ⚡</div>
+          <div class="plan-opt-price">€29/mo</div>
+        </div>
+        <div class="plan-opt" onclick="selectPlan(this, 'business')">
+          <div class="plan-opt-name">Business</div>
+          <div class="plan-opt-price">€79/mo</div>
+        </div>
+      </div>
+      <button class="submit-btn" id="planBtn" onclick="goToPayment()">Continuer vers le paiement →</button>
+      <div class="secure-badge">✓ Essai 14 jours · Satisfait ou remboursé</div>
+    </div>
+
+    <!-- PAYMENT -->
+    <div id="paySection" style="display:none">
+      <div class="modal-title">Paiement sécurisé 🔐</div>
+      <div class="modal-sub">Abonnement Pro · 29€/mois · Annulable à tout moment</div>
+
+      <div class="card-visual">
+        <div class="card-chip"></div>
+        <div class="card-number-display" id="cardNumDisplay">•••• •••• •••• ••••</div>
+        <div class="card-info">
+          <span>NOM DU TITULAIRE</span>
+          <span id="cardExpDisplay">MM/AA</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Numéro de carte</label>
+        <input type="text" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
+      </div>
+      <div class="payment-row">
+        <div class="form-group">
+          <label class="form-label">Expiration</label>
+          <input type="text" class="form-input" placeholder="MM/AA" maxlength="5" oninput="formatExp(this)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">CVV</label>
+          <input type="text" class="form-input" placeholder="•••" maxlength="3">
+        </div>
+      </div>
+      <button class="submit-btn" onclick="processPayment()">
+        <span id="payBtnText">Payer 29€ et lancer mon projet →</span>
+      </button>
+      <div class="secure-badge">🔒 Paiement chiffré · Powered by Stripe</div>
+    </div>
+
+    <!-- SUCCESS -->
+    <div id="successSection" style="display:none; text-align:center">
+      <div style="font-size:3rem; margin-bottom:16px">🎉</div>
+      <div class="modal-title">Bienvenue sur Genproia !</div>
+      <div class="modal-sub" style="margin-bottom:24px">Ton compte est actif. Tu peux maintenant générer ton premier business complet.</div>
+      <button class="submit-btn" onclick="closeModal()">Commencer à générer →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// CURSOR
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+function animRing() { rx += (mx-rx)*0.12; ry += (my-ry)*0.12; ring.style.left = rx+'px'; ring.style.top = ry+'px'; requestAnimationFrame(animRing); }
+animRing();
+document.querySelectorAll('a,button,.example-chip,.plan-opt,.pricing-card').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width='20px'; cursor.style.height='20px'; ring.style.width='60px'; ring.style.height='60px'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width='12px'; cursor.style.height='12px'; ring.style.width='40px'; ring.style.height='40px'; });
+});
+
+// DEMO GENERATOR
+const demoData = {
+  'boutique': { name: 'UrbanThread', alt: 'Alternatives : VogueNest, StyleFlow', slogan: 'Porte ton histoire.', logo: 'UT', domains: ['urbanthread.fr','urbanthread.co','urban-thread.com'] },
+  'fidélité': { name: 'LoyalPulse', alt: 'Alternatives : RewardLoop, BonusSpark', slogan: 'Fidéliser, c\'est grandir.', logo: 'LP', domains: ['loyalpulse.io','loyalpulse.fr','loyal-pulse.app'] },
+  'livraison': { name: 'SwiftBite', alt: 'Alternatives : RapidEats, ZipFood', slogan: 'Chaud. Vite. Là.', logo: 'SB', domains: ['swiftbite.fr','swift-bite.co','swiftbite.app'] },
+  'fitness': { name: 'CoreFlow', alt: 'Alternatives : PeakPulse, FitMind', slogan: 'Entraîne-toi mieux, vis mieux.', logo: 'CF', domains: ['coreflow.app','coreflow.io','core-flow.fr'] },
+  'immobilier': { name: 'NestIQ', alt: 'Alternatives : PropSense, ImmoVision', slogan: 'Trouve. Achète. Vis.', logo: 'NQ', domains: ['nestiq.fr','nest-iq.immo','nestiq.io'] },
+};
+
+const regenAlts = {
+  name: [['VogueNest','Alternatives : UrbanThread, StyleFlow'],['StyleFlow','Alternatives : UrbanThread, VogueNest'],['PrimeCraft','Alternatives : NovaBrand, ZenVault']],
+  slogan: ["Le style sans limites.", "Fait pour se démarquer.", "Fais-en ta marque."],
+  logo: ['VN','SF','PC'],
+  domains: [['voguenest.fr','voguenest.co','vogue-nest.com'],['styleflow.io','styleflow.fr','style-flow.co'],['primecraft.fr','primecraft.io','prime-craft.app']],
+};
+
+
+let selectedDomain = null;
+
+function renderDomains(domains, targetId) {
+  const arr = Array.isArray(domains) ? domains : domains.split(' · ');
+  document.getElementById(targetId).innerHTML = arr.map((d, i) => `
+    <div class="domain-option" id="dom-${i}" onclick="selectDomain(this, '${d}')">
+      <span class="domain-dot">●</span>
+      <span class="domain-name">${d}</span>
+      <span class="domain-check">✓</span>
+      <a class="domain-verify" href="https://www.lws.fr/nom-de-domaine.php?domaine=${d}" target="_blank" onclick="event.stopPropagation()">Vérifier dispo →</a>
+    </div>
+  `).join('');
+  // Auto-select first
+  const first = document.getElementById('dom-0');
+  if (first) selectDomain(first, arr[0]);
+}
+
+function selectDomain(el, domain) {
+  document.querySelectorAll('.domain-option').forEach(d => d.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedDomain = domain;
+  // Save to project data
+  const raw = localStorage.getItem('genproia_project');
+  if (raw) {
+    const data = JSON.parse(raw);
+    data.domainChoisi = domain;
+    localStorage.setItem('genproia_project', JSON.stringify(data));
+  }
+}
+
+let validated = { name: false, slogan: false, logo: false, domains: false };
+let regenIndex = { name: 0, slogan: 0, logo: 0, domains: 0 };
+
+function fillIdea(el) {
+  document.getElementById('ideaInput').value = el.textContent.replace(/[🛍️💆🍕📱🏠]/u, '').trim();
+}
+
+function generateIdea() {
+  const val = document.getElementById('ideaInput').value.toLowerCase();
+  const btn = document.getElementById('genBtnText');
+  btn.innerHTML = '<div class="loading-dots"><span></span><span></span><span></span></div>';
+  validated = { name: false, slogan: false, logo: false, domains: false };
+  ['valName','valSlogan','valLogo','valDomains'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('validated'); el.textContent = '✓ Valider'; el.disabled = false; }
+  });
+  document.getElementById('buildSiteBar').style.display = 'none';
+  document.getElementById('validateHint').style.display = 'block';
+
+  setTimeout(() => {
+    let data = demoData['boutique'];
+    if (val.includes('fidél') || val.includes('saas') || val.includes('loyal')) data = demoData['fidélité'];
+    else if (val.includes('livr') || val.includes('repas') || val.includes('food')) data = demoData['livraison'];
+    else if (val.includes('fit') || val.includes('sport') || val.includes('coach')) data = demoData['fitness'];
+    else if (val.includes('immob') || val.includes('maison') || val.includes('appart')) data = demoData['immobilier'];
+
+    document.getElementById('outName').textContent = data.name;
+    document.getElementById('outAlt').textContent = data.alt;
+    document.getElementById('outSlogan').textContent = data.slogan;
+    document.getElementById('outLogo').textContent = data.logo;
+    renderDomains(data.domains, 'outDomains');
+
+    btn.textContent = 'Générer ✦';
+    document.getElementById('outputPreview').classList.add('visible');
+  }, 1800);
+}
+
+function regenCell(type) {
+  const idx = regenIndex[type] % regenAlts[type].length;
+  regenIndex[type]++;
+  if (type === 'name') {
+    document.getElementById('outName').textContent = regenAlts.name[idx][0];
+    document.getElementById('outAlt').textContent = regenAlts.name[idx][1];
+  } else if (type === 'slogan') {
+    document.getElementById('outSlogan').textContent = regenAlts.slogan[idx];
+  } else if (type === 'logo') {
+    document.getElementById('outLogo').textContent = regenAlts.logo[idx];
+  } else if (type === 'domains') {
+    renderDomains(regenAlts.domains[idx], 'outDomains');
+  }
+  // Reset validation for this cell
+  validated[type] = false;
+  const ids = { name:'valName', slogan:'valSlogan', logo:'valLogo', domains:'valDomains' };
+  const btn = document.getElementById(ids[type]);
+  if (btn) { btn.classList.remove('validated'); btn.textContent = '✓ Valider'; btn.disabled = false; }
+  checkAllValidated();
+}
+
+function validateCell(type) {
+  validated[type] = true;
+  const ids = { name:'valName', slogan:'valSlogan', logo:'valLogo', domains:'valDomains' };
+  const btn = document.getElementById(ids[type]);
+  if (btn) { btn.classList.add('validated'); btn.textContent = '✓ Validé'; btn.disabled = true; }
+  checkAllValidated();
+}
+
+function goToMoteur() {
+  // Ouvre le modal inscription, puis redirige vers le moteur IA
+  openModal('signup');
+}
+
+function checkAllValidated() {
+  const allDone = validated.name && validated.slogan && validated.logo && validated.domains;
+  document.getElementById('buildSiteBar').style.display = allDone ? 'flex' : 'none';
+  document.getElementById('validateHint').style.display = allDone ? 'none' : 'block';
+
+  if (allDone) {
+    // Sauvegarde les données validées pour le moteur IA
+    const domainsRaw = Array.from(document.querySelectorAll('.domain-name')).map(el => el.textContent.trim());
+    const projectData = {
+      nom: document.getElementById('outName').textContent,
+      slogan: document.getElementById('outSlogan').textContent,
+      logoInitiales: document.getElementById('outLogo').textContent,
+      domaines: domainsRaw,
+      domainChoisi: selectedDomain || domainsRaw[0] || '',
+      couleurPrimaire: '#7c3aed',
+      couleurSecondaire: '#ec4899',
+      idee: document.getElementById('ideaInput').value,
+      validated: true
+    };
+    localStorage.setItem('genproia_project', JSON.stringify(projectData));
+  }
+}
+
+
+function checkPasswordMatch() {
+  const p1 = document.getElementById('signupPassword').value;
+  const p2 = document.getElementById('signupPasswordConfirm').value;
+  const msg = document.getElementById('passwordMatchMsg');
+  const btn = document.getElementById('signupSubmitBtn');
+
+  if (!p2) { msg.style.display = 'none'; btn.disabled = false; return; }
+
+  msg.style.display = 'block';
+  if (p1 === p2 && p1.length >= 8) {
+    msg.textContent = '✓ Mots de passe identiques';
+    msg.style.color = '#6ee7b7';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  } else if (p1 !== p2) {
+    msg.textContent = '✗ Les mots de passe ne correspondent pas';
+    msg.style.color = '#fca5a5';
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+  } else if (p1.length < 8) {
+    msg.textContent = '✗ Minimum 8 caractères requis';
+    msg.style.color = '#fcd34d';
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+  }
+}
+
+function validateSignup() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const p1 = document.getElementById('signupPassword').value;
+  const p2 = document.getElementById('signupPasswordConfirm').value;
+
+  if (!name) { showSignupError('Entre ton prénom et nom'); return; }
+  if (!email || !email.includes('@')) { showSignupError('Entre un email valide'); return; }
+  if (p1.length < 8) { showSignupError('Mot de passe trop court (8 caractères min)'); return; }
+  if (p1 !== p2) { showSignupError('Les mots de passe ne correspondent pas'); return; }
+
+  goToPlan();
+}
+
+function showSignupError(msg) {
+  const m = document.getElementById('passwordMatchMsg');
+  m.textContent = '✗ ' + msg;
+  m.style.color = '#fca5a5';
+  m.style.display = 'block';
+}
+
+// MODALS
+function openModal(type, plan) {
+  if (type === 'login') openLogin();
+  else openSignup();
+}
+
+// ── INSCRIPTION ──
+function openSignup() {
+  document.getElementById('signupModal').classList.add('open');
+  showSignupSection('signupSection');
+}
+function closeSignup() { document.getElementById('signupModal').classList.remove('open'); }
+function showSignupSection(id) {
+  ['signupSection','signupPlanSection','signupPaySection','signupSuccessSection'].forEach(s => {
+    document.getElementById(s).style.display = s === id ? 'block' : 'none';
+  });
+}
+
+// ── CONNEXION ──
+function openLogin() { document.getElementById('loginModal').classList.add('open'); }
+function closeLogin() { document.getElementById('loginModal').classList.remove('open'); }
+function processLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  const err = document.getElementById('loginError');
+  if (!email || !pass) { err.textContent = '✗ Remplis tous les champs'; err.style.display='block'; return; }
+  err.style.display = 'none';
+  closeLogin();
+}
+
+// ── LEGACY (keep for compatibility) ──
+function closeModal() { closeSignup(); closeLogin(); }
+function closeModalOutside(e) {}
+function switchTab(tab) {}
+
+// ── PLAN & PAYMENT (in signup modal) ──
+function goToPlan() { showSignupSection('signupPlanSection'); }
+
+function selectPlan(el, plan) {
+  document.querySelectorAll('.plan-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  const btn = document.getElementById('planBtn');
+  if (plan === 'starter') {
+    btn.textContent = 'Continuer gratuitement →';
+    btn.onclick = () => { closeSignup(); };
+  } else {
+    btn.textContent = 'Continuer vers le paiement →';
+    btn.onclick = goToPayment;
+  }
+}
+
+function goToPayment() { showSignupSection('signupPaySection'); }
+
+function processPayment() {
+  const btn = document.getElementById('payBtnText');
+  btn.innerHTML = '<div class="loading-dots" style="justify-content:center"><span></span><span></span><span></span></div>';
+  setTimeout(() => { showSignupSection('signupSuccessSection'); }, 2000);
+}
+
+// CARD FORMATTING
+function formatCard(input) {
+  let v = input.value.replace(/\D/g, '').substring(0,16);
+  input.value = v.replace(/(.{4})/g, '$1 ').trim();
+  document.getElementById('cardNumDisplay').textContent = (v+'•'.repeat(Math.max(0,16-v.length))).replace(/(.{4})/g,'$1 ').trim().replace(/\d/g,'•').replace(/(•{4} ){2}•{4}/, m => m) || '•••• •••• •••• ••••';
+  const display = v ? v.replace(/(.{4})/g,'$1 ').trim().replace(/\d(?=.{5})/g, '•') : '•••• •••• •••• ••••';
+  document.getElementById('cardNumDisplay').textContent = display;
+}
+function formatExp(input) {
+  let v = input.value.replace(/\D/g,'');
+  if (v.length >= 2) v = v.substring(0,2)+'/'+v.substring(2,4);
+  input.value = v;
+  document.getElementById('cardExpDisplay').textContent = v || 'MM/AA';
+}
+
+// ESC to close modal
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+
+<script>
+// ── MULTILINGUE ──
+const LANGS = {
+  fr: {
+    heroTitle: 'Ton idée devient un <span class="gradient-text">business complet</span> en quelques minutes',
+    heroSub: "Entre ton idée de projet. Genproia génère automatiquement ton nom de marque, ton logo, ton slogan, ton nom de domaine et ton site web complet — prêt à encaisser des paiements.",
+    heroCta: '✦ Générer mon projet gratuitement',
+    demoTitle: 'Décris ton idée, on fait le reste',
+    demoSub: 'Pas besoin d'être développeur ni designer. Juste ton idée.',
+    demoPlaceholder: 'Ex : Je veux ouvrir une boutique e-commerce pour vendre des vêtements streetwear...',
+    generateBtn: 'Générer ✦',
+    navLogin: 'Connexion',
+    navSignup: 'Inscription',
+    installBanner: '📱 Installe Genproia sur ton téléphone !',
+    installBtn: 'Installer',
+    installDismiss: 'Plus tard',
+  },
+  en: {
+    heroTitle: 'Your idea becomes a <span class="gradient-text">complete business</span> in minutes',
+    heroSub: "Enter your project idea. Genproia automatically generates your brand name, logo, slogan, domain name and complete website — ready to accept payments.",
+    heroCta: '✦ Generate my project for free',
+    demoTitle: 'Describe your idea, we do the rest',
+    demoSub: 'No need to be a developer or designer. Just your idea.',
+    demoPlaceholder: 'Ex: I want to open an e-commerce store selling streetwear clothing...',
+    generateBtn: 'Generate ✦',
+    navLogin: 'Login',
+    navSignup: 'Sign up',
+    installBanner: '📱 Install Genproia on your phone!',
+    installBtn: 'Install',
+    installDismiss: 'Later',
+  },
+  es: {
+    heroTitle: 'Tu idea se convierte en un <span class="gradient-text">negocio completo</span> en minutos',
+    heroSub: "Introduce tu idea de proyecto. Genproia genera automáticamente tu nombre de marca, logo, eslogan, dominio y sitio web completo — listo para recibir pagos.",
+    heroCta: '✦ Generar mi proyecto gratis',
+    demoTitle: 'Describe tu idea, nosotros hacemos el resto',
+    demoSub: 'No necesitas ser desarrollador ni diseñador. Solo tu idea.',
+    demoPlaceholder: 'Ej: Quiero abrir una tienda online para vender ropa streetwear...',
+    generateBtn: 'Generar ✦',
+    navLogin: 'Iniciar sesión',
+    navSignup: 'Registrarse',
+    installBanner: '📱 ¡Instala Genproia en tu teléfono!',
+    installBtn: 'Instalar',
+    installDismiss: 'Más tarde',
+  },
+  pt: {
+    heroTitle: 'A sua ideia torna-se um <span class="gradient-text">negócio completo</span> em minutos',
+    heroSub: "Insira a sua ideia de projeto. Genproia gera automaticamente o nome da marca, logótipo, slogan, domínio e site completo — pronto para receber pagamentos.",
+    heroCta: '✦ Gerar o meu projeto gratuitamente',
+    demoTitle: 'Descreve a tua ideia, nós fazemos o resto',
+    demoSub: 'Não precisas de ser programador nem designer. Só a tua ideia.',
+    demoPlaceholder: 'Ex: Quero abrir uma loja online para vender roupa streetwear...',
+    generateBtn: 'Gerar ✦',
+    navLogin: 'Entrar',
+    navSignup: 'Registar',
+    installBanner: '📱 Instala o Genproia no teu telefone!',
+    installBtn: 'Instalar',
+    installDismiss: 'Mais tarde',
+  },
+  de: {
+    heroTitle: 'Deine Idee wird in Minuten zu einem <span class="gradient-text">kompletten Business</span>',
+    heroSub: "Gib deine Projektidee ein. Genproia generiert automatisch deinen Markennamen, Logo, Slogan, Domain und vollständige Website — bereit für Zahlungen.",
+    heroCta: '✦ Mein Projekt kostenlos generieren',
+    demoTitle: 'Beschreibe deine Idee, wir erledigen den Rest',
+    demoSub: 'Du musst kein Entwickler oder Designer sein. Nur deine Idee.',
+    demoPlaceholder: 'Z.B.: Ich möchte einen Online-Shop für Streetwear-Kleidung eröffnen...',
+    generateBtn: 'Generieren ✦',
+    navLogin: 'Anmelden',
+    navSignup: 'Registrieren',
+    installBanner: '📱 Installiere Genproia auf deinem Handy!',
+    installBtn: 'Installieren',
+    installDismiss: 'Später',
+  },
+  ar: {
+    heroTitle: 'فكرتك تصبح <span class="gradient-text">مشروعاً كاملاً</span> في دقائق',
+    heroSub: "أدخل فكرة مشروعك. Genproia تولّد تلقائياً اسم علامتك التجارية والشعار والموقع الكامل — جاهز لاستقبال المدفوعات.",
+    heroCta: '✦ أنشئ مشروعي مجاناً',
+    demoTitle: 'صف فكرتك، نحن نتولى الباقي',
+    demoSub: 'لا تحتاج إلى مطوّر أو مصمم. فكرتك فقط.',
+    demoPlaceholder: 'مثال: أريد فتح متجر إلكتروني لبيع الملابس...',
+    generateBtn: 'توليد ✦',
+    navLogin: 'تسجيل الدخول',
+    navSignup: 'إنشاء حساب',
+    installBanner: '📱 ثبّت Genproia على هاتفك!',
+    installBtn: 'تثبيت',
+    installDismiss: 'لاحقاً',
+  },
+};
+
+function detectLang() {
+  const nav = navigator.language || navigator.userLanguage || 'fr';
+  const code = nav.substring(0, 2).toLowerCase();
+  return LANGS[code] ? code : 'fr';
+}
+
+function applyLang() {
+  const code = detectLang();
+  const t = LANGS[code];
+  if (!t) return;
+
+  // RTL for Arabic
+  if (code === 'ar') {
+    document.documentElement.setAttribute('dir', 'rtl');
+    document.body.style.direction = 'rtl';
+  }
+
+  // Hero
+  const h1 = document.querySelector('.hero h1');
+  if (h1) h1.innerHTML = t.heroTitle;
+  const heroP = document.querySelector('.hero p');
+  if (heroP) heroP.textContent = t.heroSub;
+  const heroCta = document.querySelector('.btn-primary[href="#demo"]');
+  if (heroCta) heroCta.textContent = t.heroCta;
+
+  // Demo section
+  const demoTitle = document.querySelector('#demo .section-title');
+  if (demoTitle) demoTitle.textContent = t.demoTitle;
+  const demoSub = document.querySelector('#demo .section-sub');
+  if (demoSub) demoSub.textContent = t.demoSub;
+  const textarea = document.getElementById('ideaInput');
+  if (textarea) textarea.placeholder = t.demoPlaceholder;
+  const genBtn = document.getElementById('genBtnText');
+  if (genBtn) genBtn.textContent = t.generateBtn;
+
+  // Nav buttons
+  const loginBtn = document.querySelector('.nav-btn-login');
+  if (loginBtn) loginBtn.textContent = t.navLogin;
+  const signupBtn = document.querySelector('.nav-btn-signup');
+  if (signupBtn) signupBtn.textContent = t.navSignup;
+
+  // Store lang for Claude prompt
+  window.currentLang = code;
+}
+
+// ── PWA INSTALL ──
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  showInstallBanner();
+});
+
+function showInstallBanner() {
+  const code = detectLang();
+  const t = LANGS[code] || LANGS.fr;
+  const banner = document.getElementById('installBanner');
+  if (banner) {
+    document.getElementById('installBannerText').textContent = t.installBanner;
+    document.getElementById('installBannerBtn').textContent = t.installBtn;
+    document.getElementById('installBannerDismiss').textContent = t.installDismiss;
+    banner.style.transform = 'translateY(0)';
+  }
+}
+
+function installApp() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => { deferredPrompt = null; dismissInstall(); });
+  }
+}
+
+function dismissInstall() {
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.style.transform = 'translateY(120px)';
+}
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+
+// Apply language on load
+document.addEventListener('DOMContentLoaded', applyLang);
+</script>
+
+<!-- PWA INSTALL BANNER -->
+<div id="installBanner" style="
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 500;
+  background: var(--card); border-top: 1px solid var(--border);
+  padding: 14px 20px; display: flex; align-items: center; gap: 12px;
+  transform: translateY(120px); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: 0 -8px 30px rgba(0,0,0,0.4);
+">
+  <div style="flex:1;">
+    <div id="installBannerText" style="font-size:0.85rem;font-weight:600;">📱 Installe Genproia sur ton téléphone !</div>
+    <div style="font-size:0.72rem;color:var(--muted);margin-top:2px;">Accès rapide depuis ton écran d'accueil</div>
+  </div>
+  <button id="installBannerDismiss" onclick="dismissInstall()" style="background:transparent;border:1px solid var(--border2);color:var(--muted);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:0.75rem;font-family:var(--font-body);">Plus tard</button>
+  <button id="installBannerBtn" onclick="installApp()" style="background:linear-gradient(135deg,var(--violet),#9333ea);color:white;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-family:var(--font-display);font-weight:700;font-size:0.82rem;box-shadow:0 0 14px rgba(124,58,237,0.4);">Installer</button>
+</div>
+
+</body>
+</html>
