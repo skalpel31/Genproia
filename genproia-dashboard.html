@@ -679,13 +679,13 @@
   </nav>
 
   <div class="sidebar-bottom">
-    <div class="user-card">
+    <div class="user-card" onclick="logout()" title="Se déconnecter">
       <div class="user-avatar">JD</div>
       <div>
         <div class="user-name">Jean Dupont</div>
         <div class="user-plan">Pro ⚡</div>
       </div>
-      <span style="margin-left:auto; color:var(--muted); font-size:0.8rem">⋯</span>
+      <span style="margin-left:auto; color:var(--muted); font-size:0.8rem" title="Déconnexion">⏻</span>
     </div>
   </div>
 </aside>
@@ -1068,7 +1068,50 @@
 </style>
 
 <script>
-  // NAV
+  
+// ── AUTH CHECK ──
+function checkAuth() {
+  const token = localStorage.getItem('genproia_token');
+  const user = localStorage.getItem('genproia_user');
+  
+  if (!token || !user) {
+    // Pas connecté → retour à l'accueil
+    window.location.href = '/index.html';
+    return null;
+  }
+  return JSON.parse(user);
+}
+
+function logout() {
+  localStorage.removeItem('genproia_token');
+  localStorage.removeItem('genproia_user');
+  localStorage.removeItem('genproia_project');
+  window.location.href = '/index.html';
+}
+
+// Charge les infos utilisateur dans le dashboard
+function loadUserInfo() {
+  const user = checkAuth();
+  if (!user) return;
+
+  // Met à jour le nom dans la sidebar
+  const nameEl = document.querySelector('.user-name');
+  if (nameEl) nameEl.textContent = user.nom || user.email;
+
+  // Met à jour le plan
+  const planEl = document.querySelector('.user-plan');
+  if (planEl) planEl.textContent = user.plan === 'pro' ? 'Pro ⚡' : user.plan === 'business' ? 'Business' : 'Free';
+
+  // Met à jour le greeting
+  const greetEl = document.querySelector('.topbar-greeting');
+  const prenom = (user.nom || '').split(' ')[0];
+  if (greetEl && prenom) greetEl.textContent = 'Bonjour, ' + prenom + ' 👋';
+}
+
+// Lance au chargement
+document.addEventListener('DOMContentLoaded', loadUserInfo);
+
+// NAV
   function setPage(el) {
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
