@@ -2,7 +2,7 @@
   "name": "Genproia — Crée ton business avec l'IA",
   "short_name": "Genproia",
   "description": "Génère ton business complet en minutes avec l'IA. Nom, logo, site web, paiement — tout inclus.",
-  "start_url": "/genproia.html",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#05030f",
   "theme_color": "#7c3aed",
@@ -27,7 +27,7 @@
   "shortcuts": [
     {
       "name": "Générer un projet",
-      "url": "/genproia.html#demo",
+      "url": "/index.html#demo",
       "description": "Lance une nouvelle génération de projet"
     },
     {
