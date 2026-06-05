@@ -1,176 +1,305 @@
+// ── SUPABASE ──
+const SUPABASE_URL = 'https://fgkqobuomiuirwtvuuxz.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_D8jaWGbn4G72A7eq8oBtqg_acLVSLBX';
+const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ── MULTILINGUE ──
-const LANGS = {
-  fr: {
-    heroTitle: 'Ton idée devient un <span class="gradient-text">business complet</span> en quelques minutes',
-    heroSub: "Entre ton idée de projet. Genproia génère automatiquement ton nom de marque, ton logo, ton slogan, ton nom de domaine et ton site web complet — prêt à encaisser des paiements.",
-    heroCta: '✦ Générer mon projet gratuitement',
-    demoTitle: 'Décris ton idée, on fait le reste',
-    demoSub: 'Pas besoin d'être développeur ni designer. Juste ton idée.',
-    demoPlaceholder: 'Ex : Je veux ouvrir une boutique e-commerce pour vendre des vêtements streetwear...',
-    generateBtn: 'Générer ✦',
-    navLogin: 'Connexion',
-    navSignup: 'Inscription',
-    installBanner: '📱 Installe Genproia sur ton téléphone !',
-    installBtn: 'Installer',
-    installDismiss: 'Plus tard',
-  },
-  en: {
-    heroTitle: 'Your idea becomes a <span class="gradient-text">complete business</span> in minutes',
-    heroSub: "Enter your project idea. Genproia automatically generates your brand name, logo, slogan, domain name and complete website — ready to accept payments.",
-    heroCta: '✦ Generate my project for free',
-    demoTitle: 'Describe your idea, we do the rest',
-    demoSub: 'No need to be a developer or designer. Just your idea.',
-    demoPlaceholder: 'Ex: I want to open an e-commerce store selling streetwear clothing...',
-    generateBtn: 'Generate ✦',
-    navLogin: 'Login',
-    navSignup: 'Sign up',
-    installBanner: '📱 Install Genproia on your phone!',
-    installBtn: 'Install',
-    installDismiss: 'Later',
-  },
-  es: {
-    heroTitle: 'Tu idea se convierte en un <span class="gradient-text">negocio completo</span> en minutos',
-    heroSub: "Introduce tu idea de proyecto. Genproia genera automáticamente tu nombre de marca, logo, eslogan, dominio y sitio web completo — listo para recibir pagos.",
-    heroCta: '✦ Generar mi proyecto gratis',
-    demoTitle: 'Describe tu idea, nosotros hacemos el resto',
-    demoSub: 'No necesitas ser desarrollador ni diseñador. Solo tu idea.',
-    demoPlaceholder: 'Ej: Quiero abrir una tienda online para vender ropa streetwear...',
-    generateBtn: 'Generar ✦',
-    navLogin: 'Iniciar sesión',
-    navSignup: 'Registrarse',
-    installBanner: '📱 ¡Instala Genproia en tu teléfono!',
-    installBtn: 'Instalar',
-    installDismiss: 'Más tarde',
-  },
-  pt: {
-    heroTitle: 'A sua ideia torna-se um <span class="gradient-text">negócio completo</span> em minutos',
-    heroSub: "Insira a sua ideia de projeto. Genproia gera automaticamente o nome da marca, logótipo, slogan, domínio e site completo — pronto para receber pagamentos.",
-    heroCta: '✦ Gerar o meu projeto gratuitamente',
-    demoTitle: 'Descreve a tua ideia, nós fazemos o resto',
-    demoSub: 'Não precisas de ser programador nem designer. Só a tua ideia.',
-    demoPlaceholder: 'Ex: Quero abrir uma loja online para vender roupa streetwear...',
-    generateBtn: 'Gerar ✦',
-    navLogin: 'Entrar',
-    navSignup: 'Registar',
-    installBanner: '📱 Instala o Genproia no teu telefone!',
-    installBtn: 'Instalar',
-    installDismiss: 'Mais tarde',
-  },
-  de: {
-    heroTitle: 'Deine Idee wird in Minuten zu einem <span class="gradient-text">kompletten Business</span>',
-    heroSub: "Gib deine Projektidee ein. Genproia generiert automatisch deinen Markennamen, Logo, Slogan, Domain und vollständige Website — bereit für Zahlungen.",
-    heroCta: '✦ Mein Projekt kostenlos generieren',
-    demoTitle: 'Beschreibe deine Idee, wir erledigen den Rest',
-    demoSub: 'Du musst kein Entwickler oder Designer sein. Nur deine Idee.',
-    demoPlaceholder: 'Z.B.: Ich möchte einen Online-Shop für Streetwear-Kleidung eröffnen...',
-    generateBtn: 'Generieren ✦',
-    navLogin: 'Anmelden',
-    navSignup: 'Registrieren',
-    installBanner: '📱 Installiere Genproia auf deinem Handy!',
-    installBtn: 'Installieren',
-    installDismiss: 'Später',
-  },
-  ar: {
-    heroTitle: 'فكرتك تصبح <span class="gradient-text">مشروعاً كاملاً</span> في دقائق',
-    heroSub: "أدخل فكرة مشروعك. Genproia تولّد تلقائياً اسم علامتك التجارية والشعار والموقع الكامل — جاهز لاستقبال المدفوعات.",
-    heroCta: '✦ أنشئ مشروعي مجاناً',
-    demoTitle: 'صف فكرتك، نحن نتولى الباقي',
-    demoSub: 'لا تحتاج إلى مطوّر أو مصمم. فكرتك فقط.',
-    demoPlaceholder: 'مثال: أريد فتح متجر إلكتروني لبيع الملابس...',
-    generateBtn: 'توليد ✦',
-    navLogin: 'تسجيل الدخول',
-    navSignup: 'إنشاء حساب',
-    installBanner: '📱 ثبّت Genproia على هاتفك!',
-    installBtn: 'تثبيت',
-    installDismiss: 'لاحقاً',
-  },
-};
+// ── CURSOR ──
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', function(e) { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+function animRing() { rx += (mx-rx)*0.12; ry += (my-ry)*0.12; ring.style.left = rx+'px'; ring.style.top = ry+'px'; requestAnimationFrame(animRing); }
+animRing();
 
-function detectLang() {
-  const nav = navigator.language || navigator.userLanguage || 'fr';
-  const code = nav.substring(0, 2).toLowerCase();
-  return LANGS[code] ? code : 'fr';
-}
-
-function applyLang() {
-  const code = detectLang();
-  const t = LANGS[code];
-  if (!t) return;
-
-  // RTL for Arabic
-  if (code === 'ar') {
-    document.documentElement.setAttribute('dir', 'rtl');
-    document.body.style.direction = 'rtl';
-  }
-
-  // Hero
-  const h1 = document.querySelector('.hero h1');
-  if (h1) h1.innerHTML = t.heroTitle;
-  const heroP = document.querySelector('.hero p');
-  if (heroP) heroP.textContent = t.heroSub;
-  const heroCta = document.querySelector('.btn-primary[href="#demo"]');
-  if (heroCta) heroCta.textContent = t.heroCta;
-
-  // Demo section
-  const demoTitle = document.querySelector('#demo .section-title');
-  if (demoTitle) demoTitle.textContent = t.demoTitle;
-  const demoSub = document.querySelector('#demo .section-sub');
-  if (demoSub) demoSub.textContent = t.demoSub;
-  const textarea = document.getElementById('ideaInput');
-  if (textarea) textarea.placeholder = t.demoPlaceholder;
-  const genBtn = document.getElementById('genBtnText');
-  if (genBtn) genBtn.textContent = t.generateBtn;
-
-  // Nav buttons
-  const loginBtn = document.querySelector('.nav-btn-login');
-  if (loginBtn) loginBtn.textContent = t.navLogin;
-  const signupBtn = document.querySelector('.nav-btn-signup');
-  if (signupBtn) signupBtn.textContent = t.navSignup;
-
-  // Store lang for Claude prompt
-  window.currentLang = code;
-}
-
-// ── PWA INSTALL ──
-let deferredPrompt = null;
-
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  showInstallBanner();
-});
-
-function showInstallBanner() {
-  const code = detectLang();
-  const t = LANGS[code] || LANGS.fr;
-  const banner = document.getElementById('installBanner');
-  if (banner) {
-    document.getElementById('installBannerText').textContent = t.installBanner;
-    document.getElementById('installBannerBtn').textContent = t.installBtn;
-    document.getElementById('installBannerDismiss').textContent = t.installDismiss;
-    banner.style.transform = 'translateY(0)';
+// ── PASSWORD CHECK ──
+function checkPasswordMatch() {
+  const p1 = document.getElementById('signupPassword').value;
+  const p2 = document.getElementById('signupPasswordConfirm').value;
+  const msg = document.getElementById('passwordMatchMsg');
+  const btn = document.getElementById('signupSubmitBtn');
+  if (!p2) { msg.style.display = 'none'; btn.disabled = false; return; }
+  msg.style.display = 'block';
+  if (p1 === p2 && p1.length >= 8) {
+    msg.textContent = 'Mots de passe identiques';
+    msg.style.color = '#6ee7b7';
+    btn.disabled = false; btn.style.opacity = '1';
+  } else if (p1 !== p2) {
+    msg.textContent = 'Les mots de passe ne correspondent pas';
+    msg.style.color = '#fca5a5';
+    btn.disabled = true; btn.style.opacity = '0.5';
+  } else {
+    msg.textContent = 'Minimum 8 caracteres requis';
+    msg.style.color = '#fcd34d';
+    btn.disabled = true; btn.style.opacity = '0.5';
   }
 }
 
-function installApp() {
-  if (deferredPrompt) {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => { deferredPrompt = null; dismissInstall(); });
+function showSignupError(msg) {
+  const m = document.getElementById('passwordMatchMsg');
+  m.textContent = msg;
+  m.style.color = '#fca5a5';
+  m.style.display = 'block';
+}
+
+// ── INSCRIPTION ──
+async function validateSignup() {
+  const name = document.getElementById('signupName').value.trim();
+  const email = document.getElementById('signupEmail').value.trim();
+  const p1 = document.getElementById('signupPassword').value;
+  const p2 = document.getElementById('signupPasswordConfirm').value;
+
+  if (!name) { showSignupError('Entre ton prenom et nom'); return; }
+  if (!email || !email.includes('@')) { showSignupError('Entre un email valide'); return; }
+  if (p1.length < 8) { showSignupError('Mot de passe trop court (8 caracteres minimum)'); return; }
+  if (p1 !== p2) { showSignupError('Les mots de passe ne correspondent pas'); return; }
+
+  const btn = document.getElementById('signupSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Chargement...';
+
+  const result = await _supabase.auth.signUp({
+    email: email,
+    password: p1,
+    options: { data: { nom: name } }
+  });
+
+  if (result.error) {
+    const msg = result.error.message.includes('already') ? 'Cet email est deja utilise' : result.error.message;
+    showSignupError(msg);
+    btn.disabled = false;
+    btn.textContent = 'Continuer';
+    return;
   }
+
+  if (result.data && result.data.session) {
+    localStorage.setItem('genproia_token', result.data.session.access_token);
+    localStorage.setItem('genproia_user', JSON.stringify({
+      id: result.data.user.id,
+      email: result.data.user.email,
+      nom: name,
+      plan: 'free'
+    }));
+  }
+
+  goToPlan();
 }
 
-function dismissInstall() {
-  const banner = document.getElementById('installBanner');
-  if (banner) banner.style.transform = 'translateY(120px)';
+// ── CONNEXION ──
+async function processLogin() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass = document.getElementById('loginPassword').value;
+  const errEl = document.getElementById('loginError');
+
+  if (!email || !pass) {
+    errEl.textContent = 'Remplis tous les champs';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const btn = document.querySelector('#loginModal .submit-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Connexion...'; }
+
+  const result = await _supabase.auth.signInWithPassword({ email: email, password: pass });
+
+  if (result.error) {
+    errEl.textContent = 'Email ou mot de passe incorrect';
+    errEl.style.display = 'block';
+    if (btn) { btn.disabled = false; btn.textContent = 'Se connecter'; }
+    return;
+  }
+
+  localStorage.setItem('genproia_token', result.data.session.access_token);
+  localStorage.setItem('genproia_user', JSON.stringify({
+    id: result.data.user.id,
+    email: result.data.user.email,
+    nom: result.data.user.user_metadata.nom || email.split('@')[0],
+    plan: 'free'
+  }));
+
+  closeLogin();
+  window.location.href = '/genproia-dashboard.html';
 }
 
-// Register service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+// ── MODALS ──
+function openModal(type, plan) {
+  if (type === 'login') openLogin();
+  else openSignup();
+}
+
+function openSignup() {
+  document.getElementById('signupModal').classList.add('open');
+  showSignupSection('signupSection');
+}
+function closeSignup() { document.getElementById('signupModal').classList.remove('open'); }
+function showSignupSection(id) {
+  ['signupSection','signupPlanSection','signupPaySection','signupSuccessSection'].forEach(function(s) {
+    document.getElementById(s).style.display = s === id ? 'block' : 'none';
   });
 }
+function openLogin() { document.getElementById('loginModal').classList.add('open'); }
+function closeLogin() { document.getElementById('loginModal').classList.remove('open'); }
+function closeModal() { closeSignup(); closeLogin(); }
+function closeModalOutside() {}
 
-// Apply language on load
-document.addEventListener('DOMContentLoaded', applyLang);
+function goToPlan() { showSignupSection('signupPlanSection'); }
+function goToMoteur() { openSignup(); }
+
+function selectPlan(el, plan) {
+  document.querySelectorAll('.plan-opt').forEach(function(o) { o.classList.remove('selected'); });
+  el.classList.add('selected');
+  const btn = document.getElementById('planBtn');
+  if (plan === 'starter') {
+    btn.textContent = 'Continuer gratuitement';
+    btn.onclick = function() {
+      closeSignup();
+      window.location.href = '/genproia-dashboard.html';
+    };
+  } else {
+    btn.textContent = 'Continuer vers le paiement';
+    btn.onclick = goToPayment;
+  }
+}
+
+function goToPayment() { showSignupSection('signupPaySection'); }
+
+function processPayment() {
+  const btn = document.getElementById('payBtnText');
+  btn.textContent = 'Traitement...';
+  setTimeout(function() { showSignupSection('signupSuccessSection'); }, 2000);
+}
+
+// ── DEMO GENERATOR ──
+const demoData = {
+  'boutique': { name: 'UrbanThread', alt: 'VogueNest, StyleFlow', slogan: 'Porte ton histoire.', logo: 'UT', domains: ['urbanthread.fr','urbanthread.co','urban-thread.com'] },
+  'fidelite': { name: 'LoyalPulse', alt: 'RewardLoop, BonusSpark', slogan: 'Fideliser, cest grandir.', logo: 'LP', domains: ['loyalpulse.io','loyalpulse.fr','loyal-pulse.app'] },
+  'livraison': { name: 'SwiftBite', alt: 'RapidEats, ZipFood', slogan: 'Chaud. Vite. La.', logo: 'SB', domains: ['swiftbite.fr','swift-bite.co','swiftbite.app'] },
+  'fitness': { name: 'CoreFlow', alt: 'PeakPulse, FitMind', slogan: 'Entraine-toi mieux, vis mieux.', logo: 'CF', domains: ['coreflow.app','coreflow.io','core-flow.fr'] },
+  'immobilier': { name: 'NestIQ', alt: 'PropSense, ImmoVision', slogan: 'Trouve. Achete. Vis.', logo: 'NQ', domains: ['nestiq.fr','nest-iq.immo','nestiq.io'] }
+};
+
+let validated = { name: false, slogan: false, logo: false, domains: false };
+let selectedDomain = null;
+
+function fillIdea(el) {
+  document.getElementById('ideaInput').value = el.textContent.trim();
+}
+
+function generateIdea() {
+  const val = document.getElementById('ideaInput').value.toLowerCase();
+  const btn = document.getElementById('genBtnText');
+  btn.textContent = '...';
+  validated = { name: false, slogan: false, logo: false, domains: false };
+  document.getElementById('buildSiteBar').style.display = 'none';
+  document.getElementById('validateHint').style.display = 'block';
+
+  setTimeout(function() {
+    let data = demoData['boutique'];
+    if (val.includes('fidel') || val.includes('saas') || val.includes('loyal')) data = demoData['fidelite'];
+    else if (val.includes('livr') || val.includes('repas')) data = demoData['livraison'];
+    else if (val.includes('fit') || val.includes('sport') || val.includes('coach')) data = demoData['fitness'];
+    else if (val.includes('immob') || val.includes('maison')) data = demoData['immobilier'];
+
+    document.getElementById('outName').textContent = data.name;
+    document.getElementById('outAlt').textContent = data.alt;
+    document.getElementById('outSlogan').textContent = data.slogan;
+    document.getElementById('outLogo').textContent = data.logo;
+    renderDomains(data.domains, 'outDomains');
+    btn.textContent = 'Generer';
+    document.getElementById('outputPreview').classList.add('visible');
+  }, 1500);
+}
+
+function renderDomains(domains, targetId) {
+  document.getElementById(targetId).innerHTML = domains.map(function(d, i) {
+    return '<div class="domain-option" id="dom-' + i + '" onclick="selectDomain(this,\'' + d + '\')">' +
+      '<span class="domain-dot">●</span>' +
+      '<span class="domain-name">' + d + '</span>' +
+      '<span class="domain-check">✓</span>' +
+      '<a class="domain-verify" href="https://www.lws.fr/nom-de-domaine.php?domaine=' + d + '" target="_blank" onclick="event.stopPropagation()">Verifier dispo</a>' +
+      '</div>';
+  }).join('');
+  const first = document.getElementById('dom-0');
+  if (first) selectDomain(first, domains[0]);
+}
+
+function selectDomain(el, domain) {
+  document.querySelectorAll('.domain-option').forEach(function(d) { d.classList.remove('selected'); });
+  el.classList.add('selected');
+  selectedDomain = domain;
+}
+
+function regenCell(type) {
+  const alts = {
+    name: [['VogueNest','UrbanThread, StyleFlow'],['StyleFlow','UrbanThread, VogueNest'],['PrimeCraft','NovaBrand, ZenVault']],
+    slogan: ['Le style sans limites.','Fait pour se demarquer.','Fais-en ta marque.'],
+    logo: ['VN','SF','PC'],
+    domains: [['voguenest.fr','voguenest.co','vogue-nest.com'],['styleflow.io','styleflow.fr','style-flow.co'],['primecraft.fr','primecraft.io','prime-craft.app']]
+  };
+  const idx = Math.floor(Math.random() * 3);
+  if (type === 'name') {
+    document.getElementById('outName').textContent = alts.name[idx][0];
+    document.getElementById('outAlt').textContent = alts.name[idx][1];
+  } else if (type === 'slogan') {
+    document.getElementById('outSlogan').textContent = alts.slogan[idx];
+  } else if (type === 'logo') {
+    document.getElementById('outLogo').textContent = alts.logo[idx];
+  } else if (type === 'domains') {
+    renderDomains(alts.domains[idx], 'outDomains');
+  }
+  validated[type] = false;
+  const ids = { name:'valName', slogan:'valSlogan', logo:'valLogo', domains:'valDomains' };
+  const btn = document.getElementById(ids[type]);
+  if (btn) { btn.classList.remove('validated'); btn.textContent = 'Valider'; btn.disabled = false; }
+  checkAllValidated();
+}
+
+function validateCell(type) {
+  validated[type] = true;
+  const ids = { name:'valName', slogan:'valSlogan', logo:'valLogo', domains:'valDomains' };
+  const btn = document.getElementById(ids[type]);
+  if (btn) { btn.classList.add('validated'); btn.textContent = 'Valide'; btn.disabled = true; }
+  checkAllValidated();
+}
+
+function checkAllValidated() {
+  const allDone = validated.name && validated.slogan && validated.logo && validated.domains;
+  document.getElementById('buildSiteBar').style.display = allDone ? 'flex' : 'none';
+  document.getElementById('validateHint').style.display = allDone ? 'none' : 'block';
+
+  if (allDone) {
+    const domainsRaw = Array.from(document.querySelectorAll('.domain-name')).map(function(el) { return el.textContent.trim(); });
+    const projectData = {
+      nom: document.getElementById('outName').textContent,
+      slogan: document.getElementById('outSlogan').textContent,
+      logoInitiales: document.getElementById('outLogo').textContent,
+      domaines: domainsRaw,
+      domainChoisi: selectedDomain || domainsRaw[0] || '',
+      couleurPrimaire: '#7c3aed',
+      couleurSecondaire: '#ec4899',
+      idee: document.getElementById('ideaInput').value,
+      validated: true
+    };
+    localStorage.setItem('genproia_project', JSON.stringify(projectData));
+  }
+}
+
+function goToMoteurFinal() { openSignup(); }
+
+// ── CARD FORMATTING ──
+function formatCard(input) {
+  let v = input.value.replace(/\D/g,'').substring(0,16);
+  input.value = v.replace(/(.{4})/g,'$1 ').trim();
+  const display = v ? v.replace(/(.{4})/g,'$1 ').trim().replace(/\d(?=.{5})/g,'*') : '**** **** **** ****';
+  document.getElementById('cardNumDisplay').textContent = display;
+}
+
+function formatExp(input) {
+  let v = input.value.replace(/\D/g,'');
+  if (v.length >= 2) v = v.substring(0,2)+'/'+v.substring(2,4);
+  input.value = v;
+  document.getElementById('cardExpDisplay').textContent = v || 'MM/AA';
+}
+
+// ── ESC KEY ──
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
