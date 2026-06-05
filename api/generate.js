@@ -2,11 +2,10 @@ const { createClient } = require('@supabase/supabase-js');
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
+  process.env.SUPABASE_SERVICE_KEY || process.env.SUPABASE_KEY
 );
 
 module.exports = async function handler(req, res) {
-  // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -23,21 +22,6 @@ module.exports = async function handler(req, res) {
   const { idee, type } = req.body;
   if (!idee || idee.trim().length < 10) {
     return res.status(400).json({ error: 'Décris ton idée en au moins 10 caractères.' });
-  }
-
-  // Vérifier plan
-  const { data: userData } = await supabase
-    .from('users')
-    .select('plan, projets_count')
-    .eq('id', user.id)
-    .single();
-
-  if (userData?.plan === 'free' && userData?.projets_count >= 1) {
-    return res.status(403).json({
-      error: 'Limite atteinte',
-      message: 'Le plan gratuit permet 1 génération. Passe au plan Pro.',
-      upgrade: true
-    });
   }
 
   const typeLabel = {
@@ -57,19 +41,19 @@ Son idée : "${idee}"
 Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après :
 
 {
-  "nom": "Nom de marque court et mémorable (1-2 mots)",
+  "nom": "Nom de marque court et mémorable (1-2 mots max)",
   "nom_alternatives": ["Alternative 1", "Alternative 2"],
-  "slogan": "Slogan percutant en français (5-8 mots)",
+  "slogan": "Slogan percutant en français (5-8 mots max)",
   "description": "Description du business en 2 phrases",
   "type": "${type || 'ecommerce'}",
-  "couleur_primaire": "#hexcode",
-  "couleur_secondaire": "#hexcode",
+  "couleur_primaire": "#hexcode couleur principale",
+  "couleur_secondaire": "#hexcode couleur secondaire",
   "logo_initiales": "2-3 lettres",
   "domaines": ["domaine.fr", "domaine.com", "domaine.io"],
   "secteur": "secteur en 2-3 mots",
   "cible": "cible client en 1 phrase courte",
   "fonctionnalites": ["Fonctionnalité 1", "Fonctionnalité 2", "Fonctionnalité 3", "Fonctionnalité 4"],
-  "site_html": "CODE HTML COMPLET — navigation, hero, features, pricing 3 plans, footer, CSS dans style, responsive, tout en français, minimum 200 lignes"
+  "site_html": "CODE HTML COMPLET avec navigation fixe, hero section avec titre et CTA, section fonctionnalités avec cards, section pricing 3 plans (gratuit/pro/business), footer, CSS moderne dans un tag style, JavaScript minimal, responsive mobile, couleurs cohérentes avec couleur_primaire, tout en français, minimum 300 lignes de HTML"
 }`;
 
   try {
@@ -81,7 +65,7 @@ Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après :
         'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-sonnet-4-6',
         max_tokens: 8000,
         messages: [{ role: 'user', content: prompt }]
       })
@@ -102,31 +86,43 @@ Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après :
       if (!jsonMatch) throw new Error('No JSON found');
       result = JSON.parse(jsonMatch[0]);
     } catch (e) {
-      console.error('JSON parse error:', e.message, '| Raw:', text.substring(0, 200));
+      console.error('JSON parse error:', e.message, '| Raw:', text.substring(0, 300));
       return res.status(500).json({ error: 'Erreur de format IA. Réessaie.' });
     }
 
-    // Sauvegarder dans Supabase
-    const { data: projet, error: projetError } = await supabase.from('projets').insert({
-      user_id: user.id,
-      nom: result.nom,
-      slogan: result.slogan,
-      logo_initiales: result.logo_initiales,
-      couleur_primaire: result.couleur_primaire,
-      couleur_secondaire: result.couleur_secondaire,
-      domaine: result.domaines?.[0],
-      type: result.type,
-      idee: idee,
-      site_html: result.site_html,
-      statut: 'generated',
-      created_at: new Date().toISOString()
-    }).select().single();
+    // Sauvegarder dans Supabase (sans bloquer la réponse si erreur)
+    try {
+      const { data: projet, error: projetError } = await supabase.from('projets').insert({
+        user_id: user.id,
+        nom: result.nom,
+        slogan: result.slogan,
+        logo_initiales: result.logo_initiales,
+        couleur_primaire: result.couleur_primaire,
+        couleur_secondaire: result.couleur_secondaire,
+        domaine: result.domaines?.[0],
+        type: result.type,
+        idee: idee,
+        site_html: result.site_html,
+        statut: 'generated',
+        created_at: new Date().toISOString()
+      }).select().single();
 
-    if (!projetError && projet) {
-      result.projet_id = projet.id;
-      await supabase.from('users').update({
-        projets_count: (userData?.projets_count || 0) + 1
-      }).eq('id', user.id);
+      if (projetError) {
+        console.error('Supabase insert error:', projetError);
+      } else if (projet) {
+        result.projet_id = projet.id;
+        // Incrémenter compteur
+        const { data: userData } = await supabase
+          .from('users')
+          .select('projets_count')
+          .eq('id', user.id)
+          .single();
+        await supabase.from('users').update({
+          projets_count: (userData?.projets_count || 0) + 1
+        }).eq('id', user.id);
+      }
+    } catch (dbErr) {
+      console.error('DB error (non-blocking):', dbErr);
     }
 
     return res.status(200).json({ success: true, result });
