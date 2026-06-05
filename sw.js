@@ -1,7 +1,7 @@
 // Genproia Service Worker — PWA
 const CACHE_NAME = 'genproia-v1';
 const ASSETS = [
-  '/genproia.html',
+  '/index.html',
   '/genproia-dashboard.html',
   '/genproia-moteur-ia.html',
   '/manifest.json',
