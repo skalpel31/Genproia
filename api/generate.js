@@ -32,26 +32,140 @@ async function getUnsplashImages(query, count = 6) {
   }
 }
 
-// Mots-clés Unsplash par type et secteur
+// ══════════════════════════════════════════════════════════════
+// UNSPLASH — Détection secteur (~60 secteurs + fallback intelligent)
+// ══════════════════════════════════════════════════════════════
+
 function getUnsplashQuery(type, idee) {
   const idea = idee.toLowerCase();
-  if (idea.includes('street') || idea.includes('urban')) return 'streetwear fashion clothing';
-  if (idea.includes('vêtement') || idea.includes('mode') || idea.includes('boutique')) return 'fashion clothing store';
-  if (idea.includes('fit') || idea.includes('sport') || idea.includes('gym')) return 'fitness gym workout';
-  if (idea.includes('food') || idea.includes('repas') || idea.includes('resto')) return 'food restaurant meal';
-  if (idea.includes('immo') || idea.includes('maison') || idea.includes('appart')) return 'luxury real estate house';
-  if (idea.includes('tech') || idea.includes('saas') || idea.includes('app')) return 'technology software office';
-  if (idea.includes('beauté') || idea.includes('cosmétique') || idea.includes('soin')) return 'beauty cosmetics skincare';
-  if (idea.includes('voyage') || idea.includes('tourisme')) return 'travel destination landscape';
-  if (idea.includes('photo') || idea.includes('créat')) return 'creative photography art';
-  if (idea.includes('bio') || idea.includes('nature') || idea.includes('écolo')) return 'organic nature sustainable';
-  if (type === 'ecommerce') return 'products shopping store';
-  if (type === 'saas') return 'technology dashboard software';
-  if (type === 'vitrine') return 'professional business office';
-  if (type === 'landing') return 'modern design minimal';
-  if (type === 'marketplace') return 'marketplace people community';
-  if (type === 'blog') return 'lifestyle writing content';
-  return 'business professional';
+
+  // ── MODE & VÊTEMENTS ──
+  if (idea.includes('cbd') || idea.includes('cannabis') || idea.includes('chanvre')) return 'cbd hemp wellness natural';
+  if (idea.includes('street') || idea.includes('urban') || idea.includes('hype')) return 'streetwear fashion urban clothing';
+  if (idea.includes('luxe') || idea.includes('luxury') || idea.includes('premium') || idea.includes('haut de gamme')) return 'luxury fashion elegant boutique';
+  if (idea.includes('vêtement') || idea.includes('mode') || idea.includes('fring') || idea.includes('textile')) return 'fashion clothing store minimal';
+  if (idea.includes('enfant') || idea.includes('bébé') || idea.includes('kid')) return 'children kids clothing baby';
+  if (idea.includes('lingerie') || idea.includes('sous-vêtement')) return 'lingerie elegant fashion minimal';
+  if (idea.includes('chaussure') || idea.includes('sneaker') || idea.includes('basket')) return 'sneakers shoes fashion footwear';
+  if (idea.includes('bijou') || idea.includes('joaill') || idea.includes('bijoux')) return 'jewelry gold luxury accessories';
+  if (idea.includes('maroquin') || idea.includes('sac') || idea.includes('bag')) return 'leather bag accessories luxury';
+  if (idea.includes('chapeau') || idea.includes('casquette') || idea.includes('bonnet')) return 'hat cap fashion accessories';
+
+  // ── BEAUTÉ & BIEN-ÊTRE ──
+  if (idea.includes('cosmétique') || idea.includes('maquillage') || idea.includes('makeup')) return 'cosmetics makeup beauty products';
+  if (idea.includes('soin') || idea.includes('skincare') || idea.includes('crème')) return 'skincare beauty natural products';
+  if (idea.includes('parfum') || idea.includes('fragrance')) return 'perfume fragrance luxury bottle';
+  if (idea.includes('coiffure') || idea.includes('salon') || idea.includes('barbier') || idea.includes('barber')) return 'hair salon barbershop grooming';
+  if (idea.includes('spa') || idea.includes('massage') || idea.includes('détente')) return 'spa massage wellness relaxation';
+  if (idea.includes('yoga') || idea.includes('méditation') || idea.includes('bien-être')) return 'yoga meditation wellness mindfulness';
+  if (idea.includes('fit') || idea.includes('sport') || idea.includes('gym') || idea.includes('muscl')) return 'fitness gym workout training';
+  if (idea.includes('nutrition') || idea.includes('complément') || idea.includes('protéine')) return 'nutrition supplements health food';
+  if (idea.includes('tattoo') || idea.includes('tatouage') || idea.includes('piercing')) return 'tattoo art body art studio';
+
+  // ── ALIMENTATION & BOISSONS ──
+  if (idea.includes('restaurant') || idea.includes('resto') || idea.includes('brasserie')) return 'restaurant food dining elegant';
+  if (idea.includes('café') || idea.includes('coffee') || idea.includes('barista')) return 'coffee cafe espresso barista';
+  if (idea.includes('boulang') || idea.includes('pâtisserie') || idea.includes('bakery')) return 'bakery pastry bread croissant';
+  if (idea.includes('pizza') || idea.includes('fast food') || idea.includes('burger')) return 'pizza burger fast food restaurant';
+  if (idea.includes('sushi') || idea.includes('japonais') || idea.includes('asiatique')) return 'sushi japanese food asian cuisine';
+  if (idea.includes('livraison') || idea.includes('delivery') || idea.includes('repas')) return 'food delivery meal service';
+  if (idea.includes('bio') || idea.includes('organique') || idea.includes('vegan') || idea.includes('végétal')) return 'organic vegan healthy food natural';
+  if (idea.includes('vin') || idea.includes('wine') || idea.includes('cave') || idea.includes('alcool')) return 'wine vineyard bottle cellar';
+  if (idea.includes('bière') || idea.includes('brasserie') || idea.includes('craft beer')) return 'craft beer brewery bar';
+  if (idea.includes('chocolat') || idea.includes('confiserie') || idea.includes('bonbon')) return 'chocolate sweets candy confectionery';
+  if (idea.includes('traiteur') || idea.includes('catering')) return 'catering food event service';
+
+  // ── IMMOBILIER & CONSTRUCTION ──
+  if (idea.includes('immo') || idea.includes('agence') && idea.includes('maison')) return 'real estate house property luxury';
+  if (idea.includes('architecte') || idea.includes('architecture')) return 'architecture building design modern';
+  if (idea.includes('déco') || idea.includes('intérieur') || idea.includes('design') && idea.includes('maison')) return 'interior design home decor';
+  if (idea.includes('jardin') || idea.includes('paysag') || idea.includes('garden')) return 'garden landscape nature green';
+  if (idea.includes('construct') || idea.includes('bâtiment') || idea.includes('btp')) return 'construction building architecture';
+  if (idea.includes('nettoy') || idea.includes('ménage') || idea.includes('cleaning')) return 'cleaning service home professional';
+
+  // ── TECH & DIGITAL ──
+  if (idea.includes('saas') || idea.includes('logiciel') || idea.includes('software')) return 'technology software dashboard interface';
+  if (idea.includes('app') || idea.includes('mobile') || idea.includes('application')) return 'mobile app smartphone technology';
+  if (idea.includes('ia') || idea.includes('intelligence artificielle') || idea.includes('ai')) return 'artificial intelligence technology future';
+  if (idea.includes('crypto') || idea.includes('blockchain') || idea.includes('nft')) return 'cryptocurrency blockchain technology';
+  if (idea.includes('cybersécurité') || idea.includes('securité') || idea.includes('security')) return 'cybersecurity technology protection digital';
+  if (idea.includes('data') || idea.includes('analytics') || idea.includes('analyse')) return 'data analytics dashboard technology';
+  if (idea.includes('ecommerce') || idea.includes('e-commerce') || idea.includes('boutique en ligne')) return 'ecommerce online shopping product';
+  if (idea.includes('web') || idea.includes('site') || idea.includes('digital') || idea.includes('agence')) return 'digital agency technology web design';
+
+  // ── SERVICES & B2B ──
+  if (idea.includes('comptable') || idea.includes('comptabilité') || idea.includes('factur')) return 'accounting finance business office';
+  if (idea.includes('avocat') || idea.includes('juridique') || idea.includes('droit')) return 'lawyer legal business professional';
+  if (idea.includes('rh') || idea.includes('recrutement') || idea.includes('emploi')) return 'human resources recruitment office people';
+  if (idea.includes('marketing') || idea.includes('publicité') || idea.includes('communication')) return 'marketing communication business creative';
+  if (idea.includes('conseil') || idea.includes('consulting') || idea.includes('stratégie')) return 'consulting business strategy meeting';
+  if (idea.includes('formation') || idea.includes('coaching') || idea.includes('cours')) return 'coaching training education learning';
+  if (idea.includes('école') || idea.includes('université') || idea.includes('éducation')) return 'education school learning students';
+  if (idea.includes('événement') || idea.includes('wedding') || idea.includes('mariage')) return 'event wedding celebration party';
+  if (idea.includes('traduct') || idea.includes('langue') || idea.includes('translation')) return 'language translation communication global';
+  if (idea.includes('graphiste') || idea.includes('design') || idea.includes('créatif')) return 'graphic design creative studio art';
+
+  // ── TRANSPORT & MOBILITÉ ──
+  if (idea.includes('voiture') || idea.includes('auto') || idea.includes('garage')) return 'car automobile automotive dealership';
+  if (idea.includes('moto') || idea.includes('scooter')) return 'motorcycle scooter urban transport';
+  if (idea.includes('vélo') || idea.includes('cyclisme') || idea.includes('vtt')) return 'bicycle cycling sport outdoor';
+  if (idea.includes('taxi') || idea.includes('vtc') || idea.includes('chauffeur')) return 'taxi driver urban transport city';
+  if (idea.includes('déménag') || idea.includes('transport') && idea.includes('meubl')) return 'moving transport logistics boxes';
+  if (idea.includes('voyage') || idea.includes('tourisme') || idea.includes('vacances')) return 'travel tourism vacation destination';
+  if (idea.includes('camping') || idea.includes('randonnée') || idea.includes('outdoor')) return 'camping outdoor adventure nature';
+
+  // ── SANTÉ & MÉDICAL ──
+  if (idea.includes('médecin') || idea.includes('médical') || idea.includes('santé')) return 'healthcare medical doctor hospital';
+  if (idea.includes('dentiste') || idea.includes('dental')) return 'dental dentist teeth health';
+  if (idea.includes('pharmacie') || idea.includes('pharma')) return 'pharmacy medicine health pills';
+  if (idea.includes('vétérin') || idea.includes('animal') || idea.includes('pet') || idea.includes('chien') || idea.includes('chat')) return 'veterinary pet dog cat animal';
+  if (idea.includes('psycholog') || idea.includes('thérapeute') || idea.includes('thérapie')) return 'psychology therapy mental health wellness';
+
+  // ── ARTS & LOISIRS ──
+  if (idea.includes('musique') || idea.includes('music') || idea.includes('studio')) return 'music studio recording instrument';
+  if (idea.includes('photo') || idea.includes('photographe')) return 'photography photographer camera portrait';
+  if (idea.includes('vidéo') || idea.includes('film') || idea.includes('cinéma')) return 'video film cinema production';
+  if (idea.includes('jeu') || idea.includes('gaming') || idea.includes('esport')) return 'gaming esport video game controller';
+  if (idea.includes('art') || idea.includes('galerie') || idea.includes('peinture')) return 'art gallery painting exhibition creative';
+  if (idea.includes('livre') || idea.includes('librairie') || idea.includes('édition')) return 'books library reading literature';
+  if (idea.includes('sport') || idea.includes('foot') || idea.includes('football')) return 'football sport team athletic';
+  if (idea.includes('piscine') || idea.includes('natation') || idea.includes('aqua')) return 'swimming pool water sport aquatic';
+
+  // ── MARKETPLACE & COMMUNAUTÉ ──
+  if (idea.includes('artisan') || idea.includes('fait main') || idea.includes('handmade')) return 'artisan handmade craft workshop';
+  if (idea.includes('seconde main') || idea.includes('occasion') || idea.includes('vintage')) return 'vintage second hand thrift market';
+  if (idea.includes('communauté') || idea.includes('réseau') || idea.includes('platform')) return 'community people network connection';
+
+  // ── FALLBACK INTELLIGENT ──
+  // Extraire les mots significatifs de l'idée et construire une query anglaise
+  const stopWords = ['je', 'veux', 'veut', 'créer', 'faire', 'lancer', 'ouvrir', 'une', 'un', 'des', 'les', 'mon', 'ma', 'pour', 'avec', 'qui', 'dans', 'sur', 'de', 'du', 'la', 'le', 'et', 'ou', 'en', 'par', 'à', 'au', 'aux'];
+  const words = idea.split(/\s+/).filter(w => w.length > 3 && !stopWords.includes(w));
+
+  // Traductions français -> anglais pour les mots courants
+  const translations = {
+    'boutique': 'store', 'magasin': 'shop', 'vente': 'sale', 'produit': 'product',
+    'service': 'service', 'entreprise': 'business', 'société': 'company',
+    'professionnel': 'professional', 'moderne': 'modern', 'luxe': 'luxury',
+    'qualité': 'quality', 'artisan': 'artisan', 'local': 'local',
+    'naturel': 'natural', 'écologique': 'eco', 'durable': 'sustainable',
+    'innovant': 'innovative', 'technologie': 'technology', 'numérique': 'digital',
+    'créatif': 'creative', 'design': 'design', 'agence': 'agency'
+  };
+
+  const translated = words.slice(0, 3).map(w => translations[w] || w).join(' ');
+
+  // Fallback par type si pas assez de mots
+  if (translated.length < 4) {
+    if (type === 'ecommerce') return 'ecommerce products shopping';
+    if (type === 'saas') return 'technology software business';
+    if (type === 'vitrine') return 'professional business service';
+    if (type === 'landing') return 'modern minimal design';
+    if (type === 'marketplace') return 'marketplace community people';
+    if (type === 'blog') return 'lifestyle content writing';
+    return 'business professional modern';
+  }
+
+  return translated;
 }
 
 // ══════════════════════════════════════════════════════════════
