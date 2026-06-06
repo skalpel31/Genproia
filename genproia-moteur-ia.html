@@ -554,16 +554,35 @@ function goStep2() {
   showStep(2);
 }
 
-// Aller à l'étape identité (step 3) — génère les suggestions localement
+// Aller à l'étape identité (step 3) — utilise les données de la démo si disponibles
 function goStep3() {
   const idea = document.getElementById('ideaInput').value.toLowerCase();
-  // Générer des suggestions basées sur l'idée
-  const suggestions = genererSuggestions(idea);
+
+  // Lire les données validées depuis la démo index.html
+  let savedProj = null;
+  try { savedProj = JSON.parse(localStorage.getItem('genproia_project')); } catch(e) {}
+
+  let suggestions;
+  if (savedProj && savedProj.validated && savedProj.nom && savedProj.nom !== '—') {
+    // Utiliser les données de la démo
+    suggestions = {
+      nom: savedProj.nom,
+      nomAlts: savedProj.nom_alternatives || ['Alternative 1', 'Alternative 2'],
+      slogan: savedProj.slogan,
+      initiales: savedProj.logoInitiales || savedProj.nom.substring(0,2).toUpperCase(),
+      couleur1: savedProj.couleurPrimaire || '#7c3aed',
+      couleur2: savedProj.couleurSecondaire || '#ec4899',
+      domaine: savedProj.domainChoisi || savedProj.domaines?.[0] || 'monsite.fr'
+    };
+  } else {
+    // Générer des suggestions basées sur l'idée
+    suggestions = genererSuggestions(idea);
+  }
   identData = suggestions;
 
   // Remplir les cards
   document.getElementById('vNom').textContent = suggestions.nom;
-  document.getElementById('vNomAlt').textContent = 'Alt: ' + suggestions.nomAlts.join(', ');
+  document.getElementById('vNomAlt').textContent = suggestions.nomAlts ? 'Alt: ' + suggestions.nomAlts.join(', ') : '';
   document.getElementById('vSlogan').textContent = suggestions.slogan;
   const logo = document.getElementById('vLogo');
   logo.textContent = suggestions.initiales;
