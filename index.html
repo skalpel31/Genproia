@@ -460,6 +460,39 @@
   .domain-option.selected .domain-check { opacity: 1; }
   .domain-verify { font-family: 'Inter', sans-serif; font-size: 0.63rem; color: var(--cyan); text-decoration: none; opacity: 0; transition: opacity 0.2s; white-space: nowrap; flex-shrink: 0; border: 1px solid rgba(6,182,212,0.28); padding: 2px 7px; border-radius: 4px; }
   .domain-option:hover .domain-verify, .domain-option.selected .domain-verify { opacity: 1; }
+
+  /* CHAT PUBLIC */
+  .pub-chat-btn { position: fixed; bottom: 28px; right: 28px; z-index: 200; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(135deg, var(--violet), #9333ea); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 4px 24px rgba(124,58,237,0.45); transition: transform 0.2s, box-shadow 0.2s; }
+  .pub-chat-btn:hover { transform: scale(1.08); box-shadow: 0 6px 32px rgba(124,58,237,0.55); }
+  .pub-chat-win { position: fixed; bottom: 94px; right: 28px; z-index: 200; width: 340px; height: 460px; background: var(--card); border: 1px solid rgba(139,92,246,0.25); border-radius: 20px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+  .pub-chat-win.open { display: flex; animation: fadeUp 0.3s ease; }
+  .pub-chat-head { background: linear-gradient(135deg, rgba(124,58,237,0.35), rgba(147,51,234,0.15)); border-bottom: 1px solid var(--border); padding: 13px 15px; display: flex; align-items: center; gap: 10px; }
+  .pub-chat-av { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--violet), var(--pink)); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; flex-shrink: 0; }
+  .pub-chat-info { flex: 1; }
+  .pub-chat-name { font-family: 'Inter', sans-serif; font-size: 0.83rem; font-weight: 600; }
+  .pub-chat-status { font-size: 0.65rem; color: #10b981; display: flex; align-items: center; gap: 3px; }
+  .pub-chat-status::before { content: ''; width: 5px; height: 5px; background: #10b981; border-radius: 50%; display: inline-block; }
+  .pub-chat-x { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; padding: 4px; }
+  .pub-chat-x:hover { color: var(--white); }
+  .pub-chat-msgs { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .pub-chat-msgs::-webkit-scrollbar { width: 3px; }
+  .pub-chat-msgs::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .pub-msg { max-width: 85%; }
+  .pub-msg.user { align-self: flex-end; }
+  .pub-msg.ai { align-self: flex-start; }
+  .pub-msg-bubble { padding: 8px 12px; border-radius: 14px; font-size: 0.8rem; line-height: 1.5; }
+  .pub-msg.user .pub-msg-bubble { background: linear-gradient(135deg, var(--violet), #9333ea); color: white; border-radius: 14px 14px 4px 14px; }
+  .pub-msg.ai .pub-msg-bubble { background: rgba(255,255,255,0.06); color: var(--white); border-radius: 14px 14px 14px 4px; border: 1px solid var(--border); }
+  .pub-typing { align-self: flex-start; }
+  .pub-typing-dots { display: flex; gap: 4px; padding: 9px 13px; background: rgba(255,255,255,0.06); border-radius: 14px 14px 14px 4px; border: 1px solid var(--border); }
+  .pub-typing-dots span { width: 5px; height: 5px; background: var(--muted); border-radius: 50%; animation: bounce 1.2s infinite; }
+  .pub-typing-dots span:nth-child(2){animation-delay:.2s} .pub-typing-dots span:nth-child(3){animation-delay:.4s}
+  .pub-chat-input-area { padding: 10px; border-top: 1px solid var(--border); display: flex; gap: 7px; align-items: center; }
+  .pub-chat-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid rgba(139,92,246,0.2); border-radius: 9px; padding: 8px 11px; color: var(--white); font-family: var(--font-body); font-size: 0.8rem; outline: none; }
+  .pub-chat-input:focus { border-color: var(--violet-bright); }
+  .pub-chat-input::placeholder { color: var(--muted); }
+  .pub-chat-send { width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--violet), #9333ea); border: none; cursor: pointer; color: white; font-size: 0.85rem; transition: opacity 0.2s; flex-shrink: 0; }
+  .pub-chat-send:hover { opacity: 0.9; }
 </style>
 </head>
 <body>
@@ -1252,6 +1285,87 @@ function installApp() {
 function dismissInstall() {
   const banner = document.getElementById('installBanner');
   if (banner) banner.style.transform = 'translateY(120px)';
+}
+</script>
+
+<!-- CHAT PUBLIC -->
+<button class="pub-chat-btn" onclick="togglePubChat()" title="Discuter avec nous">💬</button>
+<div class="pub-chat-win" id="pubChatWin">
+  <div class="pub-chat-head">
+    <div class="pub-chat-av">✦</div>
+    <div class="pub-chat-info">
+      <div class="pub-chat-name">Genproia IA</div>
+      <div class="pub-chat-status">En ligne</div>
+    </div>
+    <button class="pub-chat-x" onclick="togglePubChat()">✕</button>
+  </div>
+  <div class="pub-chat-msgs" id="pubChatMsgs">
+    <div class="pub-msg ai"><div class="pub-msg-bubble">Bonjour ! 👋 Tu as une idée de business ? Décris-la moi et je t'explique comment Genproia peut la transformer en site complet en quelques minutes !</div></div>
+  </div>
+  <div class="pub-chat-input-area">
+    <input class="pub-chat-input" id="pubChatInput" placeholder="Pose ta question..." onkeydown="if(event.key==='Enter')sendPubChat()">
+    <button class="pub-chat-send" onclick="sendPubChat()">→</button>
+  </div>
+</div>
+
+<script translate="no">
+var pubChatOpen = false;
+var pubChatHistory = [];
+
+function togglePubChat() {
+  pubChatOpen = !pubChatOpen;
+  document.getElementById('pubChatWin').classList.toggle('open', pubChatOpen);
+  if (pubChatOpen) document.getElementById('pubChatInput').focus();
+}
+
+async function sendPubChat() {
+  var input = document.getElementById('pubChatInput');
+  var msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  addPubMsg(msg, 'user');
+  pubChatHistory.push({ role: 'user', content: msg });
+
+  var typingId = 'pt_' + Date.now();
+  var tEl = document.createElement('div');
+  tEl.className = 'pub-msg ai pub-typing';
+  tEl.id = typingId;
+  tEl.innerHTML = '<div class="pub-typing-dots"><span></span><span></span><span></span></div>';
+  document.getElementById('pubChatMsgs').appendChild(tEl);
+  scrollPubChat();
+
+  try {
+    var resp = await fetch('/api/chat-public', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: msg, history: pubChatHistory.slice(-6) })
+    });
+    var data = await resp.json();
+    document.getElementById(typingId).remove();
+    if (data.success) {
+      addPubMsg(data.reply, 'ai');
+      pubChatHistory.push({ role: 'assistant', content: data.reply });
+    } else {
+      addPubMsg('Désolé, une erreur est survenue. Réessaie !', 'ai');
+    }
+  } catch(e) {
+    document.getElementById(typingId).remove();
+    addPubMsg('Erreur de connexion. Vérifie ta connexion !', 'ai');
+  }
+}
+
+function addPubMsg(text, role) {
+  var div = document.createElement('div');
+  div.className = 'pub-msg ' + role;
+  div.innerHTML = '<div class="pub-msg-bubble">' + text.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</div>';
+  document.getElementById('pubChatMsgs').appendChild(div);
+  scrollPubChat();
+}
+
+function scrollPubChat() {
+  var msgs = document.getElementById('pubChatMsgs');
+  msgs.scrollTop = msgs.scrollHeight;
 }
 </script>
 </body>
