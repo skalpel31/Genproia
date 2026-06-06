@@ -1041,27 +1041,54 @@ let selectedDomain = null;
 
 function fillIdea(el) { document.getElementById('ideaInput').value = el.textContent.trim(); }
 
-function generateIdea() {
-  const val = document.getElementById('ideaInput').value.toLowerCase();
+async function generateIdea() {
+  const idee = document.getElementById('ideaInput').value.trim();
+  if (!idee || idee.length < 3) return;
   const btn = document.getElementById('genBtnText');
   btn.textContent = '...';
   validated = { name: false, slogan: false, logo: false, domains: false };
   document.getElementById('buildSiteBar').style.display = 'none';
   document.getElementById('validateHint').style.display = 'block';
-  setTimeout(function() {
+  document.getElementById('outputPreview').classList.remove('visible');
+
+  try {
+    const response = await fetch('/api/demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idee })
+    });
+    const data = await response.json();
+
+    if (data.success && data.result) {
+      const r = data.result;
+      document.getElementById('outName').textContent = r.nom || '—';
+      document.getElementById('outAlt').textContent = (r.nom_alternatives || []).join(', ');
+      document.getElementById('outSlogan').textContent = r.slogan || '—';
+      const logo = document.getElementById('outLogo');
+      logo.textContent = r.initiales || (r.nom || 'GN').substring(0,2).toUpperCase();
+      logo.style.background = 'linear-gradient(135deg,' + (r.couleur_primaire||'#7c3aed') + ',' + (r.couleur_secondaire||'#ec4899') + ')';
+      renderDomains(r.domaines || [r.nom.toLowerCase().replace(/\s/g,'')+'.fr'], 'outDomains');
+    } else {
+      throw new Error('API error');
+    }
+  } catch(e) {
+    // Fallback statique si API échoue
+    const val = idee.toLowerCase();
     let data = demoData['boutique'];
     if (val.includes('fidel') || val.includes('saas') || val.includes('loyal')) data = demoData['fidelite'];
     else if (val.includes('livr') || val.includes('repas')) data = demoData['livraison'];
     else if (val.includes('fit') || val.includes('sport') || val.includes('coach')) data = demoData['fitness'];
     else if (val.includes('immob') || val.includes('maison')) data = demoData['immobilier'];
+    else if (val.includes('cbd') || val.includes('cannabis')) data = { name: 'CannaVibe', alt: 'GreenLeaf, HempCo', slogan: 'La nature à l'état pur.', logo: 'CV', domains: ['cannavibe.fr','cannavibe.co','canna-vibe.com'] };
     document.getElementById('outName').textContent = data.name;
     document.getElementById('outAlt').textContent = data.alt;
     document.getElementById('outSlogan').textContent = data.slogan;
     document.getElementById('outLogo').textContent = data.logo;
     renderDomains(data.domains, 'outDomains');
-    btn.textContent = 'Générer';
-    document.getElementById('outputPreview').classList.add('visible');
-  }, 1500);
+  }
+
+  btn.textContent = 'Générer';
+  document.getElementById('outputPreview').classList.add('visible');
 }
 
 function renderDomains(domains, targetId) {
