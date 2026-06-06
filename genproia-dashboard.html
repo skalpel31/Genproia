@@ -22,9 +22,7 @@
   /* SIDEBAR */
   .sidebar { width: var(--sidebar-w); min-height: 100vh; background: var(--deep); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; z-index: 50; transition: transform 0.3s; }
   .sidebar-logo { padding: 26px 22px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
-  .logo-icon { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg, var(--violet), var(--pink)); display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 800; }
-  .logo-text { font-family: 'Inter', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--white); letter-spacing: -0.03em; }
-  .logo-text span { color: var(--violet-bright); }
+  .sidebar-logo a { line-height: 0; }
   .sidebar-nav { flex: 1; padding: 18px 10px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
   .nav-section-label { font-family: 'Inter', sans-serif; font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); padding: 10px 12px 5px; font-weight: 600; }
   .nav-item { display: flex; align-items: center; gap: 11px; padding: 9px 12px; border-radius: 9px; cursor: pointer; transition: background 0.2s, color 0.2s; color: var(--muted); font-size: 0.83rem; font-weight: 500; text-decoration: none; position: relative; border: 1px solid transparent; }
@@ -190,8 +188,9 @@
 
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
-    <div class="logo-icon">G</div>
-    <div class="logo-text">Genpr<span>oia</span></div>
+    <a href="/index.html" style="display:flex;align-items:center;gap:0;text-decoration:none;">
+      <img src="/logo-genproia.png" alt="Genproia" style="height:38px;width:auto;object-fit:contain;">
+    </a>
   </div>
   <nav class="sidebar-nav">
     <div class="nav-section-label">Principal</div>
@@ -544,8 +543,16 @@ async function loadDashboard() {
     document.getElementById('adminLink').style.display = 'block';
   }
 
-  // Plan réel
-  const plan = user.plan || 'free';
+  // Plan réel depuis Supabase (pas localStorage)
+  let plan = user.plan || 'free';
+  try {
+    const { data: userData } = await _sb.from('users').select('plan').eq('id', user.id).single();
+    if (userData && userData.plan) {
+      plan = userData.plan;
+      user.plan = plan;
+      localStorage.setItem('genproia_user', JSON.stringify(user));
+    }
+  } catch(e) {}
   const planLabel = plan === 'pro' ? 'Pro' : plan === 'business' ? 'Business' : 'Free';
   document.getElementById('userPlan').textContent = planLabel;
   document.getElementById('planBadge').textContent = planLabel;
@@ -577,11 +584,14 @@ async function loadDashboard() {
         ? 'linear-gradient(135deg,' + p.couleur_primaire + ',' + p.couleur_secondaire + ')'
         : colors[i % 4];
       const initiales = (p.logo_initiales || (p.nom||'PR').substring(0,2)).toUpperCase();
+      const logoHtml = p.logo_svg
+        ? '<div class="project-logo" style="overflow:hidden;padding:0;">' + p.logo_svg.replace(/width="[^"]*"/, 'width="40"').replace(/height="[^"]*"/, 'height="40"') + '</div>'
+        : '<div class="project-logo" style="background:' + couleur + '">' + initiales + '</div>';
       const div = document.createElement('div');
       div.className = 'project-item';
       div.onclick = () => openPreview(p);
       div.innerHTML =
-        '<div class="project-logo" style="background:' + couleur + '">' + initiales + '</div>' +
+        logoHtml +
         '<div class="project-info"><div class="project-name">' + (p.nom||'Projet') + '</div><div class="project-type">' + (p.type||'Projet') + ' · ' + (p.idee||'').substring(0,35) + '</div></div>' +
         '<div class="project-status ps-generated">Généré</div>' +
         '<div class="project-actions">' +
@@ -615,12 +625,15 @@ function renderAllProjets() {
       ? 'linear-gradient(135deg,' + p.couleur_primaire + ',' + p.couleur_secondaire + ')'
       : colors[i % 4];
     const initiales = (p.logo_initiales || (p.nom||'PR').substring(0,2)).toUpperCase();
+    const logoHtml2 = p.logo_svg
+      ? '<div class="project-logo" style="overflow:hidden;padding:0;width:48px;height:48px;">' + p.logo_svg.replace(/width="[^"]*"/, 'width="48"').replace(/height="[^"]*"/, 'height="48"') + '</div>'
+      : '<div class="project-logo" style="background:' + couleur + ';width:48px;height:48px;">' + initiales + '</div>';
     const div = document.createElement('div');
     div.className = 'project-item';
     div.style.padding = '16px 18px';
     div.onclick = () => openPreview(p);
     div.innerHTML =
-      '<div class="project-logo" style="background:' + couleur + ';width:48px;height:48px;">' + initiales + '</div>' +
+      logoHtml2 +
       '<div class="project-info">' +
         '<div class="project-name" style="font-size:0.9rem">' + (p.nom||'Projet') + '</div>' +
         '<div class="project-type">' + (p.type||'Projet') + ' · ' + (p.idee||'').substring(0,50) + '</div>' +
@@ -646,10 +659,13 @@ function renderIdentite() {
       ? 'linear-gradient(135deg,' + p.couleur_primaire + ',' + p.couleur_secondaire + ')'
       : 'linear-gradient(135deg,#7c3aed,#ec4899)';
     const initiales = (p.logo_initiales || (p.nom||'PR').substring(0,2)).toUpperCase();
+    const logoHtml3 = p.logo_svg
+      ? '<div class="identity-logo" style="overflow:hidden;padding:0;">' + p.logo_svg.replace(/width="[^"]*"/, 'width="50"').replace(/height="[^"]*"/, 'height="50"') + '</div>'
+      : '<div class="identity-logo" style="background:' + couleur + '">' + initiales + '</div>';
     const div = document.createElement('div');
     div.className = 'identity-card';
     div.innerHTML =
-      '<div class="identity-logo" style="background:' + couleur + '">' + initiales + '</div>' +
+      logoHtml3 +
       '<div class="identity-info">' +
         '<div class="identity-name">' + (p.nom||'Projet') + '</div>' +
         '<div class="identity-slogan">' + (p.slogan||'') + '</div>' +
