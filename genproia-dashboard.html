@@ -242,7 +242,7 @@
     <div class="nav-section-label">Compte</div>
     <a class="nav-item" onclick="showPage('parametres',this)"><span class="nav-icon">⚙️</span> Paramètres</a>
     <a class="nav-item" onclick="showPage('support',this)"><span class="nav-icon">🆘</span> Support</a>
-    <a class="nav-item" onclick="toggleChat();setNavActive(this)" id="chatNavItem"><span class="nav-icon">✦</span> Assistant IA</a>
+    <a class="nav-item" onclick="toggleChat()" id="chatNavItem" style="cursor:pointer;"><span class="nav-icon">✦</span> Assistant IA</a>
   </nav>
   <div class="sidebar-bottom">
     <div id="adminLink" style="display:none;margin-bottom:8px;">
@@ -858,11 +858,6 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closePreview
 // ── CHAT IA ──
 let chatHistory = [];
 let chatOpen = false;
-
-function setNavActive(el) {
-  document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
-}
 
 function toggleChat() {
   chatOpen = !chatOpen;
