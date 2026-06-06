@@ -661,15 +661,47 @@ function selectGiftPlan(el, plan) {
   selectedGiftPlan = plan;
 }
 
-function applyGiftPlan() {
+async function applyGiftPlan() {
   if (!currentUser) return;
-  const duration = document.getElementById('giftDuration').value;
   const planLabels = { free:'Free', pro:'Pro', business:'Business' };
+  const btn = document.querySelector('[onclick="applyGiftPlan()"]');
+  if (btn) { btn.textContent = 'Application...'; btn.disabled = true; }
+
+  // Sauvegarder dans Supabase
+  const { error } = await _sbAdmin.from('users').update({
+    plan: selectedGiftPlan,
+    updated_at: new Date().toISOString()
+  }).eq('id', currentUser.id);
+
+  if (btn) { btn.textContent = 'Appliquer gratuitement'; btn.disabled = false; }
+
+  if (error) {
+    showToast('Erreur : ' + error.message, 'error');
+    return;
+  }
+
+  // Mettre à jour localement
   const u = users.find(x => x.id === currentUser.id);
   if (u) u.plan = selectedGiftPlan;
   renderUsers(users);
+
+  // Mettre à jour les compteurs
+  const pro = users.filter(u => u.plan === 'pro').length;
+  const business = users.filter(u => u.plan === 'business').length;
+  const free = users.filter(u => u.plan === 'free').length;
+  document.getElementById('proCount').textContent = pro;
+  document.getElementById('businessCount').textContent = business;
+  document.getElementById('freeCount').textContent = free;
+  document.getElementById('countPro').textContent = pro;
+  document.getElementById('countBusiness').textContent = business;
+  document.getElementById('countFree').textContent = free;
+  const mrr = (pro * 29) + (business * 79);
+  document.getElementById('kpiMrr').textContent = '€' + mrr;
+  document.getElementById('mrrPro').textContent = '€' + (pro * 29);
+  document.getElementById('mrrBusiness').textContent = '€' + (business * 79);
+
   closeModal();
-  showToast('Plan ' + planLabels[selectedGiftPlan] + ' offert à ' + currentUser.name, 'success');
+  showToast('Plan ' + planLabels[selectedGiftPlan] + ' appliqué à ' + currentUser.name + ' ✓', 'success');
 }
 
 // ── EXPORT CSV ──
