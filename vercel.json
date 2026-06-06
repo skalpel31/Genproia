@@ -10,6 +10,10 @@
       "dest": "/api/generate.js"
     },
     {
+      "src": "/api/demo",
+      "dest": "/api/demo.js"
+    },
+    {
       "src": "/(.*\\.html)",
       "dest": "/$1"
     },
