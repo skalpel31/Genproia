@@ -22,6 +22,10 @@
       "dest": "/api/chat-dashboard.js"
     },
     {
+      "src": "/api/chat-public",
+      "dest": "/api/chat-public.js"
+    },
+    {
       "src": "/(.*\\.html)",
       "dest": "/$1"
     },
