@@ -1062,7 +1062,7 @@ async function generateIdea() {
     if (data.success && data.result) {
       const r = data.result;
       document.getElementById('outName').textContent = r.nom || '—';
-      document.getElementById('outAlt').textContent = (r.nom_alternatives || []).join(', ');
+      document.getElementById('outAlt').textContent = '';
       document.getElementById('outSlogan').textContent = r.slogan || '—';
       const logo = document.getElementById('outLogo');
       logo.textContent = r.initiales || (r.nom || 'GN').substring(0,2).toUpperCase();
@@ -1081,7 +1081,7 @@ async function generateIdea() {
     else if (val.includes('immob') || val.includes('maison')) data = demoData['immobilier'];
     else if (val.includes('cbd') || val.includes('cannabis')) data = { name: 'CannaVibe', alt: 'GreenLeaf, HempCo', slogan: 'La nature pure.', logo: 'CV', domains: ['cannavibe.fr','cannavibe.co','canna-vibe.com'] };
     document.getElementById('outName').textContent = data.name;
-    document.getElementById('outAlt').textContent = data.alt;
+    document.getElementById('outAlt').textContent = '';
     document.getElementById('outSlogan').textContent = data.slogan;
     document.getElementById('outLogo').textContent = data.logo;
     renderDomains(data.domains, 'outDomains');
@@ -1127,7 +1127,18 @@ async function regenCell(type) {
       const r = data.result;
       if (type === 'name') {
         document.getElementById('outName').textContent = r.nom || '—';
-        document.getElementById('outAlt').textContent = (r.nom_alternatives || []).join(', ');
+        document.getElementById('outAlt').textContent = '';
+        // Mettre à jour logo et domaine en cohérence
+        const logo = document.getElementById('outLogo');
+        logo.textContent = r.initiales || (r.nom || 'GN').substring(0,2).toUpperCase();
+        logo.style.background = 'linear-gradient(135deg,' + (r.couleur_primaire||'#7c3aed') + ',' + (r.couleur_secondaire||'#ec4899') + ')';
+        renderDomains(r.domaines || [(r.nom||'monsite').toLowerCase().replace(/\s/g,'')+'.fr'], 'outDomains');
+        // Reset validation logo et domaine
+        ['valLogo','valDomains'].forEach(function(id) {
+          const b = document.getElementById(id);
+          if (b) { b.classList.remove('validated'); b.textContent = 'Valider'; b.disabled = false; }
+        });
+        validated.logo = false; validated.domains = false;
       } else if (type === 'slogan') {
         document.getElementById('outSlogan').textContent = r.slogan || '—';
       } else if (type === 'logo') {
