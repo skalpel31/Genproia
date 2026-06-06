@@ -756,7 +756,13 @@ function sendSupport() {
 }
 
 // ── INIT ──
-document.addEventListener('DOMContentLoaded', loadDashboard);
+document.addEventListener('DOMContentLoaded', function() {
+  loadDashboard();
+  // Lire le paramètre page dans l'URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const pageParam = urlParams.get('page');
+  if (pageParam) setTimeout(() => showPage(pageParam, null), 500);
+});
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closePreview(); });
 </script>
 </body>
