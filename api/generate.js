@@ -561,6 +561,7 @@ module.exports = async function handler(req, res) {
         nom: result.nom,
         slogan: result.slogan,
         logo_initiales: result.logo_initiales,
+        logo_svg: svgLogo,
         couleur_primaire: result.couleur_primaire,
         couleur_secondaire: result.couleur_secondaire,
         domaine: result.domaines?.[0],
