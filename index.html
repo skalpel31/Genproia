@@ -102,9 +102,9 @@
 
   /* HERO */
   .hero {
-    min-height: 100vh;
+    min-height: 80vh;
     display: flex; flex-direction: column; align-items: center; justify-content: center;
-    padding: 120px 60px 80px;
+    padding: 120px 60px 40px;
     position: relative; text-align: center;
   }
   .orb {
@@ -202,17 +202,7 @@
   }
   .btn-ghost:hover { color: var(--white); border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
 
-  .hero-stats {
-    display: flex; gap: 56px; margin-top: 64px;
-    animation: fadeIn 1s 0.7s ease both;
-  }
-  .stat { text-align: center; }
-  .stat-value {
-    font-family: 'Inter', sans-serif;
-    font-size: 1.9rem; font-weight: 700;
-    color: var(--white); letter-spacing: -0.04em; line-height: 1;
-  }
-  .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 6px; letter-spacing: 0.01em; }
+
 
   /* DEMO */
   .demo-section {
@@ -433,11 +423,7 @@
   .testi-name { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem; }
   .testi-role { font-size: 0.75rem; color: var(--muted); }
 
-  .cta-section { padding: 100px 60px; display: flex; justify-content: center; }
-  .cta-box { background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(236,72,153,0.08) 100%); border: 1px solid rgba(139,92,246,0.28); border-radius: 28px; padding: 72px 56px; text-align: center; max-width: 780px; width: 100%; position: relative; overflow: hidden; }
-  .cta-box::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 400px; height: 400px; background: radial-gradient(circle, rgba(124,58,237,0.18), transparent 70%); pointer-events: none; }
-  .cta-box h2 { font-family: 'Inter', sans-serif; font-size: clamp(1.7rem, 3vw, 2.5rem); font-weight: 700; margin-bottom: 14px; letter-spacing: -0.03em; }
-  .cta-box p { color: var(--muted); margin-bottom: 34px; max-width: 400px; margin-left: auto; margin-right: auto; font-size: 0.95rem; }
+
 
   footer { border-top: 1px solid var(--border); padding: 36px 60px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 0.8rem; }
   .footer-links { display: flex; gap: 22px; }
@@ -509,11 +495,7 @@
       Voir comment ça marche
     </a>
   </div>
-  <div class="hero-stats">
-    <div class="stat"><div class="stat-value">2 min</div><div class="stat-label">De l'idée au site en ligne</div></div>
-    <div class="stat"><div class="stat-value">12k+</div><div class="stat-label">Projets générés</div></div>
-    <div class="stat"><div class="stat-value">98%</div><div class="stat-label">Taux de satisfaction</div></div>
-  </div>
+
 </section>
 
 <!-- DEMO -->
@@ -688,18 +670,7 @@
   </div>
 </section>
 
-<!-- CTA FINAL -->
-<section class="cta-section">
-  <div class="cta-box">
-    <div class="section-label">Prêt à lancer ?</div>
-    <h2>Ton prochain business<br>commence ici.</h2>
-    <p>Rejoins 12 000+ entrepreneurs qui ont transformé leur idée en business avec Genproia.</p>
-    <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
-      <a href="#" class="btn-primary" onclick="openModal('signup')">Créer mon compte gratuit</a>
-      <a href="#pricing" class="btn-ghost">Voir les tarifs</a>
-    </div>
-  </div>
-</section>
+
 
 <!-- FOOTER -->
 <footer>
@@ -707,7 +678,7 @@
   <div class="footer-links">
     <a href="#">À propos</a><a href="#">Blog</a><a href="#">Confidentialité</a><a href="#">CGU</a><a href="#">Contact</a>
   </div>
-  <div style="font-size:0.78rem">© 2025 Genproia. Tous droits réservés.</div>
+  <div style="font-size:0.78rem">© 2026 Genproia. Tous droits réservés.</div>
 </footer>
 
 <!-- MODAL INSCRIPTION -->
@@ -939,6 +910,14 @@ async function validateSignup() {
   if (result.data && result.data.session) {
     localStorage.setItem('genproia_token', result.data.session.access_token);
     localStorage.setItem('genproia_user', JSON.stringify({ id: result.data.user.id, email: result.data.user.email, nom: name, plan: 'free' }));
+    // Redirection directe si démo validée
+    const redirect = localStorage.getItem('genproia_redirect_after_login');
+    if (redirect) {
+      localStorage.removeItem('genproia_redirect_after_login');
+      closeSignup();
+      window.location.href = redirect;
+      return;
+    }
   }
   goToPlan();
 }
@@ -959,7 +938,9 @@ async function processLogin() {
   localStorage.setItem('genproia_token', result.data.session.access_token);
   localStorage.setItem('genproia_user', JSON.stringify({ id: result.data.user.id, email: result.data.user.email, nom: result.data.user.user_metadata.nom || email.split('@')[0], plan: 'free' }));
   closeLogin();
-  window.location.href = '/genproia-dashboard.html';
+  const redirect = localStorage.getItem('genproia_redirect_after_login');
+  if (redirect) { localStorage.removeItem('genproia_redirect_after_login'); window.location.href = redirect; }
+  else { window.location.href = '/genproia-dashboard.html'; }
 }
 
 function openModal(type, plan) { if (type === 'login') openLogin(); else openSignup(); }
@@ -975,7 +956,32 @@ function closeLogin() { document.getElementById('loginModal').classList.remove('
 function closeModal() { closeSignup(); closeLogin(); }
 function closeModalOutside() {}
 function goToPlan() { showSignupSection('signupPlanSection'); }
-function goToMoteur() { openSignup(); }
+function goToMoteur() {
+  // Sauvegarder les données du projet
+  const domainsRaw = Array.from(document.querySelectorAll('.domain-name')).map(function(el) { return el.textContent.trim(); });
+  const projectData = {
+    nom: document.getElementById('outName').textContent,
+    slogan: document.getElementById('outSlogan').textContent,
+    logoInitiales: document.getElementById('outLogo').textContent,
+    domaines: domainsRaw,
+    domainChoisi: selectedDomain || domainsRaw[0] || '',
+    couleurPrimaire: '#7c3aed',
+    couleurSecondaire: '#ec4899',
+    idee: document.getElementById('ideaInput').value,
+    validated: true
+  };
+  localStorage.setItem('genproia_project', JSON.stringify(projectData));
+
+  // Si déjà connecté → moteur IA directement
+  const token = localStorage.getItem('genproia_token');
+  if (token) {
+    window.location.href = '/genproia-moteur-ia.html?fromdemo=1';
+    return;
+  }
+  // Sinon → modal connexion/inscription avec redirection après
+  localStorage.setItem('genproia_redirect_after_login', '/genproia-moteur-ia.html?fromdemo=1');
+  openSignup();
+}
 
 function selectPlan(el, plan) {
   document.querySelectorAll('.plan-opt').forEach(function(o) { o.classList.remove('selected'); });
