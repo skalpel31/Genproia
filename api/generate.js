@@ -6,282 +6,351 @@ const supabase = createClient(
 );
 
 // ══════════════════════════════════════════════════════════════
-// PROMPTS DÉDIÉS PAR TYPE DE SITE — Genproia v3.0
+// UNSPLASH — Récupérer des images par secteur
 // ══════════════════════════════════════════════════════════════
 
-function getPrompt(type, idee) {
+const UNSPLASH_KEY = process.env.UNSPLASH_ACCESS_KEY;
 
+async function getUnsplashImages(query, count = 6) {
+  if (!UNSPLASH_KEY) return [];
+  try {
+    const res = await fetch(
+      `https://api.unsplash.com/search/photos?query=${encodeURIComponent(query)}&per_page=${count}&orientation=landscape`,
+      { headers: { Authorization: `Client-ID ${UNSPLASH_KEY}` } }
+    );
+    const data = await res.json();
+    return (data.results || []).map(p => ({
+      url: p.urls.regular,
+      small: p.urls.small,
+      thumb: p.urls.thumb,
+      alt: p.alt_description || query,
+      author: p.user.name
+    }));
+  } catch (e) {
+    console.error('Unsplash error:', e);
+    return [];
+  }
+}
+
+// Mots-clés Unsplash par type et secteur
+function getUnsplashQuery(type, idee) {
+  const idea = idee.toLowerCase();
+  if (idea.includes('street') || idea.includes('urban')) return 'streetwear fashion clothing';
+  if (idea.includes('vêtement') || idea.includes('mode') || idea.includes('boutique')) return 'fashion clothing store';
+  if (idea.includes('fit') || idea.includes('sport') || idea.includes('gym')) return 'fitness gym workout';
+  if (idea.includes('food') || idea.includes('repas') || idea.includes('resto')) return 'food restaurant meal';
+  if (idea.includes('immo') || idea.includes('maison') || idea.includes('appart')) return 'luxury real estate house';
+  if (idea.includes('tech') || idea.includes('saas') || idea.includes('app')) return 'technology software office';
+  if (idea.includes('beauté') || idea.includes('cosmétique') || idea.includes('soin')) return 'beauty cosmetics skincare';
+  if (idea.includes('voyage') || idea.includes('tourisme')) return 'travel destination landscape';
+  if (idea.includes('photo') || idea.includes('créat')) return 'creative photography art';
+  if (idea.includes('bio') || idea.includes('nature') || idea.includes('écolo')) return 'organic nature sustainable';
+  if (type === 'ecommerce') return 'products shopping store';
+  if (type === 'saas') return 'technology dashboard software';
+  if (type === 'vitrine') return 'professional business office';
+  if (type === 'landing') return 'modern design minimal';
+  if (type === 'marketplace') return 'marketplace people community';
+  if (type === 'blog') return 'lifestyle writing content';
+  return 'business professional';
+}
+
+// ══════════════════════════════════════════════════════════════
+// SVG LOGO — Généré par Claude
+// ══════════════════════════════════════════════════════════════
+
+async function generateSVGLogo(nom, initiales, couleur1, couleur2) {
+  try {
+    const prompt = `Génère un logo SVG minimaliste et professionnel pour une marque nommée "${nom}" avec les initiales "${initiales}".
+Utilise ces couleurs : primaire ${couleur1}, secondaire ${couleur2}.
+Le logo doit être dans un carré de 100x100px, avec un fond dégradé et les initiales en blanc centré.
+Réponds UNIQUEMENT avec le code SVG complet, rien d'autre.
+Exemple de format attendu : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">...</svg>`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-5',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content[0].text.trim();
+    const svgMatch = text.match(/<svg[\s\S]*<\/svg>/);
+    if (svgMatch) return svgMatch[0];
+  } catch (e) {
+    console.error('SVG logo error:', e);
+  }
+
+  // Fallback SVG simple
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" style="stop-color:${couleur1}"/>
+    <stop offset="100%" style="stop-color:${couleur2}"/>
+  </linearGradient></defs>
+  <rect width="100" height="100" rx="20" fill="url(#g)"/>
+  <text x="50" y="62" font-family="Inter,sans-serif" font-size="${initiales.length > 2 ? '26' : '32'}" font-weight="800" fill="white" text-anchor="middle">${initiales}</text>
+</svg>`;
+}
+
+// ══════════════════════════════════════════════════════════════
+// PROMPTS DÉDIÉS PAR TYPE DE SITE — Genproia v4.0
+// ══════════════════════════════════════════════════════════════
+
+function getPrompt(type, idee, images) {
   const base = `Tu es Genproia, un générateur de business complet propulsé par l'IA.
 L'utilisateur veut créer ce projet : "${idee}"
 Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.`;
 
+  // Instructions images Unsplash à injecter dans les prompts
+  const imgInstructions = images && images.length > 0
+    ? `\n\nIMPORTANT — Images disponibles (Unsplash, libres de droits) à utiliser dans le HTML :
+${images.map((img, i) => `Image ${i+1}: ${img.url} (alt: "${img.alt}")`).join('\n')}
+Utilise ces vraies URLs d'images dans les balises <img> du site. Ne génère PAS de placeholders CSS pour les images — utilise ces vraies photos Unsplash.
+Ajoute l'attribut loading="lazy" sur chaque image.`
+    : `\n\nPas d'images Unsplash disponibles — utilise des dégradés CSS colorés comme placeholder d'images.`;
+
   const siteInstructions = {
 
-    // ─────────────────────────────────────────────
-    // E-COMMERCE
-    // ─────────────────────────────────────────────
     ecommerce: `${base}
 
 Génère un business e-commerce complet et cohérent avec l'idée. Le JSON doit contenir :
-
 {
   "nom": "Nom de marque court, mémorable, original (1-2 mots max)",
   "nom_alternatives": ["Alternative 1", "Alternative 2"],
   "slogan": "Slogan accrocheur en français (5-8 mots)",
   "description": "Description du business en 2 phrases percutantes",
   "type": "ecommerce",
-  "couleur_primaire": "#hexcode — couleur principale cohérente avec le secteur",
-  "couleur_secondaire": "#hexcode — couleur complémentaire harmonieuse",
-  "couleur_accent": "#hexcode — couleur d'accentuation pour les CTA",
-  "logo_initiales": "2-3 lettres pour le logo",
+  "couleur_primaire": "#hexcode",
+  "couleur_secondaire": "#hexcode",
+  "couleur_accent": "#hexcode",
+  "logo_initiales": "2-3 lettres",
   "domaines": ["domaine.fr", "domaine.com", "domaine.shop"],
   "secteur": "secteur d'activité précis",
-  "cible": "cible client précise (âge, profil, besoin)",
+  "cible": "cible client précise",
   "fonctionnalites": ["Catalogue produits filtrable", "Panier et checkout sécurisé", "Paiement Stripe", "Fiches produits détaillées", "Système d'avis clients", "Programme fidélité"],
   "produits": [
-    {"nom": "Nom produit 1 cohérent avec l'idée", "prix": 49, "description": "Description courte du produit", "badge": "Nouveau"},
+    {"nom": "Nom produit 1 cohérent", "prix": 49, "description": "Description courte", "badge": "Nouveau"},
     {"nom": "Nom produit 2", "prix": 79, "description": "Description courte", "badge": "Bestseller"},
     {"nom": "Nom produit 3", "prix": 39, "description": "Description courte", "badge": ""},
     {"nom": "Nom produit 4", "prix": 129, "description": "Description courte", "badge": "Premium"},
     {"nom": "Nom produit 5", "prix": 59, "description": "Description courte", "badge": ""},
     {"nom": "Nom produit 6", "prix": 89, "description": "Description courte", "badge": "Populaire"}
   ],
-  "site_html": "VOIR INSTRUCTIONS CI-DESSOUS"
+  "site_html": "..."
 }
+${imgInstructions}
 
 Pour site_html, génère un vrai site e-commerce HTML complet et professionnel avec :
-- Header fixe avec logo, navigation (Accueil, Boutique, À propos, Contact), icône panier avec badge compteur
-- Hero section avec grande image de fond (dégradé couleur_primaire), titre accrocheur, sous-titre, bouton CTA "Découvrir la boutique"
+- Header fixe avec logo SVG (LOGO_SVG_PLACEHOLDER), navigation, icône panier avec badge compteur
+- Hero section avec image de fond (utilise Image 1 si disponible), titre accrocheur, CTA "Découvrir la boutique"
 - Barre de réassurance (Livraison gratuite | Retours 30j | Paiement sécurisé | Service client 7j/7)
-- Section "Nos produits" avec grille de 6 cards produits, chaque card ayant : image placeholder stylée avec les couleurs de la marque, badge (Nouveau/Bestseller/etc), nom, description, prix, bouton "Ajouter au panier"
-- Section "Pourquoi nous choisir" avec 4 avantages iconiques
-- Section témoignages avec 3 avis clients 5 étoiles cohérents avec le secteur
-- Newsletter avec champ email et bouton
-- Footer complet avec logo, liens, réseaux sociaux, copyright
-- CSS moderne : variables CSS pour les couleurs de la marque, hover effects, transitions fluides, responsive mobile parfait
-- JavaScript : compteur panier fonctionnel, animation au scroll, notification "Ajouté au panier"
-- Minimum 400 lignes de HTML
-- Tout en français, cohérent avec l'identité de la marque`,
+- Section "Nos produits" : grille de 6 cards avec vraies photos Unsplash (Images 1-6), badge, nom, prix, bouton "Ajouter au panier"
+- Section "Pourquoi nous choisir" avec 4 avantages
+- Témoignages 5 étoiles cohérents avec le secteur
+- Newsletter + Footer complet
+- CSS moderne avec variables couleurs, hover effects, responsive
+- JavaScript : panier fonctionnel, notification "Ajouté au panier", animation scroll
+- Minimum 400 lignes, tout en français`,
 
-    // ─────────────────────────────────────────────
-    // SAAS
-    // ─────────────────────────────────────────────
     saas: `${base}
 
-Génère un business SaaS complet et cohérent avec l'idée. Le JSON doit contenir :
-
+Génère un business SaaS complet. Le JSON doit contenir :
 {
-  "nom": "Nom de marque court, mémorable, tech (1-2 mots max)",
-  "nom_alternatives": ["Alternative 1", "Alternative 2"],
-  "slogan": "Slogan qui promet un bénéfice concret (5-8 mots)",
-  "description": "Description du SaaS en 2 phrases avec le problème résolu et la solution",
+  "nom": "Nom tech mémorable (1-2 mots)",
+  "nom_alternatives": ["Alt 1", "Alt 2"],
+  "slogan": "Slogan avec bénéfice concret (5-8 mots)",
+  "description": "Description en 2 phrases",
   "type": "saas",
-  "couleur_primaire": "#hexcode — couleur tech/pro cohérente",
-  "couleur_secondaire": "#hexcode — couleur secondaire",
-  "couleur_accent": "#hexcode — couleur CTA",
+  "couleur_primaire": "#hexcode",
+  "couleur_secondaire": "#hexcode",
+  "couleur_accent": "#hexcode",
   "logo_initiales": "2-3 lettres",
   "domaines": ["domaine.io", "domaine.app", "domaine.fr"],
   "secteur": "secteur SaaS précis",
-  "cible": "cible (type d'entreprise, taille, métier)",
-  "fonctionnalites": ["Feature principale 1", "Feature principale 2", "Feature 3", "Feature 4", "Feature 5", "Feature 6"],
+  "cible": "cible entreprise/métier",
+  "fonctionnalites": ["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5", "Feature 6"],
   "plans": [
-    {"nom": "Starter", "prix": 0, "features": ["Feature 1", "Feature 2", "Feature 3"], "cta": "Commencer gratuitement"},
-    {"nom": "Pro", "prix": 29, "features": ["Tout Starter", "Feature 4", "Feature 5", "Feature 6", "Support prioritaire"], "cta": "Essai 14 jours", "populaire": true},
-    {"nom": "Enterprise", "prix": 99, "features": ["Tout Pro", "API illimitée", "SSO", "SLA garanti", "Account manager"], "cta": "Contacter les ventes"}
+    {"nom": "Starter", "prix": 0, "features": ["F1", "F2", "F3"], "cta": "Commencer gratuitement"},
+    {"nom": "Pro", "prix": 29, "features": ["Tout Starter", "F4", "F5", "Support prioritaire"], "cta": "Essai 14 jours", "populaire": true},
+    {"nom": "Enterprise", "prix": 99, "features": ["Tout Pro", "API", "SSO", "SLA"], "cta": "Contacter"}
   ],
-  "site_html": "VOIR INSTRUCTIONS CI-DESSOUS"
+  "site_html": "..."
 }
+${imgInstructions}
 
-Pour site_html, génère un vrai site SaaS HTML complet et professionnel avec :
-- Header fixe avec logo, navigation (Fonctionnalités, Tarifs, Témoignages, Blog), boutons "Se connecter" et "Essai gratuit" (CTA principal)
-- Hero section impact : titre H1 ultra fort qui résout un problème, sous-titre explicatif, 2 CTA (Essai gratuit 14j + Voir la démo), stats de réassurance (X clients, Y% satisfaction, Z heures économisées/mois)
-- Section "Dashboard preview" : mockup d'interface fictif stylisé en CSS pur (fenêtre de browser avec des éléments UI simulés)
-- Section features : 6 fonctionnalités avec icônes SVG inline, titre et description pour chacune
-- Section "Comment ça marche" : 3 étapes numérotées
-- Section pricing : 3 plans côte à côte avec toggle mensuel/annuel (prix annuel = -20%), plan populaire mis en avant
-- Section témoignages : 3 témoignages avec photo avatar, nom, titre, entreprise, note 5 étoiles
-- FAQ : 5 questions/réponses en accordion JavaScript
-- CTA final : grande section avec titre et bouton "Commencer maintenant"
-- Footer tech avec liens, statut système, conformité RGPD
-- CSS : design SaaS moderne (dark/light selon secteur), animations subtiles, responsive parfait
-- JavaScript : toggle pricing mensuel/annuel, FAQ accordion, compteur animé pour les stats
-- Minimum 450 lignes, tout en français`,
+Pour site_html, génère un vrai site SaaS HTML avec :
+- Header avec logo SVG (LOGO_SVG_PLACEHOLDER), nav, boutons connexion/essai gratuit
+- Hero avec image de fond (Image 1), titre H1 fort, stats réassurance
+- Mockup dashboard CSS simulé
+- 6 features avec icônes SVG inline
+- 3 étapes "Comment ça marche"
+- Pricing 3 plans avec toggle mensuel/annuel (-20%)
+- 3 témoignages avec avatars
+- FAQ accordion (5 questions)
+- CTA final + Footer
+- JavaScript : toggle pricing, FAQ accordion, compteurs animés
+- Minimum 450 lignes`,
 
-    // ─────────────────────────────────────────────
-    // VITRINE
-    // ─────────────────────────────────────────────
     vitrine: `${base}
 
-Génère un site vitrine professionnel complet et cohérent avec l'idée. Le JSON doit contenir :
-
+Génère un site vitrine professionnel. Le JSON doit contenir :
 {
-  "nom": "Nom d'entreprise professionnel et mémorable",
-  "nom_alternatives": ["Alternative 1", "Alternative 2"],
-  "slogan": "Promesse claire et professionnelle (5-8 mots)",
-  "description": "Description de l'entreprise en 2 phrases avec expertise et valeur ajoutée",
+  "nom": "Nom professionnel mémorable",
+  "nom_alternatives": ["Alt 1", "Alt 2"],
+  "slogan": "Promesse professionnelle claire (5-8 mots)",
+  "description": "Description en 2 phrases",
   "type": "vitrine",
-  "couleur_primaire": "#hexcode — couleur sérieuse et professionnelle",
-  "couleur_secondaire": "#hexcode — couleur complémentaire",
-  "couleur_accent": "#hexcode — couleur pour les CTA",
+  "couleur_primaire": "#hexcode",
+  "couleur_secondaire": "#hexcode",
+  "couleur_accent": "#hexcode",
   "logo_initiales": "2-3 lettres",
   "domaines": ["domaine.fr", "domaine.com", "domaine.pro"],
-  "secteur": "secteur d'activité précis",
-  "cible": "clientèle cible précise",
+  "secteur": "secteur précis",
+  "cible": "clientèle cible",
   "fonctionnalites": ["Service 1", "Service 2", "Service 3", "Service 4"],
   "services": [
-    {"nom": "Service 1 cohérent avec l'idée", "description": "Description détaillée du service", "icone": "emoji"},
-    {"nom": "Service 2", "description": "Description détaillée", "icone": "emoji"},
-    {"nom": "Service 3", "description": "Description détaillée", "icone": "emoji"},
-    {"nom": "Service 4", "description": "Description détaillée", "icone": "emoji"}
+    {"nom": "Service 1", "description": "Description détaillée", "icone": "emoji"},
+    {"nom": "Service 2", "description": "Description", "icone": "emoji"},
+    {"nom": "Service 3", "description": "Description", "icone": "emoji"},
+    {"nom": "Service 4", "description": "Description", "icone": "emoji"}
   ],
-  "site_html": "VOIR INSTRUCTIONS CI-DESSOUS"
+  "site_html": "..."
 }
+${imgInstructions}
 
-Pour site_html, génère un vrai site vitrine HTML complet et professionnel avec :
-- Header fixe élégant avec logo, navigation (Accueil, Services, À propos, Réalisations, Contact), bouton "Nous contacter"
-- Hero section : grande image de fond en dégradé, titre accrocheur, sous-titre avec valeur ajoutée, 2 CTA (Nos services + Nous contacter), badges de confiance (Années d'expérience, Clients satisfaits, Projets réalisés)
-- Section services : 4 cards avec icône, titre, description, lien "En savoir plus"
-- Section "À propos" : texte de présentation, liste de valeurs, chiffres clés (année création, clients, projets, satisfaction)
-- Section "Nos réalisations" : 3 projets/cas clients avec description et résultats
-- Section témoignages : 3 avis clients avec nom, entreprise, photo avatar CSS, note étoiles
-- Formulaire de contact complet : nom, email, téléphone, sujet, message, bouton envoyer avec validation JS
-- Footer professionnel : logo, description, services, coordonnées, réseaux sociaux, mentions légales
-- CSS : design corporate élégant, palette couleurs de la marque, typographie professionnelle, responsive parfait
-- JavaScript : formulaire de contact avec validation, animation au scroll, menu mobile hamburger
-- Minimum 400 lignes, tout en français, ton professionnel`,
+Pour site_html, génère un vrai site vitrine HTML avec :
+- Header avec logo SVG (LOGO_SVG_PLACEHOLDER), nav, bouton contact
+- Hero avec image de fond (Image 1 si dispo), titre, 2 CTA, badges confiance
+- 4 cards services avec icônes
+- Section "À propos" avec chiffres clés
+- 3 réalisations/cas clients avec photos (Images 2-4)
+- 3 témoignages avec avatars
+- Formulaire contact complet avec validation JS
+- Footer professionnel
+- Minimum 400 lignes`,
 
-    // ─────────────────────────────────────────────
-    // LANDING PAGE
-    // ─────────────────────────────────────────────
     landing: `${base}
 
-Génère une landing page de conversion ultra-efficace et cohérente avec l'idée. Le JSON doit contenir :
-
+Génère une landing page de conversion. Le JSON doit contenir :
 {
-  "nom": "Nom de marque court et percutant",
-  "nom_alternatives": ["Alternative 1", "Alternative 2"],
-  "slogan": "Promesse de valeur claire et irrésistible (5-8 mots)",
-  "description": "Description en 2 phrases axées sur le bénéfice client",
+  "nom": "Nom percutant",
+  "nom_alternatives": ["Alt 1", "Alt 2"],
+  "slogan": "Promesse irrésistible (5-8 mots)",
+  "description": "Description axée bénéfice client",
   "type": "landing",
-  "couleur_primaire": "#hexcode — couleur forte et engageante",
-  "couleur_secondaire": "#hexcode — couleur secondaire",
-  "couleur_accent": "#hexcode — couleur CTA ultra visible",
+  "couleur_primaire": "#hexcode",
+  "couleur_secondaire": "#hexcode",
+  "couleur_accent": "#hexcode",
   "logo_initiales": "2-3 lettres",
   "domaines": ["domaine.fr", "domaine.com", "domaine.io"],
   "secteur": "secteur précis",
-  "cible": "persona précis avec problème spécifique",
+  "cible": "persona précis avec problème",
   "fonctionnalites": ["Bénéfice 1", "Bénéfice 2", "Bénéfice 3", "Bénéfice 4"],
-  "site_html": "VOIR INSTRUCTIONS CI-DESSOUS"
+  "site_html": "..."
 }
+${imgInstructions}
 
-Pour site_html, génère une landing page HTML de conversion ultra-efficace avec :
-- Header minimal : logo + bouton CTA unique "Commencer maintenant"
-- Hero section ultra-impactant : titre H1 qui parle directement au problème du client, sous-titre avec la promesse de résultat, formulaire d'inscription email inline (email + bouton), preuve sociale sous le formulaire (X personnes déjà inscrites, logos de médias/partenaires)
-- Barre de social proof : logos d'entreprises clientes ou médias (simulés en CSS)
-- Section "Le problème" : 3 points de douleur du client avec icônes ❌
-- Section "La solution" : 3 bénéfices avec icônes ✅, transformation avant/après
-- Section "Comment ça marche" : 3 étapes simples et numérotées
-- Section features : 4 avantages avec icônes et descriptions courtes
-- Section témoignages vidéo : 3 témoignages avec avatar, citation forte, résultat chiffré
-- Section urgence/scarcité : countdown timer JavaScript, places limitées ou offre limitée dans le temps
-- Section pricing simple : 1 seul plan ou 2 maximum, très clair
-- FAQ : 4 objections courantes répondues
-- CTA final massif : grande section colorée avec titre fort et bouton énorme
-- Footer minimaliste : mentions légales, confidentialité
-- CSS : design psychologiquement optimisé pour la conversion, couleurs de la marque, boutons CTA très visibles, responsive parfait
-- JavaScript : countdown timer fonctionnel (72h), formulaire avec validation, scroll smooth
-- Minimum 380 lignes, tout en français, copywriting orienté conversion`,
+Pour site_html, génère une landing page HTML ultra-efficace avec :
+- Header minimal : logo SVG (LOGO_SVG_PLACEHOLDER) + CTA unique
+- Hero ultra-impactant avec image (Image 1), titre H1 problème/solution, formulaire email inline, preuve sociale
+- Section problème (3 points ❌) + solution (3 points ✅)
+- 3 étapes "Comment ça marche" avec images (Images 2-4)
+- 4 features avec icônes
+- 3 témoignages avec résultats chiffrés
+- Countdown timer JavaScript (72h)
+- Pricing simple (1-2 plans)
+- FAQ 4 questions
+- CTA final massif
+- Footer minimal
+- Minimum 380 lignes, copywriting conversion`,
 
-    // ─────────────────────────────────────────────
-    // MARKETPLACE
-    // ─────────────────────────────────────────────
     marketplace: `${base}
 
-Génère une marketplace complète et cohérente avec l'idée. Le JSON doit contenir :
-
+Génère une marketplace complète. Le JSON doit contenir :
 {
-  "nom": "Nom de marketplace mémorable et évocateur",
-  "nom_alternatives": ["Alternative 1", "Alternative 2"],
-  "slogan": "Slogan qui connecte acheteurs et vendeurs (5-8 mots)",
-  "description": "Description en 2 phrases expliquant la valeur pour acheteurs ET vendeurs",
+  "nom": "Nom marketplace mémorable",
+  "nom_alternatives": ["Alt 1", "Alt 2"],
+  "slogan": "Slogan acheteurs-vendeurs (5-8 mots)",
+  "description": "Description valeur acheteurs ET vendeurs",
   "type": "marketplace",
-  "couleur_primaire": "#hexcode — couleur de confiance",
-  "couleur_secondaire": "#hexcode — couleur complémentaire",
-  "couleur_accent": "#hexcode — couleur CTA",
+  "couleur_primaire": "#hexcode",
+  "couleur_secondaire": "#hexcode",
+  "couleur_accent": "#hexcode",
   "logo_initiales": "2-3 lettres",
   "domaines": ["domaine.fr", "domaine.com", "domaine.co"],
-  "secteur": "secteur de la marketplace",
-  "cible": "acheteurs ET vendeurs ciblés",
-  "fonctionnalites": ["Mise en relation", "Paiement sécurisé", "Système d'avis", "Messagerie intégrée", "Tableau de bord vendeur", "Protection acheteur"],
-  "categories": ["Catégorie 1 cohérente", "Catégorie 2", "Catégorie 3", "Catégorie 4", "Catégorie 5", "Catégorie 6"],
+  "secteur": "secteur marketplace",
+  "cible": "acheteurs ET vendeurs",
+  "fonctionnalites": ["Mise en relation", "Paiement sécurisé", "Avis", "Messagerie", "Dashboard vendeur", "Protection acheteur"],
+  "categories": ["Cat 1", "Cat 2", "Cat 3", "Cat 4", "Cat 5", "Cat 6"],
   "vendeurs": [
-    {"nom": "Vendeur/Prestataire 1 cohérent", "note": 4.9, "avis": 127, "badge": "Top vendeur"},
-    {"nom": "Vendeur/Prestataire 2", "note": 4.8, "avis": 89, "badge": "Certifié"},
-    {"nom": "Vendeur/Prestataire 3", "note": 4.7, "avis": 203, "badge": ""}
+    {"nom": "Vendeur 1", "note": 4.9, "avis": 127, "badge": "Top vendeur"},
+    {"nom": "Vendeur 2", "note": 4.8, "avis": 89, "badge": "Certifié"},
+    {"nom": "Vendeur 3", "note": 4.7, "avis": 203, "badge": ""}
   ],
-  "site_html": "VOIR INSTRUCTIONS CI-DESSOUS"
+  "site_html": "..."
 }
+${imgInstructions}
 
-Pour site_html, génère une vraie marketplace HTML complète et professionnelle avec :
-- Header avec logo, barre de recherche centrale avec filtre catégorie, boutons "S'inscrire" et "Proposer mes services/produits"
-- Hero section : titre fort, sous-titre, grande barre de recherche avec exemples de recherches populaires, stats (X vendeurs, Y catégories, Z transactions)
-- Section catégories : grille de 6 catégories avec icône emoji et nombre d'annonces
-- Section "Vendeurs/Prestataires en vedette" : 3 cards avec avatar CSS, nom, spécialité, note étoiles, nombre d'avis, badge, bouton "Voir le profil"
-- Section "Dernières annonces/offres" : 6 cards avec image placeholder stylée, titre, vendeur, prix, note
-- Section "Comment ça marche" : 2 colonnes (Pour les acheteurs | Pour les vendeurs) avec 3 étapes chacune
-- Section confiance : garanties, protection, paiement sécurisé, assurance
-- Section témoignages : 3 avis mixtes acheteurs/vendeurs
-- Newsletter et CTA final pour les vendeurs
-- Footer complet avec catégories, liens utiles, app mobile (si pertinent), réseaux sociaux
-- CSS : design marketplace moderne, système de notation étoiles CSS, cards hover effects, responsive
-- JavaScript : barre de recherche avec suggestions, filtres catégories, pagination simulée
-- Minimum 420 lignes, tout en français`,
+Pour site_html, génère une vraie marketplace HTML avec :
+- Header avec logo SVG (LOGO_SVG_PLACEHOLDER), recherche centrale, boutons inscription/vendre
+- Hero avec image (Image 1), titre, barre recherche, stats
+- 6 catégories avec icônes et compteurs
+- 3 vendeurs en vedette avec avatars, notes, badges
+- 6 annonces avec photos (Images 1-6), prix, notes
+- Comment ça marche (acheteurs | vendeurs)
+- Section confiance et garanties
+- 3 témoignages mixtes
+- Newsletter + CTA vendeurs + Footer
+- Minimum 420 lignes`,
 
-    // ─────────────────────────────────────────────
-    // BLOG / MÉDIA
-    // ─────────────────────────────────────────────
     blog: `${base}
 
-Génère un blog/média professionnel complet et cohérent avec l'idée. Le JSON doit contenir :
-
+Génère un blog/média professionnel. Le JSON doit contenir :
 {
-  "nom": "Nom de publication mémorable et crédible",
-  "nom_alternatives": ["Alternative 1", "Alternative 2"],
+  "nom": "Nom publication crédible",
+  "nom_alternatives": ["Alt 1", "Alt 2"],
   "slogan": "Ligne éditoriale claire (5-8 mots)",
-  "description": "Description en 2 phrases sur la mission éditoriale et la cible",
+  "description": "Mission éditoriale en 2 phrases",
   "type": "blog",
-  "couleur_primaire": "#hexcode — couleur éditoriale forte",
-  "couleur_secondaire": "#hexcode — couleur secondaire",
-  "couleur_accent": "#hexcode — couleur liens et CTA",
+  "couleur_primaire": "#hexcode",
+  "couleur_secondaire": "#hexcode",
+  "couleur_accent": "#hexcode",
   "logo_initiales": "2-3 lettres",
   "domaines": ["domaine.fr", "domaine.com", "domaine.media"],
-  "secteur": "thématique éditoriale précise",
-  "cible": "lectorat cible précis",
-  "fonctionnalites": ["Articles de fond", "Newsletter", "Podcasts/Vidéos", "Communauté membres", "Contenu premium", "Archives searchables"],
-  "categories": ["Catégorie 1 cohérente", "Catégorie 2", "Catégorie 3", "Catégorie 4"],
+  "secteur": "thématique éditoriale",
+  "cible": "lectorat cible",
+  "fonctionnalites": ["Articles de fond", "Newsletter", "Podcasts", "Communauté", "Premium", "Archives"],
+  "categories": ["Cat 1", "Cat 2", "Cat 3", "Cat 4"],
   "articles": [
-    {"titre": "Article 1 accrocheur et cohérent avec le thème", "categorie": "Catégorie", "temps_lecture": "5 min", "date": "Aujourd'hui"},
-    {"titre": "Article 2 très intéressant", "categorie": "Catégorie", "temps_lecture": "8 min", "date": "Hier"},
-    {"titre": "Article 3 pertinent", "categorie": "Catégorie", "temps_lecture": "3 min", "date": "Il y a 2 jours"},
-    {"titre": "Article 4 engageant", "categorie": "Catégorie", "temps_lecture": "6 min", "date": "Il y a 3 jours"},
-    {"titre": "Article 5 viral", "categorie": "Catégorie", "temps_lecture": "4 min", "date": "Il y a 4 jours"},
-    {"titre": "Article 6 complet", "categorie": "Catégorie", "temps_lecture": "10 min", "date": "Il y a 5 jours"}
+    {"titre": "Article 1 accrocheur", "categorie": "Cat", "temps_lecture": "5 min", "date": "Aujourd'hui"},
+    {"titre": "Article 2", "categorie": "Cat", "temps_lecture": "8 min", "date": "Hier"},
+    {"titre": "Article 3", "categorie": "Cat", "temps_lecture": "3 min", "date": "Il y a 2 jours"},
+    {"titre": "Article 4", "categorie": "Cat", "temps_lecture": "6 min", "date": "Il y a 3 jours"},
+    {"titre": "Article 5", "categorie": "Cat", "temps_lecture": "4 min", "date": "Il y a 4 jours"},
+    {"titre": "Article 6", "categorie": "Cat", "temps_lecture": "10 min", "date": "Il y a 5 jours"}
   ],
-  "site_html": "VOIR INSTRUCTIONS CI-DESSOUS"
+  "site_html": "..."
 }
+${imgInstructions}
 
-Pour site_html, génère un vrai blog/média HTML complet et professionnel avec :
-- Header avec logo/titre du média, navigation catégories (4 catégories cohérentes), barre de recherche, bouton "S'abonner"
-- Hero article à la une : grande image de fond dégradé couleur marque, catégorie badge, titre H1 de l'article principal, auteur + date + temps de lecture, bouton "Lire l'article"
-- Barre catégories filtrables : 4 catégories cliquables en JS
-- Grille d'articles : 6 cards avec image placeholder colorée selon catégorie, badge catégorie, titre article, extrait (2 lignes), auteur avec avatar CSS, date et temps de lecture
-- Sidebar droite : articles populaires, newsletter inline, tags cloud
-- Section newsletter grande : titre accrocheur, sous-titre, formulaire email, nombre d'abonnés
-- Section "À propos du média" : mission, équipe (3 personnes avec avatar CSS et bio courte)
-- Footer avec logo, mission, catégories, newsletter, réseaux sociaux
-- CSS : design éditorial élégant, typographie optimisée pour la lecture, cards hover, responsive parfait (mobile first)
-- JavaScript : filtre catégories, recherche live, mode sombre/clair toggle
-- Minimum 400 lignes, tout en français, ton éditorial adapté à la thématique`
+Pour site_html, génère un vrai blog HTML avec :
+- Header avec logo SVG (LOGO_SVG_PLACEHOLDER), nav catégories, recherche, bouton s'abonner
+- Hero article à la une avec image (Image 1), badge catégorie, titre H1, auteur + date
+- Barre catégories filtrables (JS)
+- Grille 6 articles avec photos (Images 1-6), badges, titres, extraits, auteurs
+- Sidebar : articles populaires, newsletter, tags
+- Grande section newsletter
+- À propos du média avec équipe (3 personnes)
+- Footer complet
+- JavaScript : filtres catégories, recherche live, mode sombre/clair
+- Minimum 400 lignes`
   };
 
   return siteInstructions[type] || siteInstructions['ecommerce'];
@@ -310,10 +379,16 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Décris ton idée en au moins 10 caractères.' });
   }
 
-  // Construire le prompt selon le type
-  const prompt = getPrompt(type || 'ecommerce', idee);
-
   try {
+    // 1. Récupérer les images Unsplash en parallèle
+    const unsplashQuery = getUnsplashQuery(type || 'ecommerce', idee);
+    const images = await getUnsplashImages(unsplashQuery, 6);
+    console.log(`Unsplash: ${images.length} images pour "${unsplashQuery}"`);
+
+    // 2. Construire le prompt avec les images
+    const prompt = getPrompt(type || 'ecommerce', idee, images);
+
+    // 3. Appel Claude
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -347,7 +422,25 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: 'Erreur de format IA. Réessaie.' });
     }
 
-    // Sauvegarder dans Supabase
+    // 4. Générer le logo SVG
+    const svgLogo = await generateSVGLogo(
+      result.nom,
+      result.logo_initiales || result.nom.substring(0, 2).toUpperCase(),
+      result.couleur_primaire || '#7c3aed',
+      result.couleur_secondaire || '#ec4899'
+    );
+
+    // 5. Injecter le logo SVG dans le site HTML
+    if (result.site_html && result.site_html.includes('LOGO_SVG_PLACEHOLDER')) {
+      const svgInline = svgLogo.replace(/"/g, "'");
+      result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, svgInline);
+    }
+
+    // 6. Sauvegarder le SVG logo dans le résultat
+    result.logo_svg = svgLogo;
+    result.images_unsplash = images;
+
+    // 7. Sauvegarder dans Supabase
     try {
       const { data: projet, error: projetError } = await supabase.from('projets').insert({
         user_id: user.id,
