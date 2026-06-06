@@ -937,6 +937,14 @@ async function validateSignup() {
   if (result.data && result.data.session) {
     localStorage.setItem('genproia_token', result.data.session.access_token);
     localStorage.setItem('genproia_user', JSON.stringify({ id: result.data.user.id, email: result.data.user.email, nom: name, plan: 'free' }));
+    // Envoyer email de bienvenue
+    try {
+      await fetch('/api/email-welcome', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: result.data.user.email, nom: name })
+      });
+    } catch(e) { console.log('Email welcome error (non-blocking):', e); }
     // Redirection directe si démo validée
     const redirect = localStorage.getItem('genproia_redirect_after_login');
     if (redirect) {
