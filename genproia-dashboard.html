@@ -924,8 +924,7 @@ function addChatMsg(text, role) {
   const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
   const div = document.createElement('div');
   div.className = 'chat-msg ' + role;
-  div.innerHTML = '<div class="chat-msg-bubble">' + text.replace(/
-/g, '<br>') + '</div><div class="chat-msg-time">' + now + '</div>';
+  div.innerHTML = '<div class="chat-msg-bubble">' + text.replace(/\n/g, '<br>') + '</div><div class="chat-msg-time">' + now + '</div>';
   document.getElementById('chatMessages').appendChild(div);
   scrollChat();
 }
