@@ -466,7 +466,7 @@
 
 <!-- NAV -->
 <nav>
-  <a href="/index.html" style="line-height:0;text-decoration:none;"><img src="/logo-genproia.svg" alt="Genproia" style="height:36px;width:auto;min-width:130px;object-fit:contain;"></a>
+  <a href="/index.html" style="line-height:0;text-decoration:none;display:flex;align-items:center;"><img src="/logo-genproia.svg" alt="Genproia" style="width:140px;height:auto;"></a>
   <ul>
     <li><a href="#demo">Démo</a></li>
     <li><a href="#comment">Comment ça marche</a></li>
@@ -781,7 +781,7 @@
         </button>
       </div>
       <div style="text-align:right;margin-top:5px;">
-        <a href="#" style="font-size:0.72rem;color:var(--violet-glow);text-decoration:none;">Mot de passe oublié ?</a>
+        <a href="#" onclick="openForgotPassword();return false;" style="font-size:0.72rem;color:var(--violet-glow);text-decoration:none;">Mot de passe oublié ?</a>
       </div>
     </div>
     <div id="loginError" style="font-size:0.75rem;color:#fca5a5;margin-bottom:10px;display:none;"></div>
@@ -831,6 +831,33 @@
       <div class="modal-title">Bienvenue sur Genproia !</div>
       <div class="modal-sub" style="margin-bottom:22px">Ton compte est actif. Tu peux maintenant générer ton premier business complet.</div>
       <button class="submit-btn" onclick="closeModal()">Commencer à générer →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL MOT DE PASSE OUBLIE -->
+<div class="modal-overlay" id="forgotModal" onclick="if(event.target.id==='forgotModal')closeForgot()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeForgot()">✕</button>
+    <div class="modal-logo">Genpr<span>oia</span></div>
+    <div id="forgotSection">
+      <div class="modal-title">Mot de passe oublié</div>
+      <div class="modal-sub">Entre ton email et on t'envoie un lien pour réinitialiser ton mot de passe.</div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="forgotEmail" class="form-input" placeholder="jean@example.com">
+      </div>
+      <div id="forgotMsg" style="font-size:0.75rem;margin-bottom:10px;display:none;"></div>
+      <button class="submit-btn" id="forgotBtn" onclick="sendResetEmail()">Envoyer le lien →</button>
+      <div style="text-align:center;margin-top:14px;font-size:0.78rem;color:var(--muted)">
+        <a href="#" onclick="closeForgot();openLogin();return false;" style="color:var(--violet-glow);text-decoration:none;">← Retour à la connexion</a>
+      </div>
+    </div>
+    <div id="forgotSuccessSection" style="display:none;text-align:center;">
+      <div style="font-size:2.5rem;margin-bottom:16px">📧</div>
+      <div class="modal-title">Email envoyé !</div>
+      <div class="modal-sub" style="margin-bottom:22px">Vérifie ta boîte mail et clique sur le lien pour réinitialiser ton mot de passe.</div>
+      <button class="submit-btn" onclick="closeForgot()">Fermer</button>
     </div>
   </div>
 </div>
@@ -1119,7 +1146,21 @@ function formatExp(input) {
   if (el) el.textContent = v || 'MM/AA';
 }
 
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeModal(); closeForgot(); } });
+
+function openForgotPassword() { closeLogin(); document.getElementById('forgotModal').classList.add('open'); document.getElementById('forgotSection').style.display='block'; document.getElementById('forgotSuccessSection').style.display='none'; }
+function closeForgot() { document.getElementById('forgotModal').classList.remove('open'); }
+async function sendResetEmail() {
+  const email = document.getElementById('forgotEmail').value.trim();
+  const msg = document.getElementById('forgotMsg');
+  const btn = document.getElementById('forgotBtn');
+  if (!email || !email.includes('@')) { msg.textContent='Entre un email valide'; msg.style.color='#fca5a5'; msg.style.display='block'; return; }
+  btn.disabled = true; btn.textContent = 'Envoi...';
+  const { error } = await _supabase.auth.resetPasswordForEmail(email, { redirectTo: 'https://genproia.com/genproia-dashboard.html' });
+  if (error) { msg.textContent='Erreur : '+error.message; msg.style.color='#fca5a5'; msg.style.display='block'; btn.disabled=false; btn.textContent='Envoyer le lien →'; return; }
+  document.getElementById('forgotSection').style.display='none';
+  document.getElementById('forgotSuccessSection').style.display='block';
+}
 
 // PWA
 let deferredPrompt;
