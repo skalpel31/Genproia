@@ -263,7 +263,7 @@
     <div id="admin-page-overview" class="admin-page active">
       <div class="kpi-row">
         <div class="kpi k1"><div class="kpi-top"><div class="kpi-label">Utilisateurs totaux</div><div class="kpi-icon">👥</div></div><div class="kpi-value" id="kpiUsers">0</div><div class="kpi-delta neutral" id="kpiUsersDelta">Chargement...</div></div>
-        <div class="kpi k2"><div class="kpi-top"><div class="kpi-label">MRR</div><div class="kpi-icon">€</div></div><div class="kpi-value" id="kpiMrr">€0</div><div class="kpi-delta neutral">Revenus mensuels</div></div>
+        <div class="kpi k2"><div class="kpi-top"><div class="kpi-label">MRR</div><div class="kpi-icon">€</div></div><div class="kpi-value" id="kpiMrr">€0</div><div class="kpi-delta neutral">Connecte Stripe</div></div>
         <div class="kpi k3"><div class="kpi-top"><div class="kpi-label">Projets générés</div><div class="kpi-icon">✦</div></div><div class="kpi-value" id="kpiProjets">0</div><div class="kpi-delta neutral" id="kpiProjetsDelta">Chargement...</div></div>
         <div class="kpi k4"><div class="kpi-top"><div class="kpi-label">Churn rate</div><div class="kpi-icon">↘</div></div><div class="kpi-value">N/A</div><div class="kpi-delta neutral">Bientôt disponible</div></div>
         <div class="kpi k5"><div class="kpi-top"><div class="kpi-label">Sites déployés</div><div class="kpi-icon">🌐</div></div><div class="kpi-value" id="kpiSites">0</div><div class="kpi-delta neutral">Bientôt disponible</div></div>
@@ -695,10 +695,10 @@ async function applyGiftPlan() {
   document.getElementById('countPro').textContent = pro;
   document.getElementById('countBusiness').textContent = business;
   document.getElementById('countFree').textContent = free;
-  const mrr = (pro * 29) + (business * 79);
-  document.getElementById('kpiMrr').textContent = '€' + mrr;
-  document.getElementById('mrrPro').textContent = '€' + (pro * 29);
-  document.getElementById('mrrBusiness').textContent = '€' + (business * 79);
+  // MRR = €0 tant que Stripe n'est pas connecté
+  document.getElementById('kpiMrr').textContent = '€0';
+  document.getElementById('mrrPro').textContent = '€0';
+  document.getElementById('mrrBusiness').textContent = '€0';
 
   closeModal();
   showToast('Plan ' + planLabels[selectedGiftPlan] + ' appliqué à ' + currentUser.name + ' ✓', 'success');
@@ -792,7 +792,7 @@ async function loadAdminData() {
       return {
         id: u.id, name: u.nom || u.email, email: u.email,
         plan: u.plan || 'free', projects: u.projets_count || 0,
-        revenue: u.plan === 'pro' ? '€29' : u.plan === 'business' ? '€79' : '€0',
+        revenue: '€0', // Stripe non connecté
         status: u.statut || 'active',
         date: new Date(u.created_at).toLocaleDateString('fr-FR'),
         avatarClass: avatarClasses[i % 6],
@@ -824,10 +824,10 @@ async function loadAdminData() {
     document.getElementById('countBusiness').textContent = business;
     document.getElementById('countFree').textContent = free;
 
-    const mrr = (pro * 29) + (business * 79);
-    document.getElementById('kpiMrr').textContent = '€' + mrr;
-    document.getElementById('mrrPro').textContent = '€' + (pro * 29);
-    document.getElementById('mrrBusiness').textContent = '€' + (business * 79);
+    // MRR = €0 tant que Stripe n'est pas connecté
+    document.getElementById('kpiMrr').textContent = '€0';
+    document.getElementById('mrrPro').textContent = '€0';
+    document.getElementById('mrrBusiness').textContent = '€0';
 
     renderUsers(users);
   }
