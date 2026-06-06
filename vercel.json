@@ -14,6 +14,10 @@
       "dest": "/api/demo.js"
     },
     {
+      "src": "/api/email-welcome",
+      "dest": "/api/email-welcome.js"
+    },
+    {
       "src": "/(.*\\.html)",
       "dest": "/$1"
     },
