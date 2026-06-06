@@ -554,7 +554,7 @@ function goStep2() {
 }
 
 // Aller à l'étape identité (step 3) — utilise les données de la démo si disponibles
-function goStep3() {
+async function goStep3() {
   const idea = document.getElementById('ideaInput').value.toLowerCase();
 
   // Lire les données validées depuis la démo index.html
@@ -574,8 +574,30 @@ function goStep3() {
       domaine: savedProj.domainChoisi || savedProj.domaines?.[0] || 'monsite.fr'
     };
   } else {
-    // Générer des suggestions basées sur l'idée
-    suggestions = genererSuggestions(idea);
+    // Appel API Claude pour générer les suggestions
+    try {
+      const ideaFull = document.getElementById('ideaInput').value.trim();
+      const resp = await fetch('/api/demo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ idee: ideaFull || idea })
+      });
+      const dat = await resp.json();
+      if (dat.success && dat.result) {
+        const r = dat.result;
+        suggestions = {
+          nom: r.nom,
+          nomAlts: r.nom_alternatives || [],
+          slogan: r.slogan,
+          initiales: r.initiales || r.nom.substring(0,2).toUpperCase(),
+          couleur1: r.couleur_primaire || '#7c3aed',
+          couleur2: r.couleur_secondaire || '#ec4899',
+          domaine: (r.domaines || [])[0] || r.nom.toLowerCase().replace(/\s/g,'') + '.fr'
+        };
+      } else { throw new Error('API error'); }
+    } catch(e) {
+      suggestions = genererSuggestions(idea);
+    }
   }
   identData = suggestions;
 
@@ -633,22 +655,46 @@ const regenAlts = {
   domaine: ['voguenest.fr','styleflow.io','primecraft.fr','zenvault.co']
 };
 
-function regenIdent(type) {
-  const idx = Math.floor(Math.random() * 4);
-  if (type === 'nom') {
-    document.getElementById('vNom').textContent = regenAlts.nom[idx][0];
-    document.getElementById('vNomAlt').textContent = 'Alt: ' + regenAlts.nom[idx][1];
-  } else if (type === 'slogan') {
-    document.getElementById('vSlogan').textContent = regenAlts.slogan[idx];
-  } else if (type === 'logo') {
-    document.getElementById('vLogo').textContent = regenAlts.logo[idx];
-  } else if (type === 'domaine') {
-    document.getElementById('vDomaine').textContent = regenAlts.domaine[idx];
-  }
+async function regenIdent(type) {
+  const idee = document.getElementById('ideaInput').value.trim() || 'business en ligne';
   identValidated[type] = false;
   const ids = { nom:'valNom', slogan:'valSlogan', logo:'valLogo', domaine:'valDomaine' };
   const btn = document.getElementById(ids[type]);
   btn.classList.remove('validated');
+  btn.textContent = '...';
+  btn.disabled = true;
+
+  try {
+    const response = await fetch('/api/demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idee })
+    });
+    const data = await response.json();
+    if (data.success && data.result) {
+      const r = data.result;
+      if (type === 'nom') {
+        document.getElementById('vNom').textContent = r.nom || '—';
+        document.getElementById('vNomAlt').textContent = 'Alt: ' + (r.nom_alternatives || []).join(', ');
+      } else if (type === 'slogan') {
+        document.getElementById('vSlogan').textContent = r.slogan || '—';
+      } else if (type === 'logo') {
+        const logo = document.getElementById('vLogo');
+        logo.textContent = r.initiales || (r.nom || 'GN').substring(0,2).toUpperCase();
+        logo.style.background = 'linear-gradient(135deg,' + (r.couleur_primaire||'#7c3aed') + ',' + (r.couleur_secondaire||'#ec4899') + ')';
+      } else if (type === 'domaine') {
+        document.getElementById('vDomaine').textContent = (r.domaines || [])[0] || r.nom.toLowerCase().replace(/\s/g,'') + '.fr';
+      }
+    } else { throw new Error('API error'); }
+  } catch(e) {
+    // Fallback statique
+    const idx = Math.floor(Math.random() * 4);
+    if (type === 'nom') { document.getElementById('vNom').textContent = regenAlts.nom[idx][0]; document.getElementById('vNomAlt').textContent = 'Alt: ' + regenAlts.nom[idx][1]; }
+    else if (type === 'slogan') { document.getElementById('vSlogan').textContent = regenAlts.slogan[idx]; }
+    else if (type === 'logo') { document.getElementById('vLogo').textContent = regenAlts.logo[idx]; }
+    else if (type === 'domaine') { document.getElementById('vDomaine').textContent = regenAlts.domaine[idx]; }
+  }
+
   btn.textContent = '✓ Valider';
   btn.disabled = false;
   checkAllIdentValidated();
