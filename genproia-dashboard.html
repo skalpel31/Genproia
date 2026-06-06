@@ -208,6 +208,11 @@
     <a class="nav-item" onclick="showPage('support',this)"><span class="nav-icon">🆘</span> Support</a>
   </nav>
   <div class="sidebar-bottom">
+    <div id="adminLink" style="display:none;margin-bottom:8px;">
+      <a href="/genproia-superadmin.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:9px;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.22);text-decoration:none;color:var(--pink);font-family:Inter,sans-serif;font-size:0.75rem;font-weight:600;transition:background 0.2s;">
+        <span>⚡</span> Super Admin
+      </a>
+    </div>
     <div class="user-card" onclick="logout()" title="Se déconnecter">
       <div class="user-avatar" id="userAvatar">?</div>
       <div>
@@ -533,6 +538,11 @@ async function loadDashboard() {
   document.getElementById('topGreeting').textContent = 'Bonjour, ' + prenom;
   document.getElementById('userName').textContent = user.nom || user.email;
   document.getElementById('userAvatar').textContent = (user.nom || user.email || 'U').substring(0,2).toUpperCase();
+
+  // Bouton Super Admin si admin
+  if (user.email === 'alex.skp31@gmail.com') {
+    document.getElementById('adminLink').style.display = 'block';
+  }
 
   // Plan réel
   const plan = user.plan || 'free';
