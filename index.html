@@ -39,27 +39,8 @@
     color: var(--white);
     font-family: var(--font-body);
     overflow-x: hidden;
-    cursor: none;
   }
 
-  /* CURSOR */
-  .cursor {
-    width: 12px; height: 12px;
-    background: var(--violet-glow);
-    border-radius: 50%;
-    position: fixed; pointer-events: none; z-index: 9999;
-    transform: translate(-50%,-50%);
-    transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
-    mix-blend-mode: screen;
-  }
-  .cursor-ring {
-    width: 40px; height: 40px;
-    border: 1px solid rgba(139,92,246,0.5);
-    border-radius: 50%;
-    position: fixed; pointer-events: none; z-index: 9998;
-    transform: translate(-50%,-50%);
-    transition: transform 0.15s ease-out, width 0.2s, height 0.2s;
-  }
 
   /* NOISE */
   body::before {
@@ -185,7 +166,6 @@
     max-width: 860px;
     animation: fadeUp 0.9s 0.2s ease both;
   }
-  /* L'effet "italique coloré" — sobre et premium */
   .hero h1 .gradient-text {
     color: var(--violet-glow);
     font-style: italic;
@@ -222,7 +202,6 @@
   }
   .btn-ghost:hover { color: var(--white); border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
 
-  /* STATS — propres, blanc pur, pas de dégradé */
   .hero-stats {
     display: flex; gap: 56px; margin-top: 64px;
     animation: fadeIn 1s 0.7s ease both;
@@ -230,11 +209,8 @@
   .stat { text-align: center; }
   .stat-value {
     font-family: 'Inter', sans-serif;
-    font-size: 1.9rem;
-    font-weight: 700;
-    color: var(--white);
-    letter-spacing: -0.04em;
-    line-height: 1;
+    font-size: 1.9rem; font-weight: 700;
+    color: var(--white); letter-spacing: -0.04em; line-height: 1;
   }
   .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 6px; letter-spacing: 0.01em; }
 
@@ -265,79 +241,57 @@
 
   .idea-box {
     width: 100%; max-width: 800px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 32px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 32px;
     box-shadow: 0 0 60px rgba(124,58,237,0.08), inset 0 1px 0 rgba(255,255,255,0.05);
     position: relative; overflow: hidden;
   }
   .idea-box::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
     background: linear-gradient(90deg, transparent, var(--violet-bright), transparent);
   }
   .idea-input {
-    width: 100%;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(139,92,246,0.2);
-    border-radius: 12px;
-    padding: 16px 20px;
-    color: var(--white);
+    width: 100%; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(139,92,246,0.2); border-radius: 12px;
+    padding: 16px 20px; color: var(--white);
     font-family: var(--font-body); font-size: 0.95rem;
     outline: none; resize: none; height: 140px;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    display: block;
+    transition: border-color 0.2s, box-shadow 0.2s; display: block;
   }
   .idea-input::placeholder { color: var(--muted); }
-  .idea-input:focus {
-    border-color: var(--violet-bright);
-    box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
-  }
+  .idea-input:focus { border-color: var(--violet-bright); box-shadow: 0 0 0 3px rgba(139,92,246,0.12); }
   .idea-examples { display: flex; flex-wrap: wrap; gap: 8px; }
   .example-chip {
-    background: rgba(139,92,246,0.08);
-    border: 1px solid rgba(139,92,246,0.2);
+    background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2);
     border-radius: 100px; padding: 6px 14px;
     font-size: 0.78rem; color: var(--violet-glow);
     cursor: pointer; transition: background 0.2s, border-color 0.2s;
   }
   .example-chip:hover { background: rgba(139,92,246,0.18); border-color: var(--violet-bright); }
-
   .generate-btn {
     background: linear-gradient(135deg, var(--violet), #9333ea);
     color: var(--white); border: none; cursor: pointer;
     padding: 0 28px; border-radius: 12px;
     font-family: 'Inter', sans-serif; font-weight: 600;
-    font-size: 0.9rem; letter-spacing: 0;
-    transition: transform 0.2s, opacity 0.2s;
-    white-space: nowrap;
+    font-size: 0.9rem; transition: transform 0.2s, opacity 0.2s; white-space: nowrap;
   }
   .generate-btn:hover { transform: translateY(-1px); opacity: 0.9; }
 
-  /* OUTPUT */
   .output-preview {
     width: 100%; max-width: 800px; margin-top: 20px; box-sizing: border-box;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden; display: none;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; overflow: hidden; display: none;
   }
   .output-preview.visible { display: block; animation: fadeUp 0.5s ease; }
   .output-bar {
-    background: rgba(139,92,246,0.1);
-    padding: 12px 20px;
+    background: rgba(139,92,246,0.1); padding: 12px 20px;
     display: flex; align-items: center; gap: 8px;
     border-bottom: 1px solid var(--border);
     font-size: 0.78rem; color: var(--violet-glow); font-weight: 500;
     font-family: 'Inter', sans-serif;
   }
   .output-bar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--violet-glow); animation: pulse 1.5s infinite; }
-  .output-grid {
-    width: 100%;
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: 1px; background: var(--border);
-  }
+  .output-grid { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
   .output-cell { background: var(--deep); padding: 16px 14px; min-width: 0; overflow: hidden; box-sizing: border-box; }
   .output-cell-label { font-family: 'Inter', sans-serif; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
   .output-cell-value { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 700; color: var(--white); word-break: break-word; letter-spacing: -0.01em; }
@@ -346,154 +300,64 @@
     width: 44px; height: 44px; border-radius: 10px;
     background: linear-gradient(135deg, var(--violet), var(--pink));
     display: flex; align-items: center; justify-content: center;
-    font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 800;
-    letter-spacing: -0.02em;
+    font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 800; letter-spacing: -0.02em;
   }
   .cell-actions { display: flex; gap: 6px; margin-top: 10px; }
   .cell-regen {
     flex: 1; padding: 8px 4px; border-radius: 8px;
     background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.25);
     color: var(--violet-glow); font-size: 0.7rem; cursor: pointer;
-    font-family: 'Inter', sans-serif; font-weight: 500;
-    transition: all 0.2s; text-align: center;
+    font-family: 'Inter', sans-serif; font-weight: 500; transition: all 0.2s; text-align: center;
   }
   .cell-regen:hover { background: rgba(139,92,246,0.18); border-color: var(--violet-bright); }
   .cell-validate {
     flex: 1; padding: 8px 4px; border-radius: 8px;
     background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.35);
     color: #fcd34d; font-size: 0.7rem; cursor: pointer;
-    font-family: 'Inter', sans-serif; font-weight: 600;
-    transition: all 0.2s; text-align: center;
+    font-family: 'Inter', sans-serif; font-weight: 600; transition: all 0.2s; text-align: center;
   }
   .cell-validate:hover { background: rgba(245,158,11,0.2); }
-  .cell-validate.validated {
-    background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.4);
-    color: #6ee7b7; cursor: default; pointer-events: none;
-  }
+  .cell-validate.validated { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.4); color: #6ee7b7; cursor: default; pointer-events: none; }
   @media (max-width: 600px) {
     .output-grid { grid-template-columns: 1fr; }
     .output-preview { width: 100% !important; max-width: 100% !important; }
     .idea-box { padding: 16px; }
   }
 
-  /* HOW IT WORKS */
   .how-section { padding: 100px 60px; position: relative; }
   .how-section .center { text-align: center; display: flex; flex-direction: column; align-items: center; }
-  .steps {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 20px; margin-top: 56px; max-width: 1100px; margin-left: auto; margin-right: auto;
-  }
-  .step-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 18px; padding: 28px 22px;
-    position: relative; overflow: hidden;
-    transition: transform 0.3s, border-color 0.3s;
-  }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 56px; max-width: 1100px; margin-left: auto; margin-right: auto; }
+  .step-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 28px 22px; position: relative; overflow: hidden; transition: transform 0.3s, border-color 0.3s; }
   .step-card:hover { transform: translateY(-4px); border-color: rgba(139,92,246,0.35); }
-  .step-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--violet), var(--pink));
-    opacity: 0; transition: opacity 0.3s;
-  }
+  .step-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--violet), var(--pink)); opacity: 0; transition: opacity 0.3s; }
   .step-card:hover::before { opacity: 1; }
-
-  /* Numéros sobre — petites caps violet discret */
-  .step-num {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.65rem; font-weight: 700;
-    letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--violet-glow); opacity: 0.55;
-    margin-bottom: 18px;
-  }
-  /* Icône — carré sobre sans emoji */
-  .step-icon {
-    width: 38px; height: 38px; border-radius: 10px;
-    background: rgba(124,58,237,0.1);
-    border: 1px solid rgba(124,58,237,0.22);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1rem; margin-bottom: 16px;
-  }
-  .step-title {
-    font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600;
-    margin-bottom: 8px; letter-spacing: -0.01em;
-  }
+  .step-num { font-family: 'Inter', sans-serif; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--violet-glow); opacity: 0.55; margin-bottom: 18px; }
+  .step-title { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; margin-bottom: 8px; letter-spacing: -0.01em; }
   .step-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.65; }
 
-  /* FEATURES */
   .features-section { padding: 100px 60px; max-width: 1200px; margin: 0 auto; }
   .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 56px; }
-  .feature-big {
-    grid-column: 1; grid-row: 1 / 3;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 22px; padding: 36px;
-    position: relative; overflow: hidden;
-  }
-  .feature-big::after {
-    content: ''; position: absolute; bottom: -60px; right: -60px;
-    width: 200px; height: 200px;
-    background: radial-gradient(circle, rgba(124,58,237,0.2), transparent 70%);
-  }
-  .feature-small {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 22px; padding: 28px;
-    transition: transform 0.3s, border-color 0.3s;
-  }
+  .feature-big { grid-column: 1; grid-row: 1 / 3; background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 36px; position: relative; overflow: hidden; }
+  .feature-big::after { content: ''; position: absolute; bottom: -60px; right: -60px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(124,58,237,0.2), transparent 70%); }
+  .feature-small { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 28px; transition: transform 0.3s, border-color 0.3s; }
   .feature-small:hover { transform: translateY(-3px); border-color: rgba(139,92,246,0.28); }
-  .feature-icon-wrap {
-    width: 46px; height: 46px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.3rem; margin-bottom: 18px;
-  }
+  .feature-icon-wrap { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 18px; }
   .feat-violet { background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.25); }
   .feat-pink { background: rgba(236,72,153,0.1); border: 1px solid rgba(236,72,153,0.22); }
   .feat-cyan { background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.22); }
-  .feature-title {
-    font-family: 'Inter', sans-serif; font-size: 1.05rem; font-weight: 600;
-    margin-bottom: 10px; letter-spacing: -0.02em;
-  }
+  .feature-title { font-family: 'Inter', sans-serif; font-size: 1.05rem; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.02em; }
   .feature-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.7; }
   .feature-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
-  .ftag {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.7rem; padding: 4px 10px; border-radius: 100px;
-    background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.18);
-    color: var(--violet-glow);
-  }
+  .ftag { font-family: 'Inter', sans-serif; font-size: 0.7rem; padding: 4px 10px; border-radius: 100px; background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.18); color: var(--violet-glow); }
 
-  /* PRICING */
   .pricing-section { padding: 100px 60px; display: flex; flex-direction: column; align-items: center; }
-  .pricing-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 20px; margin-top: 56px; width: 100%; max-width: 1000px;
-  }
-  .pricing-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 22px; padding: 32px 26px;
-    position: relative; transition: transform 0.3s;
-  }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 56px; width: 100%; max-width: 1000px; }
+  .pricing-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 32px 26px; position: relative; transition: transform 0.3s; }
   .pricing-card:hover { transform: translateY(-4px); }
-  .pricing-card.featured {
-    border-color: rgba(139,92,246,0.45);
-    background: linear-gradient(160deg, rgba(124,58,237,0.1) 0%, var(--card) 60%);
-  }
-  .pricing-popular {
-    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-    background: linear-gradient(135deg, var(--violet), var(--pink));
-    color: var(--white); font-family: 'Inter', sans-serif;
-    font-size: 0.68rem; font-weight: 700;
-    padding: 4px 14px; border-radius: 100px; letter-spacing: 0.06em;
-    text-transform: uppercase; white-space: nowrap;
-  }
-  .pricing-plan {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--muted); font-weight: 600; margin-bottom: 14px;
-  }
-  .pricing-price {
-    font-family: 'Inter', sans-serif; font-size: 2.8rem; font-weight: 800;
-    line-height: 1; margin-bottom: 4px; letter-spacing: -0.04em; color: var(--white);
-  }
+  .pricing-card.featured { border-color: rgba(139,92,246,0.45); background: linear-gradient(160deg, rgba(124,58,237,0.1) 0%, var(--card) 60%); }
+  .pricing-popular { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, var(--violet), var(--pink)); color: var(--white); font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 700; padding: 4px 14px; border-radius: 100px; letter-spacing: 0.06em; text-transform: uppercase; white-space: nowrap; }
+  .pricing-plan { font-family: 'Inter', sans-serif; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 600; margin-bottom: 14px; }
+  .pricing-price { font-family: 'Inter', sans-serif; font-size: 2.8rem; font-weight: 800; line-height: 1; margin-bottom: 4px; letter-spacing: -0.04em; color: var(--white); }
   .pricing-price sup { font-size: 1.1rem; vertical-align: top; margin-top: 10px; font-weight: 600; }
   .pricing-period { color: var(--muted); font-size: 0.82rem; margin-bottom: 22px; }
   .pricing-divider { height: 1px; background: var(--border); margin-bottom: 22px; }
@@ -501,185 +365,87 @@
   .pricing-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; color: var(--muted); }
   .pricing-features li .check { color: var(--violet-glow); font-size: 0.78rem; margin-top: 2px; flex-shrink: 0; }
   .pricing-features li.active { color: var(--white); }
-  .pricing-btn {
-    width: 100%; padding: 13px;
-    border-radius: 10px; border: none; cursor: pointer;
-    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.875rem;
-    transition: transform 0.2s, opacity 0.2s;
-  }
-  .pricing-btn-ghost {
-    background: transparent; color: var(--white);
-    border: 1px solid var(--border);
-  }
+  .pricing-btn { width: 100%; padding: 13px; border-radius: 10px; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.875rem; transition: transform 0.2s, opacity 0.2s; }
+  .pricing-btn-ghost { background: transparent; color: var(--white); border: 1px solid var(--border); }
   .pricing-btn-ghost:hover { border-color: rgba(139,92,246,0.4); background: rgba(139,92,246,0.08); }
-  .pricing-btn-primary {
-    background: linear-gradient(135deg, var(--violet), #9333ea);
-    color: var(--white);
-  }
+  .pricing-btn-primary { background: linear-gradient(135deg, var(--violet), #9333ea); color: var(--white); }
   .pricing-btn-primary:hover { transform: translateY(-1px); opacity: 0.9; }
 
   /* MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; z-index: 1000;
-    background: rgba(5,3,15,0.85); backdrop-filter: blur(8px);
-    display: none; align-items: center; justify-content: center;
-  }
+  .modal-overlay { position: fixed; inset: 0; z-index: 1000; background: rgba(5,3,15,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; animation: fadeIn 0.3s ease; }
-  .modal {
-    background: var(--card); border: 1px solid rgba(139,92,246,0.28);
-    border-radius: 22px; width: 100%; max-width: 480px; padding: 36px;
-    position: relative; animation: fadeUp 0.3s ease;
-  }
-  .modal::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--violet), var(--pink));
-    border-radius: 22px 22px 0 0;
-  }
-  .modal-close {
-    position: absolute; top: 16px; right: 16px;
-    width: 30px; height: 30px; border-radius: 50%;
-    background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-    color: var(--muted); cursor: pointer; font-size: 0.9rem;
-    display: flex; align-items: center; justify-content: center;
-    transition: background 0.2s, color 0.2s;
-  }
+  .modal { background: var(--card); border: 1px solid rgba(139,92,246,0.28); border-radius: 22px; width: 100%; max-width: 480px; padding: 36px; position: relative; animation: fadeUp 0.3s ease; }
+  .modal::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--violet), var(--pink)); border-radius: 22px 22px 0 0; }
+  .modal-close { position: absolute; top: 16px; right: 16px; width: 30px; height: 30px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; }
   .modal-close:hover { background: rgba(255,255,255,0.1); color: var(--white); }
-  .modal-logo {
-    font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700;
-    color: var(--white); letter-spacing: -0.03em; margin-bottom: 8px;
-  }
+  .modal-logo { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--white); letter-spacing: -0.03em; margin-bottom: 8px; }
   .modal-logo span { color: var(--violet-bright); }
-  .modal-title {
-    font-family: 'Inter', sans-serif; font-size: 1.4rem; font-weight: 700;
-    margin-bottom: 6px; letter-spacing: -0.03em;
-  }
+  .modal-title { font-family: 'Inter', sans-serif; font-size: 1.4rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.03em; }
   .modal-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 26px; }
-
   .tabs { display: flex; gap: 0; margin-bottom: 22px; background: rgba(255,255,255,0.04); border-radius: 10px; padding: 4px; }
-  .tab-btn {
-    flex: 1; padding: 9px; border-radius: 8px; border: none; cursor: pointer;
-    font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500;
-    background: transparent; color: var(--muted); transition: all 0.2s;
-  }
+  .tab-btn { flex: 1; padding: 9px; border-radius: 8px; border: none; cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500; background: transparent; color: var(--muted); transition: all 0.2s; }
   .tab-btn.active { background: var(--violet); color: var(--white); }
   .tab-content { display: none; }
   .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
-
   .form-group { margin-bottom: 14px; }
   .form-label { display: block; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.02em; }
-  .form-input {
-    width: 100%; background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(139,92,246,0.2); border-radius: 10px;
-    padding: 11px 14px; color: var(--white);
-    font-family: var(--font-body); font-size: 0.88rem;
-    outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+
+  /* BOUTON ŒIL — SEULE NOUVEAUTÉ */
+  .pw-wrap { position: relative; }
+  .pw-wrap .form-input { padding-right: 42px; }
+  .pw-toggle {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; cursor: pointer; color: var(--muted);
+    display: flex; align-items: center; padding: 4px; transition: color 0.2s;
   }
+  .pw-toggle:hover { color: var(--violet-glow); }
+  .pw-toggle svg { width: 16px; height: 16px; }
+
+  .form-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(139,92,246,0.2); border-radius: 10px; padding: 11px 14px; color: var(--white); font-family: var(--font-body); font-size: 0.88rem; outline: none; transition: border-color 0.2s, box-shadow 0.2s; }
   .form-input:focus { border-color: var(--violet-bright); box-shadow: 0 0 0 3px rgba(139,92,246,0.1); }
   .form-input::placeholder { color: rgba(139,127,168,0.45); }
-
   .plan-select { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 18px; }
-  .plan-opt {
-    border: 1px solid var(--border); border-radius: 10px;
-    padding: 12px 8px; text-align: center; cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-  }
+  .plan-opt { border: 1px solid var(--border); border-radius: 10px; padding: 12px 8px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
   .plan-opt:hover, .plan-opt.selected { border-color: var(--violet-bright); background: rgba(139,92,246,0.1); }
   .plan-opt-name { font-family: 'Inter', sans-serif; font-size: 0.72rem; color: var(--muted); margin-bottom: 4px; }
   .plan-opt-price { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--white); letter-spacing: -0.02em; }
-
   .payment-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .card-visual {
-    background: linear-gradient(135deg, #1e1040, #2d1b69);
-    border: 1px solid rgba(139,92,246,0.25);
-    border-radius: 14px; padding: 20px; margin-bottom: 18px;
-    position: relative; overflow: hidden;
-  }
-  .card-visual::before {
-    content: ''; position: absolute; top: -30px; right: -30px;
-    width: 100px; height: 100px;
-    background: radial-gradient(circle, rgba(139,92,246,0.3), transparent);
-  }
+  .card-visual { background: linear-gradient(135deg, #1e1040, #2d1b69); border: 1px solid rgba(139,92,246,0.25); border-radius: 14px; padding: 20px; margin-bottom: 18px; position: relative; overflow: hidden; }
+  .card-visual::before { content: ''; position: absolute; top: -30px; right: -30px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(139,92,246,0.3), transparent); }
   .card-chip { width: 30px; height: 22px; background: linear-gradient(135deg, #fbbf24, #f59e0b); border-radius: 4px; margin-bottom: 16px; }
   .card-number-display { font-family: 'Inter', sans-serif; font-size: 0.88rem; letter-spacing: 0.14em; color: rgba(255,255,255,0.65); margin-bottom: 12px; }
   .card-info { display: flex; justify-content: space-between; font-size: 0.7rem; color: rgba(255,255,255,0.45); font-family: 'Inter', sans-serif; }
-
-  .submit-btn {
-    width: 100%; padding: 13px;
-    background: linear-gradient(135deg, var(--violet), #9333ea);
-    color: var(--white); border: none; cursor: pointer;
-    border-radius: 10px;
-    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem;
-    transition: transform 0.2s, opacity 0.2s;
-    margin-top: 6px;
-  }
+  .submit-btn { width: 100%; padding: 13px; background: linear-gradient(135deg, var(--violet), #9333ea); color: var(--white); border: none; cursor: pointer; border-radius: 10px; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.9rem; transition: transform 0.2s, opacity 0.2s; margin-top: 6px; }
   .submit-btn:hover { transform: translateY(-1px); opacity: 0.9; }
+  .secure-badge { display: flex; align-items: center; gap: 6px; justify-content: center; margin-top: 12px; font-size: 0.72rem; color: var(--muted); }
 
-  .secure-badge {
-    display: flex; align-items: center; gap: 6px;
-    justify-content: center; margin-top: 12px;
-    font-size: 0.72rem; color: var(--muted);
-  }
-
-  /* TESTIMONIALS */
   .testimonials-section { padding: 80px 60px; display: flex; flex-direction: column; align-items: center; }
   .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 52px; max-width: 1100px; }
-  .testi-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 18px; padding: 26px;
-    transition: transform 0.3s;
-  }
+  .testi-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 26px; transition: transform 0.3s; }
   .testi-card:hover { transform: translateY(-3px); }
   .testi-stars { color: #fbbf24; font-size: 0.85rem; margin-bottom: 12px; letter-spacing: 2px; }
   .testi-text { font-size: 0.85rem; color: var(--muted); line-height: 1.7; margin-bottom: 18px; font-style: italic; }
   .testi-author { display: flex; align-items: center; gap: 12px; }
-  .testi-avatar {
-    width: 38px; height: 38px; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--white);
-  }
+  .testi-avatar { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.85rem; color: var(--white); }
   .av1 { background: linear-gradient(135deg, #7c3aed, #ec4899); }
   .av2 { background: linear-gradient(135deg, #06b6d4, #7c3aed); }
   .av3 { background: linear-gradient(135deg, #ec4899, #f59e0b); }
   .testi-name { font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.85rem; }
   .testi-role { font-size: 0.75rem; color: var(--muted); }
 
-  /* CTA FINAL */
   .cta-section { padding: 100px 60px; display: flex; justify-content: center; }
-  .cta-box {
-    background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(236,72,153,0.08) 100%);
-    border: 1px solid rgba(139,92,246,0.28);
-    border-radius: 28px; padding: 72px 56px;
-    text-align: center; max-width: 780px; width: 100%;
-    position: relative; overflow: hidden;
-  }
-  .cta-box::before {
-    content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
-    width: 400px; height: 400px;
-    background: radial-gradient(circle, rgba(124,58,237,0.18), transparent 70%);
-    pointer-events: none;
-  }
-  .cta-box h2 {
-    font-family: 'Inter', sans-serif;
-    font-size: clamp(1.7rem, 3vw, 2.5rem);
-    font-weight: 700; margin-bottom: 14px; letter-spacing: -0.03em;
-  }
+  .cta-box { background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(236,72,153,0.08) 100%); border: 1px solid rgba(139,92,246,0.28); border-radius: 28px; padding: 72px 56px; text-align: center; max-width: 780px; width: 100%; position: relative; overflow: hidden; }
+  .cta-box::before { content: ''; position: absolute; top: -100px; left: 50%; transform: translateX(-50%); width: 400px; height: 400px; background: radial-gradient(circle, rgba(124,58,237,0.18), transparent 70%); pointer-events: none; }
+  .cta-box h2 { font-family: 'Inter', sans-serif; font-size: clamp(1.7rem, 3vw, 2.5rem); font-weight: 700; margin-bottom: 14px; letter-spacing: -0.03em; }
   .cta-box p { color: var(--muted); margin-bottom: 34px; max-width: 400px; margin-left: auto; margin-right: auto; font-size: 0.95rem; }
 
-  /* FOOTER */
-  footer {
-    border-top: 1px solid var(--border);
-    padding: 36px 60px;
-    display: flex; align-items: center; justify-content: space-between;
-    color: var(--muted); font-size: 0.8rem;
-  }
+  footer { border-top: 1px solid var(--border); padding: 36px 60px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 0.8rem; }
   .footer-links { display: flex; gap: 22px; }
   .footer-links a { color: var(--muted); text-decoration: none; transition: color 0.2s; }
   .footer-links a:hover { color: var(--white); }
 
-  /* RESPONSIVE */
   @media (max-width: 768px) {
-    nav { padding: 16px 24px; }
-    nav ul { display: none; }
+    nav { padding: 16px 24px; } nav ul { display: none; }
     .hero { padding: 100px 24px 60px; }
     .demo-section, .how-section, .features-section, .pricing-section, .testimonials-section, .cta-section { padding: 60px 24px; }
     .steps { grid-template-columns: 1fr 1fr; }
@@ -692,22 +458,13 @@
     .cta-box { padding: 44px 22px; }
   }
 
-  /* LOADING */
   .loading-dots { display: flex; gap: 4px; align-items: center; justify-content: center; }
-  .loading-dots span {
-    width: 6px; height: 6px; background: var(--white); border-radius: 50%;
-    animation: bounce 1.2s infinite;
-  }
+  .loading-dots span { width: 6px; height: 6px; background: var(--white); border-radius: 50%; animation: bounce 1.2s infinite; }
   .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
   .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-8px)} }
 
-  .domain-option {
-    display: flex; align-items: center; gap: 8px;
-    padding: 8px 10px; border-radius: 8px; cursor: pointer;
-    border: 1px solid transparent; margin-bottom: 5px;
-    transition: all 0.2s; background: rgba(255,255,255,0.02);
-  }
+  .domain-option { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; cursor: pointer; border: 1px solid transparent; margin-bottom: 5px; transition: all 0.2s; background: rgba(255,255,255,0.02); }
   .domain-option:hover { background: rgba(139,92,246,0.08); border-color: rgba(139,92,246,0.2); }
   .domain-option.selected { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.32); }
   .domain-dot { color: var(--muted); font-size: 0.5rem; flex-shrink: 0; }
@@ -715,19 +472,11 @@
   .domain-name { font-family: 'Inter', sans-serif; font-size: 0.82rem; font-weight: 600; flex: 1; color: var(--white); }
   .domain-check { font-size: 0.7rem; color: var(--green); opacity: 0; transition: opacity 0.2s; flex-shrink: 0; }
   .domain-option.selected .domain-check { opacity: 1; }
-  .domain-verify {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.63rem; color: var(--cyan); text-decoration: none;
-    opacity: 0; transition: opacity 0.2s; white-space: nowrap; flex-shrink: 0;
-    border: 1px solid rgba(6,182,212,0.28); padding: 2px 7px; border-radius: 4px;
-  }
+  .domain-verify { font-family: 'Inter', sans-serif; font-size: 0.63rem; color: var(--cyan); text-decoration: none; opacity: 0; transition: opacity 0.2s; white-space: nowrap; flex-shrink: 0; border: 1px solid rgba(6,182,212,0.28); padding: 2px 7px; border-radius: 4px; }
   .domain-option:hover .domain-verify, .domain-option.selected .domain-verify { opacity: 1; }
 </style>
 </head>
 <body>
-
-<div class="cursor" id="cursor"></div>
-<div class="cursor-ring" id="cursorRing"></div>
 
 <!-- NAV -->
 <nav>
@@ -750,22 +499,9 @@
   <div class="orb orb-2"></div>
   <div class="orb orb-3"></div>
   <div class="grid-bg"></div>
-
-  <div class="badge">
-    <div class="badge-dot"></div>
-    Genproia v2.3
-  </div>
-
-  <h1>
-    Ton idée devient un<br>
-    <span class="gradient-text">business complet</span><br>
-    en quelques minutes
-  </h1>
-
-  <p>
-    Entre ton idée de projet. Genproia génère automatiquement ton nom de marque, ton logo, ton slogan, ton nom de domaine et ton site web complet — prêt à encaisser des paiements.
-  </p>
-
+  <div class="badge"><div class="badge-dot"></div>Genproia v2.3</div>
+  <h1>Ton idée devient un<br><span class="gradient-text">business complet</span><br>en quelques minutes</h1>
+  <p>Entre ton idée de projet. Genproia génère automatiquement ton nom de marque, ton logo, ton slogan, ton nom de domaine et ton site web complet — prêt à encaisser des paiements.</p>
   <div class="hero-ctas">
     <a href="#demo" class="btn-primary">Générer mon projet gratuitement</a>
     <a href="#comment" class="btn-ghost">
@@ -773,20 +509,10 @@
       Voir comment ça marche
     </a>
   </div>
-
   <div class="hero-stats">
-    <div class="stat">
-      <div class="stat-value">2 min</div>
-      <div class="stat-label">De l'idée au site en ligne</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">12k+</div>
-      <div class="stat-label">Projets générés</div>
-    </div>
-    <div class="stat">
-      <div class="stat-value">98%</div>
-      <div class="stat-label">Taux de satisfaction</div>
-    </div>
+    <div class="stat"><div class="stat-value">2 min</div><div class="stat-label">De l'idée au site en ligne</div></div>
+    <div class="stat"><div class="stat-value">12k+</div><div class="stat-label">Projets générés</div></div>
+    <div class="stat"><div class="stat-value">98%</div><div class="stat-label">Taux de satisfaction</div></div>
   </div>
 </section>
 
@@ -795,7 +521,6 @@
   <div class="section-label">Essaie maintenant</div>
   <h2 class="section-title">Décris ton idée, on fait le reste</h2>
   <p class="section-sub">Pas besoin d'être développeur ni designer. Juste ton idée.</p>
-
   <div class="idea-box">
     <textarea class="idea-input" id="ideaInput" placeholder="Ex : Je veux ouvrir une boutique e-commerce pour vendre des vêtements streetwear..."></textarea>
     <div class="idea-examples" style="margin-top:12px;">
@@ -809,12 +534,8 @@
       <span id="genBtnText">Générer</span>
     </button>
   </div>
-
   <div class="output-preview" id="outputPreview">
-    <div class="output-bar">
-      <div class="dot"></div>
-      Génération terminée — Valide ou régénère chaque élément
-    </div>
+    <div class="output-bar"><div class="dot"></div>Génération terminée — Valide ou régénère chaque élément</div>
     <div class="output-grid">
       <div class="output-cell">
         <div class="output-cell-label">Nom de marque</div>
@@ -854,9 +575,7 @@
       Valide chaque élément ci-dessus pour débloquer la génération du site
     </div>
     <div id="buildSiteBar" style="display:none; padding:18px 24px; border-top:1px solid var(--border); gap:12px; align-items:center; flex-wrap:wrap;">
-      <button class="btn-primary" style="font-size:0.875rem; padding:11px 26px;" onclick="goToMoteur()">
-        Générer mon site complet
-      </button>
+      <button class="btn-primary" style="font-size:0.875rem; padding:11px 26px;" onclick="goToMoteur()">Générer mon site complet</button>
       <span style="font-size:0.78rem; color:var(--muted);">Tous les éléments validés · Ton site va être construit !</span>
     </div>
   </div>
@@ -869,28 +588,11 @@
     <h2 class="section-title">Du concept au business en 4 étapes</h2>
     <p class="section-sub">Genproia automatise tout ce qui prend normalement des semaines et des milliers d'euros.</p>
   </div>
-
   <div class="steps">
-    <div class="step-card">
-      <div class="step-num">01</div>
-      <div class="step-title">Décris ton idée</div>
-      <div class="step-desc">En une phrase ou un paragraphe. Notre IA comprend le contexte, le marché et tes besoins.</div>
-    </div>
-    <div class="step-card">
-      <div class="step-num">02</div>
-      <div class="step-title">Génération de l'identité</div>
-      <div class="step-desc">Nom, logo, couleurs, slogan, nom de domaine. Tout généré en cohérence avec ton marché.</div>
-    </div>
-    <div class="step-card">
-      <div class="step-num">03</div>
-      <div class="step-title">Site web complet</div>
-      <div class="step-desc">E-commerce, SaaS, vitrine. Avec paiement Stripe, super admin, dashboard — selon ton besoin.</div>
-    </div>
-    <div class="step-card">
-      <div class="step-num">04</div>
-      <div class="step-title">En ligne en 1 clic</div>
-      <div class="step-desc">Déploiement automatique. Ton site est live, sécurisé et prêt à recevoir tes premiers clients.</div>
-    </div>
+    <div class="step-card"><div class="step-num">01</div><div class="step-title">Décris ton idée</div><div class="step-desc">En une phrase ou un paragraphe. Notre IA comprend le contexte, le marché et tes besoins.</div></div>
+    <div class="step-card"><div class="step-num">02</div><div class="step-title">Génération de l'identité</div><div class="step-desc">Nom, logo, couleurs, slogan, nom de domaine. Tout généré en cohérence avec ton marché.</div></div>
+    <div class="step-card"><div class="step-num">03</div><div class="step-title">Site web complet</div><div class="step-desc">E-commerce, SaaS, vitrine. Avec paiement Stripe, super admin, dashboard — selon ton besoin.</div></div>
+    <div class="step-card"><div class="step-num">04</div><div class="step-title">En ligne en 1 clic</div><div class="step-desc">Déploiement automatique. Ton site est live, sécurisé et prêt à recevoir tes premiers clients.</div></div>
   </div>
 </section>
 
@@ -901,43 +603,19 @@
     <h2 class="section-title">Tout ce dont tu as besoin, d'un coup</h2>
     <p class="section-sub" style="margin-bottom:0">Du nom de domaine jusqu'au système de paiement.</p>
   </div>
-
   <div class="features-grid">
     <div class="feature-big">
       <div class="feature-icon-wrap feat-violet">🏪</div>
       <div class="feature-title">E-commerce complet</div>
-      <div class="feature-desc">
-        Pour une boutique en ligne, Genproia génère un site e-commerce optimisé avec catalogue produits, panier, paiement Stripe, gestion des commandes et tableau de bord admin — le tout dans le style de ta marque.
-      </div>
+      <div class="feature-desc">Pour une boutique en ligne, Genproia génère un site e-commerce optimisé avec catalogue produits, panier, paiement Stripe, gestion des commandes et tableau de bord admin — le tout dans le style de ta marque.</div>
       <div class="feature-tags">
-        <span class="ftag">Stripe intégré</span>
-        <span class="ftag">Catalogue produits</span>
-        <span class="ftag">Gestion stocks</span>
-        <span class="ftag">Dashboard admin</span>
-        <span class="ftag">Responsive</span>
-        <span class="ftag">SEO optimisé</span>
+        <span class="ftag">Stripe intégré</span><span class="ftag">Catalogue produits</span><span class="ftag">Gestion stocks</span><span class="ftag">Dashboard admin</span><span class="ftag">Responsive</span><span class="ftag">SEO optimisé</span>
       </div>
     </div>
-    <div class="feature-small">
-      <div class="feature-icon-wrap feat-pink">🤝</div>
-      <div class="feature-title">SaaS clé en main</div>
-      <div class="feature-desc">Authentification, abonnements, super admin, tableau de bord utilisateur. Tout ce qu'il faut pour lancer ton SaaS.</div>
-    </div>
-    <div class="feature-small">
-      <div class="feature-icon-wrap feat-cyan">🎨</div>
-      <div class="feature-title">Identité de marque complète</div>
-      <div class="feature-desc">Nom, logo SVG, palette couleurs, typographie — générés en cohérence avec ton secteur.</div>
-    </div>
-    <div class="feature-small">
-      <div class="feature-icon-wrap feat-violet">🌐</div>
-      <div class="feature-title">Nom de domaine & hébergement</div>
-      <div class="feature-desc">Suggestions de domaines disponibles et déploiement automatique. Ton site en ligne en moins de 2 minutes.</div>
-    </div>
-    <div class="feature-small">
-      <div class="feature-icon-wrap feat-pink">📊</div>
-      <div class="feature-title">Analytics & Dashboard</div>
-      <div class="feature-desc">Tableau de bord complet avec ventes, visiteurs, conversions. Tout visible en temps réel.</div>
-    </div>
+    <div class="feature-small"><div class="feature-icon-wrap feat-pink">🤝</div><div class="feature-title">SaaS clé en main</div><div class="feature-desc">Authentification, abonnements, super admin, tableau de bord utilisateur. Tout ce qu'il faut pour lancer ton SaaS.</div></div>
+    <div class="feature-small"><div class="feature-icon-wrap feat-cyan">🎨</div><div class="feature-title">Identité de marque complète</div><div class="feature-desc">Nom, logo SVG, palette couleurs, typographie — générés en cohérence avec ton secteur.</div></div>
+    <div class="feature-small"><div class="feature-icon-wrap feat-violet">🌐</div><div class="feature-title">Nom de domaine & hébergement</div><div class="feature-desc">Suggestions de domaines disponibles et déploiement automatique. Ton site en ligne en moins de 2 minutes.</div></div>
+    <div class="feature-small"><div class="feature-icon-wrap feat-pink">📊</div><div class="feature-title">Analytics & Dashboard</div><div class="feature-desc">Tableau de bord complet avec ventes, visiteurs, conversions. Tout visible en temps réel.</div></div>
   </div>
 </section>
 
@@ -946,13 +624,9 @@
   <div class="section-label">Tarifs simples</div>
   <h2 class="section-title">Pas de surprise, pas de frais cachés</h2>
   <p class="section-sub">Commence gratuitement, évolue quand tu es prêt.</p>
-
   <div class="pricing-grid">
     <div class="pricing-card">
-      <div class="pricing-plan">Starter</div>
-      <div class="pricing-price"><sup>€</sup>0</div>
-      <div class="pricing-period">Pour toujours</div>
-      <div class="pricing-divider"></div>
+      <div class="pricing-plan">Starter</div><div class="pricing-price"><sup>€</sup>0</div><div class="pricing-period">Pour toujours</div><div class="pricing-divider"></div>
       <ul class="pricing-features">
         <li class="active"><span class="check">✓</span> 1 projet généré</li>
         <li class="active"><span class="check">✓</span> Nom + Slogan + Logo</li>
@@ -963,13 +637,9 @@
       </ul>
       <button class="pricing-btn pricing-btn-ghost" onclick="openModal('signup')">Commencer gratuitement</button>
     </div>
-
     <div class="pricing-card featured">
       <div class="pricing-popular">Le plus populaire</div>
-      <div class="pricing-plan">Pro</div>
-      <div class="pricing-price"><sup>€</sup>29</div>
-      <div class="pricing-period">par mois · sans engagement</div>
-      <div class="pricing-divider"></div>
+      <div class="pricing-plan">Pro</div><div class="pricing-price"><sup>€</sup>29</div><div class="pricing-period">par mois · sans engagement</div><div class="pricing-divider"></div>
       <ul class="pricing-features">
         <li class="active"><span class="check">✓</span> Projets illimités</li>
         <li class="active"><span class="check">✓</span> Site web complet généré</li>
@@ -980,12 +650,8 @@
       </ul>
       <button class="pricing-btn pricing-btn-primary" onclick="openModal('pay', 'pro')">Choisir Pro →</button>
     </div>
-
     <div class="pricing-card">
-      <div class="pricing-plan">Business</div>
-      <div class="pricing-price"><sup>€</sup>79</div>
-      <div class="pricing-period">par mois · sans engagement</div>
-      <div class="pricing-divider"></div>
+      <div class="pricing-plan">Business</div><div class="pricing-price"><sup>€</sup>79</div><div class="pricing-period">par mois · sans engagement</div><div class="pricing-divider"></div>
       <ul class="pricing-features">
         <li class="active"><span class="check">✓</span> Tout du plan Pro</li>
         <li class="active"><span class="check">✓</span> Marque blanche</li>
@@ -1003,40 +669,21 @@
 <section class="testimonials-section">
   <div class="section-label">Ils ont lancé avec Genproia</div>
   <h2 class="section-title">Des entrepreneurs comme toi</h2>
-
   <div class="testi-grid">
     <div class="testi-card">
       <div class="testi-stars">★★★★★</div>
       <div class="testi-text">"J'ai lancé ma boutique de streetwear en 3 heures chrono. Le site généré était tellement beau que mes clients pensaient que j'avais une agence derrière moi."</div>
-      <div class="testi-author">
-        <div class="testi-avatar av1">K</div>
-        <div>
-          <div class="testi-name">Karim B.</div>
-          <div class="testi-role">Fondateur · UrbanThreads</div>
-        </div>
-      </div>
+      <div class="testi-author"><div class="testi-avatar av1">K</div><div><div class="testi-name">Karim B.</div><div class="testi-role">Fondateur · UrbanThreads</div></div></div>
     </div>
     <div class="testi-card">
       <div class="testi-stars">★★★★★</div>
       <div class="testi-text">"Mon SaaS de fidélité était en ligne en 2 jours. L'authentification, les abonnements Stripe, le super admin — tout était déjà là. Incroyable."</div>
-      <div class="testi-author">
-        <div class="testi-avatar av2">S</div>
-        <div>
-          <div class="testi-name">Sofia M.</div>
-          <div class="testi-role">CEO · LoyaltyPulse</div>
-        </div>
-      </div>
+      <div class="testi-author"><div class="testi-avatar av2">S</div><div><div class="testi-name">Sofia M.</div><div class="testi-role">CEO · LoyaltyPulse</div></div></div>
     </div>
     <div class="testi-card">
       <div class="testi-stars">★★★★★</div>
       <div class="testi-text">"Le nom de marque, le logo, les couleurs — tout était parfait au premier essai. J'aurais payé une agence 5000€ pour ça. Genproia me l'a donné en 2 minutes."</div>
-      <div class="testi-author">
-        <div class="testi-avatar av3">T</div>
-        <div>
-          <div class="testi-name">Thomas L.</div>
-          <div class="testi-role">Entrepreneur · RestauConnect</div>
-        </div>
-      </div>
+      <div class="testi-author"><div class="testi-avatar av3">T</div><div><div class="testi-name">Thomas L.</div><div class="testi-role">Entrepreneur · RestauConnect</div></div></div>
     </div>
   </div>
 </section>
@@ -1058,11 +705,7 @@
 <footer>
   <div class="logo" style="font-size:1.05rem">Genpr<span>oia</span></div>
   <div class="footer-links">
-    <a href="#">À propos</a>
-    <a href="#">Blog</a>
-    <a href="#">Confidentialité</a>
-    <a href="#">CGU</a>
-    <a href="#">Contact</a>
+    <a href="#">À propos</a><a href="#">Blog</a><a href="#">Confidentialité</a><a href="#">CGU</a><a href="#">Contact</a>
   </div>
   <div style="font-size:0.78rem">© 2025 Genproia. Tous droits réservés.</div>
 </footer>
@@ -1085,11 +728,21 @@
       </div>
       <div class="form-group">
         <label class="form-label">Mot de passe</label>
-        <input type="password" id="signupPassword" class="form-input" placeholder="8 caractères minimum" oninput="checkPasswordMatch()">
+        <div class="pw-wrap">
+          <input type="password" id="signupPassword" class="form-input" placeholder="8 caractères minimum" oninput="checkPasswordMatch()">
+          <button type="button" class="pw-toggle" onclick="togglePw('signupPassword',this)" tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
       </div>
       <div class="form-group">
         <label class="form-label">Confirmer le mot de passe</label>
-        <input type="password" id="signupPasswordConfirm" class="form-input" placeholder="Répète ton mot de passe" oninput="checkPasswordMatch()">
+        <div class="pw-wrap">
+          <input type="password" id="signupPasswordConfirm" class="form-input" placeholder="Répète ton mot de passe" oninput="checkPasswordMatch()">
+          <button type="button" class="pw-toggle" onclick="togglePw('signupPasswordConfirm',this)" tabindex="-1">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </button>
+        </div>
         <div id="passwordMatchMsg" style="font-size:0.72rem;margin-top:5px;display:none;"></div>
       </div>
       <button class="submit-btn" id="signupSubmitBtn" onclick="validateSignup()">Continuer →</button>
@@ -1102,18 +755,9 @@
       <div class="modal-title">Choisis ton plan</div>
       <div class="modal-sub">Change ou annule à tout moment, sans engagement.</div>
       <div class="plan-select">
-        <div class="plan-opt" onclick="selectPlan(this, 'starter')">
-          <div class="plan-opt-name">Starter</div>
-          <div class="plan-opt-price">Gratuit</div>
-        </div>
-        <div class="plan-opt selected" onclick="selectPlan(this, 'pro')">
-          <div class="plan-opt-name">Pro</div>
-          <div class="plan-opt-price">€29/mo</div>
-        </div>
-        <div class="plan-opt" onclick="selectPlan(this, 'business')">
-          <div class="plan-opt-name">Business</div>
-          <div class="plan-opt-price">€79/mo</div>
-        </div>
+        <div class="plan-opt" onclick="selectPlan(this, 'starter')"><div class="plan-opt-name">Starter</div><div class="plan-opt-price">Gratuit</div></div>
+        <div class="plan-opt selected" onclick="selectPlan(this, 'pro')"><div class="plan-opt-name">Pro</div><div class="plan-opt-price">€29/mo</div></div>
+        <div class="plan-opt" onclick="selectPlan(this, 'business')"><div class="plan-opt-name">Business</div><div class="plan-opt-price">€79/mo</div></div>
       </div>
       <button class="submit-btn" id="planBtn" onclick="goToPayment()">Continuer vers le paiement →</button>
       <div class="secure-badge">✓ Essai 14 jours · Satisfait ou remboursé</div>
@@ -1131,14 +775,8 @@
         <input type="text" class="form-input" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCard(this)">
       </div>
       <div class="payment-row">
-        <div class="form-group">
-          <label class="form-label">Expiration</label>
-          <input type="text" class="form-input" placeholder="MM/AA" maxlength="5" oninput="formatExp(this)">
-        </div>
-        <div class="form-group">
-          <label class="form-label">CVV</label>
-          <input type="text" class="form-input" placeholder="•••" maxlength="3">
-        </div>
+        <div class="form-group"><label class="form-label">Expiration</label><input type="text" class="form-input" placeholder="MM/AA" maxlength="5" oninput="formatExp(this)"></div>
+        <div class="form-group"><label class="form-label">CVV</label><input type="text" class="form-input" placeholder="•••" maxlength="3"></div>
       </div>
       <button class="submit-btn" onclick="processPayment()"><span id="payBtnText">Payer 29€ et lancer mon projet →</span></button>
       <div class="secure-badge">🔒 Paiement chiffré · Powered by Stripe</div>
@@ -1165,7 +803,12 @@
     </div>
     <div class="form-group">
       <label class="form-label">Mot de passe</label>
-      <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
+      <div class="pw-wrap">
+        <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
+        <button type="button" class="pw-toggle" onclick="togglePw('loginPassword',this)" tabindex="-1">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+      </div>
       <div style="text-align:right;margin-top:5px;">
         <a href="#" style="font-size:0.72rem;color:var(--violet-glow);text-decoration:none;">Mot de passe oublié ?</a>
       </div>
@@ -1222,12 +865,7 @@
 </div>
 
 <!-- PWA BANNER -->
-<div id="installBanner" style="
-  position: fixed; bottom: 0; left: 0; right: 0; z-index: 500;
-  background: var(--card); border-top: 1px solid var(--border);
-  padding: 14px 20px; display: flex; align-items: center; gap: 12px;
-  transform: translateY(120px); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
-">
+<div id="installBanner" style="position:fixed;bottom:0;left:0;right:0;z-index:500;background:var(--card);border-top:1px solid var(--border);padding:14px 20px;display:flex;align-items:center;gap:12px;transform:translateY(120px);transition:transform 0.4s cubic-bezier(0.4,0,0.2,1);">
   <div style="flex:1;">
     <div style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:600;">Installe Genproia sur ton téléphone</div>
     <div style="font-size:0.72rem;color:var(--muted);margin-top:2px;">Accès rapide depuis ton écran d'accueil</div>
@@ -1241,13 +879,22 @@ const SUPABASE_URL = 'https://fgkqobuomiuirwtvuuxz.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_D8jaWGbn4G72A7eq8oBtqg_acLVSLBX';
 const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// CURSOR
-const cursor = document.getElementById('cursor');
-const cursorRing = document.getElementById('cursorRing');
-document.addEventListener('mousemove', function(e) {
-  cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
-  cursorRing.style.left = e.clientX + 'px'; cursorRing.style.top = e.clientY + 'px';
-});
+// BOUTON ŒIL — afficher/masquer mot de passe
+const eyeOpen = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+const eyeClosed = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+function togglePw(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (input.type === 'password') {
+    input.type = 'text';
+    btn.innerHTML = eyeClosed;
+    btn.style.color = 'var(--violet-glow)';
+  } else {
+    input.type = 'password';
+    btn.innerHTML = eyeOpen;
+    btn.style.color = '';
+  }
+}
 
 function checkPasswordMatch() {
   const p1 = document.getElementById('signupPassword').value;
