@@ -18,6 +18,10 @@
       "dest": "/api/email-welcome.js"
     },
     {
+      "src": "/api/chat-dashboard",
+      "dest": "/api/chat-dashboard.js"
+    },
+    {
       "src": "/(.*\\.html)",
       "dest": "/$1"
     },
