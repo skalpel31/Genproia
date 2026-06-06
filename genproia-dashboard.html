@@ -570,9 +570,12 @@ function showPage(page, el) {
   document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   if (el) {
-    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    // Ne retirer active QUE sur les items qui utilisent showPage (pas Générer ni Assistant IA)
+    document.querySelectorAll('.nav-item[onclick*="showPage"]').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
   }
+  // Fermer le chat si on navigue ailleurs
+  if (chatOpen) toggleChat();
   // Remplir les pages dynamiques
   if (page === 'projets') renderAllProjets();
   if (page === 'identite') renderIdentite();
