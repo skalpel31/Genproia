@@ -7,81 +7,29 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --void: #03020a;
-    --deep: #07050f;
-    --surface: #0c0919;
-    --card: #100d22;
-    --card2: #141028;
-    --border: rgba(139,92,246,0.13);
-    --border2: rgba(255,255,255,0.05);
-    --violet: #7c3aed;
-    --violet-bright: #8b5cf6;
-    --violet-glow: #a78bfa;
-    --pink: #ec4899;
-    --cyan: #06b6d4;
-    --green: #10b981;
-    --yellow: #f59e0b;
-    --red: #ef4444;
-    --orange: #f97316;
-    --white: #ede9ff;
-    --muted: #6b5f90;
-    --muted2: #3d3460;
-    --font-display: 'Inter', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-    --sidebar-w: 240px;
+    --void: #03020a; --deep: #07050f; --surface: #0c0919; --card: #100d22; --card2: #141028;
+    --border: rgba(139,92,246,0.13); --border2: rgba(255,255,255,0.05);
+    --violet: #7c3aed; --violet-bright: #8b5cf6; --violet-glow: #a78bfa;
+    --pink: #ec4899; --cyan: #06b6d4; --green: #10b981; --yellow: #f59e0b;
+    --red: #ef4444; --orange: #f97316; --white: #ede9ff; --muted: #6b5f90; --muted2: #3d3460;
+    --font-display: 'Inter', sans-serif; --font-body: 'DM Sans', sans-serif; --sidebar-w: 240px;
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
   body { background: var(--void); color: var(--white); font-family: var(--font-body); display: flex; }
+  body::after { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E"); }
 
-  body::after {
-    content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
-  }
-
-  /* SIDEBAR */
-  .sidebar {
-    width: var(--sidebar-w); min-height: 100vh;
-    background: var(--deep); border-right: 1px solid var(--border);
-    display: flex; flex-direction: column;
-    position: fixed; left: 0; top: 0; bottom: 0; z-index: 50;
-  }
+  .sidebar { width: var(--sidebar-w); min-height: 100vh; background: var(--deep); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; z-index: 50; }
   .sb-top { padding: 20px 16px; border-bottom: 1px solid var(--border); }
   .sb-logo { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
-  .sb-logo-icon {
-    width: 30px; height: 30px; border-radius: 8px;
-    background: linear-gradient(135deg, var(--violet), var(--pink));
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 800;
-  }
-  .sb-logo-text {
-    font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700;
-    color: var(--white); letter-spacing: -0.03em;
-  }
+  .sb-logo-icon { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, var(--violet), var(--pink)); display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 800; }
+  .sb-logo-text { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--white); letter-spacing: -0.03em; }
   .sb-logo-text span { color: var(--violet-bright); }
-  .sb-admin-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.22);
-    border-radius: 5px; padding: 3px 9px;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.62rem; font-weight: 700; color: #fca5a5;
-    letter-spacing: 0.08em; text-transform: uppercase;
-  }
+  .sb-admin-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.22); border-radius: 5px; padding: 3px 9px; font-family: 'Inter', sans-serif; font-size: 0.62rem; font-weight: 700; color: #fca5a5; letter-spacing: 0.08em; text-transform: uppercase; }
   .sb-admin-badge::before { content: '●'; color: var(--red); font-size: 0.48rem; }
-
   .sb-nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 1px; overflow-y: auto; }
-  .sb-section {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--muted2); padding: 9px 10px 4px; font-weight: 600;
-  }
-  .sb-item {
-    display: flex; align-items: center; gap: 9px;
-    padding: 8px 10px; border-radius: 8px;
-    cursor: pointer; color: var(--muted);
-    font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500;
-    transition: background 0.2s, color 0.2s; position: relative; border: 1px solid transparent;
-  }
+  .sb-section { font-family: 'Inter', sans-serif; font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); padding: 9px 10px 4px; font-weight: 600; }
+  .sb-item { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; cursor: pointer; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; transition: background 0.2s, color 0.2s; position: relative; border: 1px solid transparent; }
   .sb-item:hover { background: rgba(139,92,246,0.07); color: var(--white); }
   .sb-item.active { background: rgba(139,92,246,0.12); color: var(--white); border-color: rgba(139,92,246,0.18); }
   .sb-item.active::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 3px; height: 52%; background: var(--violet-bright); border-radius: 0 3px 3px 0; }
@@ -90,35 +38,17 @@
   .sb-badge.red { background: rgba(239,68,68,0.18); color: #fca5a5; }
   .sb-badge.violet { background: rgba(124,58,237,0.18); color: var(--violet-glow); }
   .sb-badge.green { background: rgba(16,185,129,0.13); color: #6ee7b7; }
-
   .sb-bottom { padding: 10px 8px; border-top: 1px solid var(--border); }
-  .sb-admin-user {
-    display: flex; align-items: center; gap: 9px;
-    padding: 8px 10px; border-radius: 8px;
-    background: rgba(255,255,255,0.03); border: 1px solid var(--border2);
-    cursor: pointer; transition: background 0.2s;
-  }
-  .sb-admin-user:hover { background: rgba(255,255,255,0.06); }
-  .admin-avatar {
-    width: 28px; height: 28px; border-radius: 50%;
-    background: linear-gradient(135deg, #ef4444, #f97316);
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'Inter', sans-serif; font-weight: 800; font-size: 0.72rem; flex-shrink: 0;
-  }
+  .sb-links { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+  .sb-link { display: flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 7px; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.75rem; text-decoration: none; transition: background 0.2s, color 0.2s; cursor: pointer; }
+  .sb-link:hover { background: rgba(255,255,255,0.04); color: var(--white); }
+  .sb-admin-user { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); }
+  .admin-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #ef4444, #f97316); display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 0.72rem; flex-shrink: 0; }
   .admin-name { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; }
   .admin-role { font-family: 'Inter', sans-serif; font-size: 0.62rem; color: #fca5a5; }
 
-  /* MAIN */
   .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto; }
-
-  /* TOPBAR */
-  .topbar {
-    position: sticky; top: 0; z-index: 40;
-    background: rgba(3,2,10,0.85); backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    height: 56px; padding: 0 26px;
-    display: flex; align-items: center; justify-content: space-between;
-  }
+  .topbar { position: sticky; top: 0; z-index: 40; background: rgba(3,2,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); height: 56px; padding: 0 26px; display: flex; align-items: center; justify-content: space-between; }
   .tb-breadcrumb { display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--muted); }
   .tb-breadcrumb strong { color: var(--white); font-weight: 600; }
   .tb-breadcrumb span { color: var(--muted2); }
@@ -129,45 +59,26 @@
   .sys-status { display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--green); background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.18); padding: 4px 11px; border-radius: 100px; }
   .sys-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
-
-  /* CONTENT */
   .content { padding: 22px 26px; }
 
-  /* KPI ROW */
+  /* KPI */
   .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
-  .kpi {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 13px; padding: 15px 16px;
-    position: relative; overflow: hidden;
-    transition: transform 0.25s, border-color 0.25s;
-    animation: fadeUp 0.4s ease both;
-  }
-  .kpi:nth-child(1){animation-delay:.04s} .kpi:nth-child(2){animation-delay:.08s}
-  .kpi:nth-child(3){animation-delay:.12s} .kpi:nth-child(4){animation-delay:.16s}
-  .kpi:nth-child(5){animation-delay:.2s}
+  .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 13px; padding: 15px 16px; position: relative; overflow: hidden; transition: transform 0.25s, border-color 0.25s; animation: fadeUp 0.4s ease both; }
   .kpi:hover { transform: translateY(-2px); border-color: rgba(139,92,246,0.25); }
   .kpi::after { content: ''; position: absolute; bottom: -15px; right: -15px; width: 55px; height: 55px; border-radius: 50%; opacity: 0.15; pointer-events: none; }
-  .kpi.k1::after{background:var(--violet)} .kpi.k2::after{background:var(--green)}
-  .kpi.k3::after{background:var(--cyan)} .kpi.k4::after{background:var(--pink)} .kpi.k5::after{background:var(--yellow)}
+  .kpi.k1::after{background:var(--violet)} .kpi.k2::after{background:var(--green)} .kpi.k3::after{background:var(--cyan)} .kpi.k4::after{background:var(--pink)} .kpi.k5::after{background:var(--yellow)}
   .kpi-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 7px; }
-  .kpi-label { font-family: 'Inter', sans-serif; font-size: 0.67rem; color: var(--muted); font-weight: 500; letter-spacing: 0.01em; }
+  .kpi-label { font-family: 'Inter', sans-serif; font-size: 0.67rem; color: var(--muted); font-weight: 500; }
   .kpi-icon { font-size: 0.95rem; }
-
-  /* Valeurs KPI — Inter, blanc pur */
-  .kpi-value {
-    font-family: 'Inter', sans-serif; font-size: 1.65rem; font-weight: 700;
-    line-height: 1; margin-bottom: 4px; color: var(--white); letter-spacing: -0.04em;
-  }
+  .kpi-value { font-family: 'Inter', sans-serif; font-size: 1.65rem; font-weight: 700; line-height: 1; margin-bottom: 4px; color: var(--white); letter-spacing: -0.04em; }
   .kpi-delta { font-family: 'Inter', sans-serif; font-size: 0.65rem; display: flex; align-items: center; gap: 3px; }
   .kpi-delta.up{color:var(--green)} .kpi-delta.down{color:var(--red)} .kpi-delta.neutral{color:var(--muted)}
-
   @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
-  /* GRIDS */
+  /* PANELS */
   .grid-main { display: grid; grid-template-columns: 1fr 310px; gap: 16px; margin-bottom: 16px; }
   .grid-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
   .panel { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; animation: fadeUp 0.4s 0.2s ease both; }
   .panel-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
   .panel-title { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 7px; letter-spacing: -0.01em; }
@@ -183,9 +94,7 @@
   .users-table tr:hover td { background: rgba(255,255,255,0.013); }
   .user-cell { display: flex; align-items: center; gap: 8px; }
   .u-avatar { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.67rem; flex-shrink: 0; }
-  .ua1{background:linear-gradient(135deg,#7c3aed,#ec4899)} .ua2{background:linear-gradient(135deg,#06b6d4,#7c3aed)}
-  .ua3{background:linear-gradient(135deg,#10b981,#06b6d4)} .ua4{background:linear-gradient(135deg,#f59e0b,#ef4444)}
-  .ua5{background:linear-gradient(135deg,#ec4899,#f97316)} .ua6{background:linear-gradient(135deg,#8b5cf6,#10b981)}
+  .ua1{background:linear-gradient(135deg,#7c3aed,#ec4899)} .ua2{background:linear-gradient(135deg,#06b6d4,#7c3aed)} .ua3{background:linear-gradient(135deg,#10b981,#06b6d4)} .ua4{background:linear-gradient(135deg,#f59e0b,#ef4444)} .ua5{background:linear-gradient(135deg,#ec4899,#f97316)} .ua6{background:linear-gradient(135deg,#8b5cf6,#10b981)}
   .u-name { font-family: 'Inter', sans-serif; font-weight: 500; }
   .u-email { font-size: 0.7rem; color: var(--muted); }
   .plan-tag { font-family: 'Inter', sans-serif; font-size: 0.62rem; padding: 2px 7px; border-radius: 100px; font-weight: 600; }
@@ -193,23 +102,9 @@
   .pt-business { background: rgba(245,158,11,0.1); color: #fcd34d; border: 1px solid rgba(245,158,11,0.18); }
   .pt-free { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border2); }
   .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-  .sd-active{background:var(--green);box-shadow:0 0 4px rgba(16,185,129,0.4)}
-  .sd-inactive{background:var(--muted2)} .sd-suspended{background:var(--red)}
+  .sd-active{background:var(--green);box-shadow:0 0 4px rgba(16,185,129,0.4)} .sd-inactive{background:var(--muted2)} .sd-suspended{background:var(--red)}
   .action-btn { font-family: 'Inter', sans-serif; background: transparent; border: 1px solid var(--border2); color: var(--muted); padding: 3px 9px; border-radius: 5px; font-size: 0.67rem; cursor: pointer; transition: all 0.2s; }
   .action-btn:hover { border-color: var(--violet-bright); color: var(--violet-glow); background: rgba(139,92,246,0.07); }
-
-  /* ALERTS */
-  .alerts-list { padding: 7px 9px; display: flex; flex-direction: column; gap: 5px; }
-  .alert-item { display: flex; align-items: flex-start; gap: 9px; padding: 9px 11px; border-radius: 9px; border: 1px solid transparent; cursor: pointer; transition: background 0.2s; }
-  .alert-item:hover { background: rgba(255,255,255,0.02); }
-  .alert-item.critical{background:rgba(239,68,68,0.05);border-color:rgba(239,68,68,0.13)}
-  .alert-item.warning{background:rgba(245,158,11,0.04);border-color:rgba(245,158,11,0.1)}
-  .alert-item.info{background:rgba(6,182,212,0.04);border-color:rgba(6,182,212,0.08)}
-  .alert-icon { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; flex-shrink: 0; }
-  .ai-red{background:rgba(239,68,68,0.13)} .ai-yellow{background:rgba(245,158,11,0.1)} .ai-cyan{background:rgba(6,182,212,0.09)}
-  .alert-text { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; margin-bottom: 2px; }
-  .alert-sub { font-size: 0.66rem; color: var(--muted); }
-  .alert-time { font-family: 'Inter', sans-serif; font-size: 0.62rem; color: var(--muted2); margin-left: auto; white-space: nowrap; padding-top: 1px; }
 
   /* QUICK ACTIONS */
   .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding: 12px; }
@@ -219,33 +114,36 @@
   .qa-label { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; }
   .qa-desc { font-size: 0.62rem; color: var(--muted); margin-top: 2px; }
 
-  /* PLANS BREAKDOWN */
+  /* PLANS */
   .plans-breakdown { padding: 14px 18px; }
   .plan-row { display: flex; align-items: center; gap: 11px; margin-bottom: 11px; }
   .plan-row:last-child { margin-bottom: 0; }
   .plan-row-label { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; width: 76px; flex-shrink: 0; }
   .plan-bar-wrap { flex: 1; height: 4px; background: rgba(255,255,255,0.04); border-radius: 100px; overflow: hidden; }
   .plan-bar-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
-  .pbf-violet{background:linear-gradient(90deg,var(--violet),var(--violet-glow))}
-  .pbf-yellow{background:linear-gradient(90deg,#d97706,var(--yellow))}
-  .pbf-gray{background:rgba(255,255,255,0.12)}
+  .pbf-violet{background:linear-gradient(90deg,var(--violet),var(--violet-glow))} .pbf-yellow{background:linear-gradient(90deg,#d97706,var(--yellow))} .pbf-gray{background:rgba(255,255,255,0.12)}
   .plan-row-count { font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--muted); width: 55px; text-align: right; flex-shrink: 0; }
 
   /* GEN LOG */
-  .gen-log { padding: 0; }
   .gen-log-item { display: flex; align-items: center; gap: 11px; padding: 8px 18px; border-bottom: 1px solid rgba(255,255,255,0.022); transition: background 0.2s; }
   .gen-log-item:last-child { border-bottom: none; }
   .gen-log-item:hover { background: rgba(255,255,255,0.013); }
   .gen-type-icon { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; flex-shrink: 0; }
-  .gti-ecom{background:rgba(124,58,237,0.13)} .gti-saas{background:rgba(6,182,212,0.1)} .gti-landing{background:rgba(236,72,153,0.1)}
   .gen-log-main { flex: 1; min-width: 0; }
   .gen-log-name { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .gen-log-user { font-size: 0.65rem; color: var(--muted); }
   .gen-log-time { font-family: 'Inter', sans-serif; font-size: 0.62rem; color: var(--muted2); white-space: nowrap; }
   .gen-status { font-family: 'Inter', sans-serif; font-size: 0.6rem; padding: 2px 7px; border-radius: 100px; font-weight: 600; }
-  .gs-done{background:rgba(16,185,129,0.1);color:#6ee7b7}
-  .gs-proc{background:rgba(139,92,246,0.13);color:var(--violet-glow)}
-  .gs-fail{background:rgba(239,68,68,0.1);color:#fca5a5}
+  .gs-done{background:rgba(16,185,129,0.1);color:#6ee7b7} .gs-proc{background:rgba(139,92,246,0.13);color:var(--violet-glow)} .gs-fail{background:rgba(239,68,68,0.1);color:#fca5a5}
+
+  /* ADMIN PAGES */
+  .admin-page { display: none; animation: fadeIn 0.3s ease; }
+  .admin-page.active { display: block; }
+  .page-title { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.02em; }
+  .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 32px; text-align: center; }
+  .info-card-icon { font-size: 2.5rem; margin-bottom: 16px; }
+  .info-card-title { font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+  .info-card-sub { font-size: 0.83rem; color: var(--muted); }
 
   /* MODAL */
   .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(3,2,10,0.88); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; }
@@ -271,50 +169,36 @@
   .modal-action-btn.danger { border-color: rgba(239,68,68,0.22); color: #fca5a5; }
   .modal-action-btn.danger:hover { background: rgba(239,68,68,0.09); }
   .modal-action-btn.primary { background: linear-gradient(135deg, var(--violet), #9333ea); border-color: transparent; }
-  .modal-action-btn.primary:hover { opacity: 0.9; }
-
-  /* GIFT */
   .gift-plan-opt { flex: 1; border: 1px solid var(--border2); border-radius: 8px; padding: 8px 7px; text-align: center; cursor: pointer; transition: all 0.2s; background: rgba(255,255,255,0.03); }
   .gift-plan-opt:hover { border-color: rgba(139,92,246,0.28); background: rgba(139,92,246,0.07); }
   .gift-plan-opt.selected { border-color: var(--violet-bright); background: rgba(139,92,246,0.13); }
-
-  /* CONFIRM */
   .confirm-modal { background: var(--card2); border: 1px solid rgba(239,68,68,0.22); border-radius: 14px; width: 100%; max-width: 340px; padding: 22px; text-align: center; animation: fadeUp 0.3s ease; }
   .confirm-icon { font-size: 2.2rem; margin-bottom: 10px; }
-  .confirm-title { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; letter-spacing: -0.02em; }
+  .confirm-title { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; }
   .confirm-sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 18px; }
   .confirm-btns { display: flex; gap: 9px; }
   .confirm-btn { flex: 1; padding: 9px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
   .cb-cancel { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
   .cb-cancel:hover { color: var(--white); border-color: var(--border); }
   .cb-confirm { background: linear-gradient(135deg, #ef4444, #dc2626); border: none; color: var(--white); }
-  .cb-confirm:hover { opacity: 0.9; }
-
-  /* TOAST */
   .toast { position: fixed; bottom: 22px; right: 22px; z-index: 999; background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 16px; display: flex; align-items: center; gap: 9px; font-family: 'Inter', sans-serif; font-size: 0.8rem; transform: translateY(70px); opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease; }
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast.success { border-color: rgba(16,185,129,0.28); }
   .toast.error { border-color: rgba(239,68,68,0.28); }
 
   @media (max-width: 900px) {
-    .sidebar { transform: translateX(-100%); transition: transform 0.32s cubic-bezier(0.4,0,0.2,1); z-index: 300; }
+    .sidebar { transform: translateX(-100%); transition: transform 0.32s; z-index: 300; }
     .sidebar.open { transform: translateX(0); }
-    .sidebar-overlay { display: none; position: fixed; inset: 0; z-index: 299; background: rgba(3,2,10,0.72); backdrop-filter: blur(3px); }
-    .sidebar-overlay.open { display: block; }
     .main { margin-left: 0; }
-    .mobile-hamburger { display: flex !important; }
-    .kpi-row { grid-template-columns: 1fr 1fr !important; }
-    .grid-main { grid-template-columns: 1fr !important; }
-    .grid-bottom { grid-template-columns: 1fr !important; }
-    .topbar { padding: 0 13px; gap: 7px; }
-    .sys-status { display: none; }
+    .kpi-row { grid-template-columns: 1fr 1fr; }
+    .grid-main { grid-template-columns: 1fr; }
+    .grid-bottom { grid-template-columns: 1fr; }
     .content { padding: 13px; }
+    .sys-status { display: none; }
   }
 </style>
 </head>
 <body>
-
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
 <aside class="sidebar" id="sidebar">
   <div class="sb-top">
@@ -326,30 +210,33 @@
   </div>
   <nav class="sb-nav">
     <div class="sb-section">Tableau de bord</div>
-    <div class="sb-item active" onclick="setNav(this)"><span class="sb-icon">⊞</span> Vue d'ensemble</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">📊</span> Analytics <span class="sb-badge violet">Live</span></div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">💰</span> Revenus</div>
+    <div class="sb-item active" onclick="showAdminPage('overview',this)"><span class="sb-icon">⊞</span> Vue d'ensemble</div>
+    <div class="sb-item" onclick="showAdminPage('analytics',this)"><span class="sb-icon">📊</span> Analytics <span class="sb-badge violet">Live</span></div>
+    <div class="sb-item" onclick="showAdminPage('revenus',this)"><span class="sb-icon">💰</span> Revenus</div>
     <div class="sb-section">Utilisateurs</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">👥</span> Tous les users <span class="sb-badge violet" id="sidebarUserCount">0</span></div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">⚡</span> Abonnés Pro</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🏢</span> Business</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🚫</span> Suspendus <span class="sb-badge red">3</span></div>
+    <div class="sb-item" onclick="showAdminPage('users',this)"><span class="sb-icon">👥</span> Tous les users <span class="sb-badge violet" id="sidebarUserCount">0</span></div>
+    <div class="sb-item" onclick="showAdminPage('pro',this)"><span class="sb-icon">⚡</span> Abonnés Pro</div>
+    <div class="sb-item" onclick="showAdminPage('business',this)"><span class="sb-icon">🏢</span> Business</div>
+    <div class="sb-item" onclick="showAdminPage('suspendus',this)"><span class="sb-icon">🚫</span> Suspendus <span class="sb-badge red" id="suspendusCount">0</span></div>
     <div class="sb-section">Projets</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">✦</span> Générations <span class="sb-badge green">En cours</span></div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🌐</span> Sites déployés</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🛒</span> E-commerces</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">⚙️</span> SaaS générés</div>
+    <div class="sb-item" onclick="showAdminPage('generations',this)"><span class="sb-icon">✦</span> Générations</div>
+    <div class="sb-item" onclick="showAdminPage('sites',this)"><span class="sb-icon">🌐</span> Sites déployés</div>
+    <div class="sb-item" onclick="showAdminPage('ecommerces',this)"><span class="sb-icon">🛒</span> E-commerces</div>
+    <div class="sb-item" onclick="showAdminPage('saas',this)"><span class="sb-icon">⚙️</span> SaaS générés</div>
     <div class="sb-section">Système</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🔔</span> Alertes <span class="sb-badge red">2</span></div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">🔑</span> API & Clés</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">📧</span> Emails</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">⚙️</span> Paramètres</div>
-    <div class="sb-item" onclick="setNav(this)"><span class="sb-icon">📋</span> Logs</div>
+    <div class="sb-item" onclick="showAdminPage('alertes',this)"><span class="sb-icon">🔔</span> Alertes</div>
+    <div class="sb-item" onclick="showAdminPage('api',this)"><span class="sb-icon">🔑</span> API & Clés</div>
+    <div class="sb-item" onclick="showAdminPage('emails',this)"><span class="sb-icon">📧</span> Emails</div>
+    <div class="sb-item" onclick="showAdminPage('parametres',this)"><span class="sb-icon">⚙️</span> Paramètres</div>
+    <div class="sb-item" onclick="showAdminPage('logs',this)"><span class="sb-icon">📋</span> Logs</div>
   </nav>
   <div class="sb-bottom">
+    <div class="sb-links">
+      <a class="sb-link" href="/genproia-dashboard.html">← Retour au dashboard</a>
+    </div>
     <div class="sb-admin-user">
-      <div class="admin-avatar">SA</div>
-      <div><div class="admin-name">Super Admin</div><div class="admin-role">● Accès total</div></div>
+      <div class="admin-avatar" id="adminAvatar">SA</div>
+      <div><div class="admin-name" id="adminName">Super Admin</div><div class="admin-role">● Accès total</div></div>
     </div>
   </div>
 </aside>
@@ -357,147 +244,193 @@
 <div class="main">
   <div class="topbar">
     <div class="tb-breadcrumb">
-      <span>Genproia</span><span>›</span><strong>Vue d'ensemble</strong>
+      <span>Genproia</span><span>›</span><strong id="breadcrumbTitle">Vue d'ensemble</strong>
       <span style="margin-left:7px;font-family:'Inter',sans-serif;font-size:0.6rem;background:rgba(239,68,68,0.09);border:1px solid rgba(239,68,68,0.18);color:#fca5a5;padding:2px 7px;border-radius:4px;font-weight:700;letter-spacing:0.06em">ADMIN</span>
     </div>
     <div class="tb-right">
-      <button class="mobile-hamburger" id="hamburger" onclick="toggleSidebar()" style="display:none;width:34px;height:34px;border-radius:8px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.07);color:white;font-size:1rem;cursor:pointer;align-items:center;justify-content:center;">☰</button>
       <div class="sys-status"><div class="sys-dot"></div>Tous systèmes opérationnels</div>
       <div class="tb-icon-btn">🔍</div>
       <div class="tb-icon-btn">🔔<div class="tb-notif"></div></div>
-      <div class="tb-icon-btn">⚙️</div>
+      <div class="tb-icon-btn" onclick="window.location.href='/genproia-dashboard.html'" title="Dashboard">🏠</div>
     </div>
   </div>
 
   <div class="content">
-    <div class="kpi-row">
-      <div class="kpi k1">
-        <div class="kpi-top"><div class="kpi-label">Utilisateurs totaux</div><div class="kpi-icon">👥</div></div>
-        <div class="kpi-value" id="kpiUsers">0</div>
-        <div class="kpi-delta neutral" id="kpiUsersDelta">Chargement...</div>
-      </div>
-      <div class="kpi k2">
-        <div class="kpi-top"><div class="kpi-label">MRR</div><div class="kpi-icon">€</div></div>
-        <div class="kpi-value" id="kpiMrr">€0</div>
-        <div class="kpi-delta neutral">Connecte Stripe</div>
-      </div>
-      <div class="kpi k3">
-        <div class="kpi-top"><div class="kpi-label">Projets générés</div><div class="kpi-icon">✦</div></div>
-        <div class="kpi-value" id="kpiProjets">0</div>
-        <div class="kpi-delta neutral" id="kpiProjetsDelta">Chargement...</div>
-      </div>
-      <div class="kpi k4">
-        <div class="kpi-top"><div class="kpi-label">Churn rate</div><div class="kpi-icon">↘</div></div>
-        <div class="kpi-value">N/A</div>
-        <div class="kpi-delta neutral">Bientôt disponible</div>
-      </div>
-      <div class="kpi k5">
-        <div class="kpi-top"><div class="kpi-label">Sites déployés live</div><div class="kpi-icon">🌐</div></div>
-        <div class="kpi-value" id="kpiSites">0</div>
-        <div class="kpi-delta neutral">Bientôt disponible</div>
-      </div>
-    </div>
 
-    <div class="grid-main">
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            Utilisateurs récents
-            <span style="font-family:'Inter',sans-serif;font-size:0.6rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.18);color:var(--violet-glow);padding:2px 8px;border-radius:100px;" id="userCountBadge">0 total</span>
-          </div>
-          <div style="display:flex;gap:7px;align-items:center">
-            <input type="text" placeholder="Rechercher…" style="background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:6px;padding:5px 9px;color:var(--white);font-family:'Inter',sans-serif;font-size:0.72rem;outline:none;width:130px;" oninput="filterUsers(this.value)">
-            <div class="panel-action">Voir tout →</div>
-          </div>
-        </div>
-        <div style="overflow-x:auto">
-          <table class="users-table" id="usersTable">
-            <thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Statut</th><th>Actions</th></tr></thead>
-            <tbody id="usersBody"></tbody>
-          </table>
-        </div>
+    <!-- PAGE VUE D'ENSEMBLE -->
+    <div id="admin-page-overview" class="admin-page active">
+      <div class="kpi-row">
+        <div class="kpi k1"><div class="kpi-top"><div class="kpi-label">Utilisateurs totaux</div><div class="kpi-icon">👥</div></div><div class="kpi-value" id="kpiUsers">0</div><div class="kpi-delta neutral" id="kpiUsersDelta">Chargement...</div></div>
+        <div class="kpi k2"><div class="kpi-top"><div class="kpi-label">MRR</div><div class="kpi-icon">€</div></div><div class="kpi-value" id="kpiMrr">€0</div><div class="kpi-delta neutral">Revenus mensuels</div></div>
+        <div class="kpi k3"><div class="kpi-top"><div class="kpi-label">Projets générés</div><div class="kpi-icon">✦</div></div><div class="kpi-value" id="kpiProjets">0</div><div class="kpi-delta neutral" id="kpiProjetsDelta">Chargement...</div></div>
+        <div class="kpi k4"><div class="kpi-top"><div class="kpi-label">Churn rate</div><div class="kpi-icon">↘</div></div><div class="kpi-value">N/A</div><div class="kpi-delta neutral">Bientôt disponible</div></div>
+        <div class="kpi k5"><div class="kpi-top"><div class="kpi-label">Sites déployés</div><div class="kpi-icon">🌐</div></div><div class="kpi-value" id="kpiSites">0</div><div class="kpi-delta neutral">Bientôt disponible</div></div>
       </div>
-
-      <div style="display:flex;flex-direction:column;gap:13px">
+      <div class="grid-main">
         <div class="panel">
           <div class="panel-header">
-            <div class="panel-title">Alertes système</div>
-            <div class="panel-action">Tout voir →</div>
+            <div class="panel-title">Utilisateurs récents <span style="font-family:'Inter',sans-serif;font-size:0.6rem;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.18);color:var(--violet-glow);padding:2px 8px;border-radius:100px;" id="userCountBadge">0 total</span></div>
+            <div style="display:flex;gap:7px;align-items:center">
+              <input type="text" placeholder="Rechercher…" style="background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:6px;padding:5px 9px;color:var(--white);font-family:'Inter',sans-serif;font-size:0.72rem;outline:none;width:130px;" oninput="filterUsers(this.value)">
+              <div class="panel-action" onclick="showAdminPage('users',null)">Voir tout →</div>
+            </div>
           </div>
-          <div class="alerts-list" id="alertsList">
-            <div style="padding:18px;text-align:center;color:var(--muted);font-size:0.8rem;">
-              Aucune alerte. Tout fonctionne normalement ✅
+          <div style="overflow-x:auto"><table class="users-table" id="usersTable"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:13px">
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Alertes système</div></div>
+            <div style="padding:18px;text-align:center;color:var(--muted);font-size:0.8rem;">Aucune alerte. Tout fonctionne normalement ✅</div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><div class="panel-title">Actions rapides</div></div>
+            <div class="qa-grid">
+              <div class="qa-btn" onclick="showToast('Fonctionnalité bientôt disponible','success')"><div class="qa-icon">📧</div><div class="qa-label">Envoyer email</div><div class="qa-desc">Broadcast all</div></div>
+              <div class="qa-btn" onclick="exportCSV()"><div class="qa-icon">📤</div><div class="qa-label">Exporter CSV</div><div class="qa-desc">Tous les users</div></div>
+              <div class="qa-btn" onclick="showToast('Mode maintenance bientôt disponible','success')"><div class="qa-icon">🔧</div><div class="qa-label">Maintenance</div><div class="qa-desc">Activer le mode</div></div>
+              <div class="qa-btn" onclick="showToast('Rapport généré','success')"><div class="qa-icon">📋</div><div class="qa-label">Rapport MRR</div><div class="qa-desc">Ce mois-ci</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="grid-bottom">
+        <div class="panel">
+          <div class="panel-header"><div class="panel-title">Répartition des plans</div></div>
+          <div class="plans-breakdown">
+            <div class="plan-row"><div class="plan-row-label" style="color:var(--violet-glow)">Pro</div><div class="plan-bar-wrap"><div class="plan-bar-fill pbf-violet" id="barPro" style="width:0%"></div></div><div class="plan-row-count" id="countPro">0</div></div>
+            <div class="plan-row"><div class="plan-row-label" style="color:#fcd34d">Business</div><div class="plan-bar-wrap"><div class="plan-bar-fill pbf-yellow" id="barBusiness" style="width:0%"></div></div><div class="plan-row-count" id="countBusiness">0</div></div>
+            <div class="plan-row"><div class="plan-row-label" style="color:var(--muted)">Free</div><div class="plan-bar-wrap"><div class="plan-bar-fill pbf-gray" id="barFree" style="width:100%"></div></div><div class="plan-row-count" id="countFree">0</div></div>
+            <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+              <div style="font-family:'Inter',sans-serif;font-size:0.65rem;color:var(--muted);margin-bottom:9px;letter-spacing:0.05em;text-transform:uppercase;">MRR par plan</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
+                <div style="text-align:center;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.13);border-radius:8px;padding:9px 5px"><div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:var(--violet-glow)" id="mrrPro">€0</div><div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Pro</div></div>
+                <div style="text-align:center;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.13);border-radius:8px;padding:9px 5px"><div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:#fcd34d" id="mrrBusiness">€0</div><div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Business</div></div>
+                <div style="text-align:center;background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:8px;padding:9px 5px"><div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:var(--muted)">€0</div><div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Free</div></div>
+              </div>
             </div>
           </div>
         </div>
         <div class="panel">
-          <div class="panel-header"><div class="panel-title">Actions rapides</div></div>
-          <div class="qa-grid">
-            <div class="qa-btn" onclick="showToast('Email envoyé à tous les utilisateurs','success')"><div class="qa-icon">📧</div><div class="qa-label">Envoyer email</div><div class="qa-desc">Broadcast all</div></div>
-            <div class="qa-btn" onclick="showToast('Export en cours…','success')"><div class="qa-icon">📤</div><div class="qa-label">Exporter CSV</div><div class="qa-desc">Tous les users</div></div>
-            <div class="qa-btn" onclick="showToast('Mode maintenance activé','error')"><div class="qa-icon">🔧</div><div class="qa-label">Maintenance</div><div class="qa-desc">Activer le mode</div></div>
-            <div class="qa-btn" onclick="showToast('Rapport généré','success')"><div class="qa-icon">📋</div><div class="qa-label">Rapport MRR</div><div class="qa-desc">Ce mois-ci</div></div>
-          </div>
+          <div class="panel-header"><div class="panel-title">Générations récentes</div><div class="panel-action" onclick="showAdminPage('generations',null)">Voir tout →</div></div>
+          <div id="genLogList"><div style="padding:18px;text-align:center;color:var(--muted);font-size:0.8rem;">Chargement...</div></div>
         </div>
       </div>
     </div>
 
-    <div class="grid-bottom">
-      <div class="panel">
-        <div class="panel-header"><div class="panel-title">Répartition des plans</div><div class="panel-action">Détails →</div></div>
-        <div class="plans-breakdown">
-          <div class="plan-row">
-            <div class="plan-row-label" style="color:var(--violet-glow)">Pro</div>
-            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-violet" id="barPro" style="width:0%"></div></div>
-            <div class="plan-row-count" id="countPro">0</div>
-          </div>
-          <div class="plan-row">
-            <div class="plan-row-label" style="color:#fcd34d">Business</div>
-            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-yellow" id="barBusiness" style="width:0%"></div></div>
-            <div class="plan-row-count" id="countBusiness">0</div>
-          </div>
-          <div class="plan-row">
-            <div class="plan-row-label" style="color:var(--muted)">Free</div>
-            <div class="plan-bar-wrap"><div class="plan-bar-fill pbf-gray" id="barFree" style="width:100%"></div></div>
-            <div class="plan-row-count" id="countFree">0</div>
-          </div>
-          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-            <div style="font-family:'Inter',sans-serif;font-size:0.65rem;color:var(--muted);margin-bottom:9px;letter-spacing:0.05em;text-transform:uppercase;">MRR par plan</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
-              <div style="text-align:center;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.13);border-radius:8px;padding:9px 5px">
-                <div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:var(--violet-glow);letter-spacing:-0.02em" id="mrrPro">€0</div>
-                <div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Pro</div>
-              </div>
-              <div style="text-align:center;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.13);border-radius:8px;padding:9px 5px">
-                <div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:#fcd34d;letter-spacing:-0.02em" id="mrrBusiness">€0</div>
-                <div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Business</div>
-              </div>
-              <div style="text-align:center;background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:8px;padding:9px 5px">
-                <div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:var(--muted);letter-spacing:-0.02em">€0</div>
-                <div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Free</div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <!-- PAGE TOUS LES USERS -->
+    <div id="admin-page-users" class="admin-page">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="page-title" style="margin-bottom:0">Tous les utilisateurs</div>
+        <input type="text" placeholder="Rechercher un utilisateur…" style="background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:8px 14px;color:var(--white);font-family:'Inter',sans-serif;font-size:0.82rem;outline:none;width:220px;" oninput="filterUsers(this.value)">
       </div>
-
       <div class="panel">
-        <div class="panel-header"><div class="panel-title">Générations récentes</div><div class="panel-action">Voir tout →</div></div>
-        <div class="gen-log" id="genLogList">
-          <div style="padding:18px;text-align:center;color:var(--muted);font-size:0.8rem;">Les générations apparaîtront ici.</div>
+        <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="allUsersBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- PAGE PRO -->
+    <div id="admin-page-pro" class="admin-page">
+      <div class="page-title">Abonnés Pro</div>
+      <div class="panel">
+        <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="proUsersBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- PAGE BUSINESS -->
+    <div id="admin-page-business" class="admin-page">
+      <div class="page-title">Abonnés Business</div>
+      <div class="panel">
+        <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="businessUsersBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- PAGE SUSPENDUS -->
+    <div id="admin-page-suspendus" class="admin-page">
+      <div class="page-title">Utilisateurs suspendus</div>
+      <div class="panel">
+        <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="suspendusUsersBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- PAGE GENERATIONS -->
+    <div id="admin-page-generations" class="admin-page">
+      <div class="page-title">Toutes les générations</div>
+      <div class="panel">
+        <div id="allGenerationsList"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div>
+      </div>
+    </div>
+
+    <!-- PAGES BIENTOT DISPONIBLES -->
+    <div id="admin-page-analytics" class="admin-page">
+      <div class="page-title">Analytics</div>
+      <div class="info-card"><div class="info-card-icon">📊</div><div class="info-card-title">Analytics avancées</div><div class="info-card-sub">Visiteurs, conversions, rétention — disponible prochainement.</div></div>
+    </div>
+    <div id="admin-page-revenus" class="admin-page">
+      <div class="page-title">Revenus</div>
+      <div class="info-card"><div class="info-card-icon">💰</div><div class="info-card-title">Module Revenus</div><div class="info-card-sub">MRR détaillé, ARR, historique — disponible après intégration Stripe.</div></div>
+    </div>
+    <div id="admin-page-sites" class="admin-page">
+      <div class="page-title">Sites déployés</div>
+      <div class="info-card"><div class="info-card-icon">🌐</div><div class="info-card-title">Sites déployés live</div><div class="info-card-sub">Disponible après intégration du déploiement automatique.</div></div>
+    </div>
+    <div id="admin-page-ecommerces" class="admin-page">
+      <div class="page-title">E-commerces générés</div>
+      <div class="panel">
+        <div id="ecommercesList"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div>
+      </div>
+    </div>
+    <div id="admin-page-saas" class="admin-page">
+      <div class="page-title">SaaS générés</div>
+      <div class="panel">
+        <div id="saasList"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div>
+      </div>
+    </div>
+    <div id="admin-page-alertes" class="admin-page">
+      <div class="page-title">Alertes système</div>
+      <div class="info-card"><div class="info-card-icon">✅</div><div class="info-card-title">Aucune alerte active</div><div class="info-card-sub">Tous les systèmes fonctionnent normalement.</div></div>
+    </div>
+    <div id="admin-page-api" class="admin-page">
+      <div class="page-title">API & Clés</div>
+      <div class="panel" style="padding:20px;">
+        <div style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:600;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">Clés configurées</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:9px;"><span style="font-size:1rem">🤖</span><div><div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;">Anthropic API</div><div style="font-size:0.72rem;color:var(--green);">✓ Configurée</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:9px;"><span style="font-size:1rem">🗄️</span><div><div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;">Supabase</div><div style="font-size:0.72rem;color:var(--green);">✓ Connecté</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:9px;"><span style="font-size:1rem">💳</span><div><div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;">Stripe</div><div style="font-size:0.72rem;color:var(--yellow);">⚠ Non configuré</div></div></div>
         </div>
       </div>
     </div>
+    <div id="admin-page-emails" class="admin-page">
+      <div class="page-title">Emails</div>
+      <div class="info-card"><div class="info-card-icon">📧</div><div class="info-card-title">Module Emails</div><div class="info-card-sub">Envoi d'emails transactionnels et broadcast — disponible prochainement.</div></div>
+    </div>
+    <div id="admin-page-parametres" class="admin-page">
+      <div class="page-title">Paramètres système</div>
+      <div class="panel" style="padding:20px;">
+        <div style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">Configuration</div>
+        <div style="display:flex;flex-direction:column;gap:12px;font-size:0.83rem;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Version</span><span style="font-family:'Inter',sans-serif;font-weight:600;">Genproia v2.3</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Environnement</span><span style="font-family:'Inter',sans-serif;font-weight:600;color:var(--green)">Production</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Modèle IA</span><span style="font-family:'Inter',sans-serif;font-weight:600;">claude-sonnet-4-5</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Base de données</span><span style="font-family:'Inter',sans-serif;font-weight:600;color:var(--green)">Supabase ✓</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Hébergement</span><span style="font-family:'Inter',sans-serif;font-weight:600;">Vercel</span></div>
+        </div>
+      </div>
+    </div>
+    <div id="admin-page-logs" class="admin-page">
+      <div class="page-title">Logs système</div>
+      <div class="panel">
+        <div id="logsContainer"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement des logs...</div></div>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <!-- USER MODAL -->
 <div class="modal-overlay" id="userModal" onclick="closeModalOut(event)">
   <div class="modal">
-    <div class="modal-top">
-      <div class="modal-title">Détails utilisateur</div>
-      <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
+    <div class="modal-top"><div class="modal-title">Détails utilisateur</div><button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="modal-body">
       <div class="modal-user-hero">
         <div class="modal-avatar ua1" id="modalAvatar">KD</div>
@@ -507,7 +440,7 @@
       <div class="modal-grid">
         <div class="modal-cell"><div class="modal-cell-label">Inscrit le</div><div class="modal-cell-value" id="modalDate">—</div></div>
         <div class="modal-cell"><div class="modal-cell-label">Projets</div><div class="modal-cell-value" id="modalProjects">—</div></div>
-        <div class="modal-cell"><div class="modal-cell-label">Revenus générés</div><div class="modal-cell-value" id="modalRevenue">—</div></div>
+        <div class="modal-cell"><div class="modal-cell-label">Revenus</div><div class="modal-cell-value" id="modalRevenue">—</div></div>
         <div class="modal-cell"><div class="modal-cell-label">Statut</div><div class="modal-cell-value" id="modalStatus">—</div></div>
       </div>
       <div style="background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.18);border-radius:10px;padding:14px;margin-bottom:12px;">
@@ -524,14 +457,12 @@
           <option value="6months">6 mois</option>
           <option value="1year">1 an</option>
         </select>
-        <input type="text" id="giftNote" placeholder="Note interne (ex: conjoint, partenaire...)" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:7px;padding:7px 11px;color:var(--white);font-size:0.75rem;outline:none;font-family:var(--font-body);margin-bottom:9px;">
-        <button onclick="applyGiftPlan()" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--violet),#9333ea);color:var(--white);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;">
-          Appliquer gratuitement
-        </button>
+        <input type="text" id="giftNote" placeholder="Note interne (ex: partenaire, test…)" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:7px;padding:7px 11px;color:var(--white);font-size:0.75rem;outline:none;font-family:var(--font-body);margin-bottom:9px;">
+        <button onclick="applyGiftPlan()" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--violet),#9333ea);color:var(--white);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;">Appliquer gratuitement</button>
       </div>
       <div class="modal-actions-grid">
         <button class="modal-action-btn primary" onclick="showToast('Email envoyé !','success');closeModal()">📧 Envoyer email</button>
-        <button class="modal-action-btn" onclick="showToast('Mot de passe réinitialisé','success');closeModal()">🔑 Reset mdp</button>
+        <button class="modal-action-btn" onclick="showToast('Reset envoyé','success');closeModal()">🔑 Reset mdp</button>
         <button class="modal-action-btn danger" onclick="closeModal();showConfirm()">🚫 Suspendre</button>
         <button class="modal-action-btn" onclick="closeModal()">✏ Éditer profil</button>
       </div>
@@ -544,7 +475,7 @@
   <div class="confirm-modal">
     <div class="confirm-icon">🚫</div>
     <div class="confirm-title">Suspendre cet utilisateur ?</div>
-    <div class="confirm-sub">L'accès sera révoqué immédiatement. L'abonnement sera mis en pause.</div>
+    <div class="confirm-sub">L'accès sera révoqué immédiatement.</div>
     <div class="confirm-btns">
       <button class="confirm-btn cb-cancel" onclick="document.getElementById('confirmModal').classList.remove('open')">Annuler</button>
       <button class="confirm-btn cb-confirm" onclick="document.getElementById('confirmModal').classList.remove('open');showToast('Utilisateur suspendu','error')">Confirmer</button>
@@ -556,22 +487,61 @@
 
 <script>
 let users = [];
+let allProjets = [];
 let currentUser = null;
 
-function renderUsers(data) {
-  const planLabels = { pro:'Pro', business:'Business', free:'Free' };
+// ── NAVIGATION ──
+function showAdminPage(page, el) {
+  document.querySelectorAll('.admin-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  const pageEl = document.getElementById('admin-page-' + page);
+  if (pageEl) pageEl.classList.add('active');
+  if (el) el.classList.add('active');
+  const labels = {
+    overview:'Vue d\'ensemble', analytics:'Analytics', revenus:'Revenus',
+    users:'Tous les users', pro:'Abonnés Pro', business:'Business', suspendus:'Suspendus',
+    generations:'Générations', sites:'Sites déployés', ecommerces:'E-commerces', saas:'SaaS générés',
+    alertes:'Alertes', api:'API & Clés', emails:'Emails', parametres:'Paramètres', logs:'Logs'
+  };
+  document.getElementById('breadcrumbTitle').textContent = labels[page] || page;
+  if (page === 'users') renderUsersPage('allUsersBody', users);
+  if (page === 'pro') renderUsersPage('proUsersBody', users.filter(u => u.plan === 'pro'));
+  if (page === 'business') renderUsersPage('businessUsersBody', users.filter(u => u.plan === 'business'));
+  if (page === 'suspendus') renderUsersPage('suspendusUsersBody', users.filter(u => u.status === 'suspended'));
+  if (page === 'generations') renderGenerationsPage();
+  if (page === 'ecommerces') renderTypePage('ecommercesList', 'ecommerce');
+  if (page === 'saas') renderTypePage('saasList', 'saas');
+  if (page === 'logs') renderLogsPage();
+}
+
+// ── USERS TABLE ──
+function buildUserRow(u, showDate) {
   const planClasses = { pro:'pt-pro', business:'pt-business', free:'pt-free' };
+  const planLabels = { pro:'Pro', business:'Business', free:'Free' };
   const statusMap = { active:'<span class="status-dot sd-active"></span>Actif', inactive:'<span class="status-dot sd-inactive"></span>Inactif', suspended:'<span class="status-dot sd-suspended"></span>Suspendu' };
-  document.getElementById('usersBody').innerHTML = data.map(u => `
-    <tr>
-      <td><div class="user-cell"><div class="u-avatar ${u.avatarClass}">${u.initials}</div><div><div class="u-name">${u.name}</div><div class="u-email">${u.email}</div></div></div></td>
-      <td><span class="plan-tag ${planClasses[u.plan]}">${planLabels[u.plan]}</span></td>
-      <td style="color:var(--violet-glow);font-weight:600">${u.projects}</td>
-      <td style="color:var(--green);font-weight:600">${u.revenue}</td>
-      <td style="font-size:0.73rem">${statusMap[u.status]}</td>
-      <td><button class="action-btn" onclick="openUser(${JSON.stringify(u.id)})">Gérer →</button></td>
-    </tr>
-  `).join('');
+  return `<tr>
+    <td><div class="user-cell"><div class="u-avatar ${u.avatarClass}">${u.initials}</div><div><div class="u-name">${u.name}</div><div class="u-email">${u.email}</div></div></div></td>
+    <td><span class="plan-tag ${planClasses[u.plan]}">${planLabels[u.plan]}</span></td>
+    <td style="color:var(--violet-glow);font-weight:600">${u.projects}</td>
+    <td style="color:var(--green);font-weight:600">${u.revenue}</td>
+    ${showDate ? `<td style="font-size:0.72rem;color:var(--muted)">${u.date}</td>` : ''}
+    <td style="font-size:0.73rem">${statusMap[u.status] || statusMap.active}</td>
+    <td><button class="action-btn" onclick="openUser('${u.id}')">Gérer →</button></td>
+  </tr>`;
+}
+
+function renderUsers(data) {
+  document.getElementById('usersBody').innerHTML = data.map(u => buildUserRow(u, false)).join('');
+}
+
+function renderUsersPage(bodyId, data) {
+  const el = document.getElementById(bodyId);
+  if (!el) return;
+  if (data.length === 0) {
+    el.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">Aucun utilisateur dans cette catégorie</td></tr>';
+    return;
+  }
+  el.innerHTML = data.map(u => buildUserRow(u, true)).join('');
 }
 
 function filterUsers(q) {
@@ -579,6 +549,65 @@ function filterUsers(q) {
   renderUsers(filtered);
 }
 
+// ── GENERATIONS ──
+function renderGenerationsPage() {
+  const container = document.getElementById('allGenerationsList');
+  if (allProjets.length === 0) {
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">Aucune génération</div>';
+    return;
+  }
+  const icons = { ecommerce:'🛒', saas:'⚙️', vitrine:'🏢', landing:'📱', marketplace:'🏪', blog:'📰' };
+  container.innerHTML = allProjets.map(p => `
+    <div class="gen-log-item">
+      <div class="gen-type-icon" style="background:rgba(124,58,237,0.13)">${icons[p.type] || '✦'}</div>
+      <div class="gen-log-main">
+        <div class="gen-log-name">${p.nom || 'Projet'}</div>
+        <div class="gen-log-user">${p.type || 'Projet'} · ${(p.idee || '').substring(0,40)}</div>
+      </div>
+      <div class="gen-log-time">${new Date(p.created_at).toLocaleDateString('fr-FR')}</div>
+      <span class="gen-status gs-done">Généré</span>
+    </div>`).join('');
+}
+
+function renderTypePage(containerId, type) {
+  const container = document.getElementById(containerId);
+  const filtered = allProjets.filter(p => p.type === type);
+  if (filtered.length === 0) {
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">Aucun projet de ce type</div>';
+    return;
+  }
+  const icons = { ecommerce:'🛒', saas:'⚙️', vitrine:'🏢', landing:'📱', marketplace:'🏪', blog:'📰' };
+  container.innerHTML = filtered.map(p => `
+    <div class="gen-log-item">
+      <div class="gen-type-icon" style="background:rgba(124,58,237,0.13)">${icons[p.type] || '✦'}</div>
+      <div class="gen-log-main"><div class="gen-log-name">${p.nom || 'Projet'}</div><div class="gen-log-user">${(p.idee || '').substring(0,50)}</div></div>
+      <div class="gen-log-time">${new Date(p.created_at).toLocaleDateString('fr-FR')}</div>
+      <span class="gen-status gs-done">Généré</span>
+    </div>`).join('');
+}
+
+// ── LOGS ──
+function renderLogsPage() {
+  const container = document.getElementById('logsContainer');
+  const logs = allProjets.slice(0, 20).map(p => ({
+    time: new Date(p.created_at).toLocaleString('fr-FR'),
+    action: 'Génération projet',
+    detail: (p.nom || '') + ' (' + (p.type || '') + ')',
+    level: 'success'
+  }));
+  if (logs.length === 0) {
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">Aucun log disponible</div>';
+    return;
+  }
+  container.innerHTML = logs.map(l => `
+    <div style="display:flex;gap:12px;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.025);font-size:0.78rem;">
+      <div style="color:var(--muted2);width:130px;flex-shrink:0;font-family:'Inter',sans-serif;font-size:0.68rem;">${l.time}</div>
+      <div style="color:var(--green);flex-shrink:0;">✓</div>
+      <div style="color:var(--muted)">${l.action} — <span style="color:var(--white)">${l.detail}</span></div>
+    </div>`).join('');
+}
+
+// ── USER MODAL ──
 function openUser(id) {
   currentUser = users.find(u => u.id === id);
   if (!currentUser) return;
@@ -601,20 +630,6 @@ function closeModal() { document.getElementById('userModal').classList.remove('o
 function closeModalOut(e) { if (e.target.id === 'userModal') closeModal(); }
 function showConfirm() { document.getElementById('confirmModal').classList.add('open'); }
 
-function setNav(el) {
-  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  document.getElementById('toastMsg').textContent = msg;
-  document.getElementById('toastIcon').textContent = type === 'success' ? '✓' : '⚠';
-  t.className = 'toast ' + type;
-  setTimeout(() => t.classList.add('show'), 10);
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
-
 let selectedGiftPlan = 'free';
 function selectGiftPlan(el, plan) {
   document.querySelectorAll('.gift-plan-opt').forEach(o => o.classList.remove('selected'));
@@ -625,35 +640,37 @@ function selectGiftPlan(el, plan) {
 function applyGiftPlan() {
   if (!currentUser) return;
   const duration = document.getElementById('giftDuration').value;
-  const note = document.getElementById('giftNote').value;
   const planLabels = { free:'Free', pro:'Pro', business:'Business' };
-  const durationLabels = { lifetime:'à vie', '1month':'1 mois', '3months':'3 mois', '6months':'6 mois', '1year':'1 an' };
-  const user = users.find(u => u.id === currentUser.id);
-  if (user) { user.plan = selectedGiftPlan; }
+  const u = users.find(x => x.id === currentUser.id);
+  if (u) u.plan = selectedGiftPlan;
   renderUsers(users);
   closeModal();
-  showToast('Plan ' + planLabels[selectedGiftPlan] + ' offert à ' + currentUser.name + ' (' + durationLabels[duration] + ')', 'success');
+  showToast('Plan ' + planLabels[selectedGiftPlan] + ' offert à ' + currentUser.name, 'success');
 }
 
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('sidebarOverlay').classList.toggle('open');
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('sidebarOverlay').classList.remove('open');
+// ── EXPORT CSV ──
+function exportCSV() {
+  if (users.length === 0) { showToast('Aucun utilisateur à exporter', 'error'); return; }
+  const header = 'Nom,Email,Plan,Projets,Inscription,Statut';
+  const rows = users.map(u => `${u.name},${u.email},${u.plan},${u.projects},${u.date},${u.status}`);
+  const csv = [header, ...rows].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'genproia-users-' + new Date().toISOString().slice(0,10) + '.csv'; a.click();
+  URL.revokeObjectURL(url);
+  showToast('Export CSV téléchargé !', 'success');
 }
 
-let touchStartX = 0, touchStartY = 0;
-document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; }, { passive: true });
-document.addEventListener('touchend', e => {
-  const dx = e.changedTouches[0].clientX - touchStartX;
-  const dy = Math.abs(e.changedTouches[0].clientY - touchStartY);
-  if (dy > 60) return;
-  const sb = document.getElementById('sidebar');
-  if (dx > 60 && touchStartX < 40) { sb.classList.add('open'); document.getElementById('sidebarOverlay').classList.add('open'); }
-  else if (dx < -60 && sb.classList.contains('open')) { closeSidebar(); }
-}, { passive: true });
+// ── TOAST ──
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  document.getElementById('toastIcon').textContent = type === 'success' ? '✓' : '⚠';
+  t.className = 'toast ' + type;
+  setTimeout(() => t.classList.add('show'), 10);
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); document.getElementById('confirmModal').classList.remove('open'); } });
 </script>
@@ -670,9 +687,12 @@ async function checkAdminAccess() {
   if (!userRaw) { window.location.href = '/index.html'; return false; }
   const user = JSON.parse(userRaw);
   if (!ADMIN_EMAILS.includes(user.email)) {
-    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#05030f;color:#f0ecff;font-family:Inter,sans-serif;text-align:center"><div><div style="font-size:2.5rem;margin-bottom:14px">🚫</div><h1 style="font-size:1.3rem;margin-bottom:7px;font-weight:700">Accès refusé</h1><p style="color:#7a6fa0;font-size:0.85rem">Tu n\'as pas accès à cette page.</p><a href="/index.html" style="display:inline-block;margin-top:18px;padding:9px 22px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-family:Inter,sans-serif;font-size:0.85rem;font-weight:600">Retour</a></div></div>';
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#05030f;color:#f0ecff;font-family:Inter,sans-serif;text-align:center"><div><div style="font-size:2.5rem;margin-bottom:14px">🚫</div><h1 style="font-size:1.3rem;margin-bottom:7px;font-weight:700">Accès refusé</h1><p style="color:#7a6fa0;font-size:0.85rem">Tu n\'as pas accès à cette page.</p><a href="/index.html" style="display:inline-block;margin-top:18px;padding:9px 22px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-weight:600">Retour</a></div></div>';
     return false;
   }
+  // Afficher le nom de l'admin
+  document.getElementById('adminName').textContent = user.nom || user.email;
+  document.getElementById('adminAvatar').textContent = (user.nom || user.email).substring(0,2).toUpperCase();
   return true;
 }
 
@@ -680,18 +700,15 @@ async function loadAdminData() {
   const ok = await checkAdminAccess();
   if (!ok) return;
 
+  // Charger users
   const { data: usersData } = await _sbAdmin.from('users').select('*').order('created_at', { ascending: false });
-
   if (usersData) {
     users = usersData.map(function(u, i) {
       const avatarClasses = ['ua1','ua2','ua3','ua4','ua5','ua6'];
       return {
-        id: u.id,
-        name: u.nom || u.email,
-        email: u.email,
-        plan: u.plan || 'free',
-        projects: u.projets_count || 0,
-        revenue: '€0',
+        id: u.id, name: u.nom || u.email, email: u.email,
+        plan: u.plan || 'free', projects: u.projets_count || 0,
+        revenue: u.plan === 'pro' ? '€29' : u.plan === 'business' ? '€79' : '€0',
         status: u.statut || 'active',
         date: new Date(u.created_at).toLocaleDateString('fr-FR'),
         avatarClass: avatarClasses[i % 6],
@@ -703,12 +720,13 @@ async function loadAdminData() {
     const pro = users.filter(u => u.plan === 'pro').length;
     const business = users.filter(u => u.plan === 'business').length;
     const free = users.filter(u => u.plan === 'free').length;
+    const suspended = users.filter(u => u.status === 'suspended').length;
 
     document.getElementById('kpiUsers').textContent = total;
     document.getElementById('kpiUsersDelta').textContent = total + ' inscrits';
     document.getElementById('sidebarUserCount').textContent = total;
-    const badge = document.getElementById('userCountBadge');
-    if (badge) badge.textContent = total + ' total';
+    document.getElementById('suspendusCount').textContent = suspended;
+    document.getElementById('userCountBadge').textContent = total + ' total';
 
     if (total > 0) {
       document.getElementById('barPro').style.width = Math.round(pro/total*100) + '%';
@@ -727,10 +745,27 @@ async function loadAdminData() {
     renderUsers(users);
   }
 
-  const { count } = await _sbAdmin.from('projets').select('*', { count: 'exact', head: true });
-  if (count !== null) {
-    document.getElementById('kpiProjets').textContent = count;
-    document.getElementById('kpiProjetsDelta').textContent = count + ' projets créés';
+  // Charger projets
+  const { data: projetsData, count } = await _sbAdmin.from('projets').select('*', { count: 'exact' }).order('created_at', { ascending: false });
+  if (projetsData) {
+    allProjets = projetsData;
+    document.getElementById('kpiProjets').textContent = count || projetsData.length;
+    document.getElementById('kpiProjetsDelta').textContent = (count || projetsData.length) + ' projets créés';
+
+    // Générations récentes dans vue d'ensemble
+    const icons = { ecommerce:'🛒', saas:'⚙️', vitrine:'🏢', landing:'📱', marketplace:'🏪', blog:'📰' };
+    const genList = document.getElementById('genLogList');
+    if (projetsData.length === 0) {
+      genList.innerHTML = '<div style="padding:18px;text-align:center;color:var(--muted);font-size:0.8rem;">Aucune génération</div>';
+    } else {
+      genList.innerHTML = projetsData.slice(0, 5).map(p => `
+        <div class="gen-log-item">
+          <div class="gen-type-icon" style="background:rgba(124,58,237,0.13)">${icons[p.type] || '✦'}</div>
+          <div class="gen-log-main"><div class="gen-log-name">${p.nom || 'Projet'}</div><div class="gen-log-user">${p.type || 'Projet'}</div></div>
+          <div class="gen-log-time">${new Date(p.created_at).toLocaleDateString('fr-FR')}</div>
+          <span class="gen-status gs-done">Généré</span>
+        </div>`).join('');
+    }
   }
 }
 
