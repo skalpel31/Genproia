@@ -38,6 +38,7 @@
   .sb-badge.red { background: rgba(239,68,68,0.18); color: #fca5a5; }
   .sb-badge.violet { background: rgba(124,58,237,0.18); color: var(--violet-glow); }
   .sb-badge.green { background: rgba(16,185,129,0.13); color: #6ee7b7; }
+  .sb-badge.yellow { background: rgba(245,158,11,0.13); color: #fcd34d; }
   .sb-bottom { padding: 10px 8px; border-top: 1px solid var(--border); }
   .sb-links { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
   .sb-link { display: flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 7px; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.75rem; text-decoration: none; transition: background 0.2s, color 0.2s; cursor: pointer; }
@@ -215,8 +216,9 @@
     <div class="sb-item" onclick="showAdminPage('revenus',this)"><span class="sb-icon">💰</span> Revenus</div>
     <div class="sb-section">Utilisateurs</div>
     <div class="sb-item" onclick="showAdminPage('users',this)"><span class="sb-icon">👥</span> Tous les users <span class="sb-badge violet" id="sidebarUserCount">0</span></div>
-    <div class="sb-item" onclick="showAdminPage('pro',this)"><span class="sb-icon">⚡</span> Abonnés Pro</div>
-    <div class="sb-item" onclick="showAdminPage('business',this)"><span class="sb-icon">🏢</span> Business</div>
+    <div class="sb-item" onclick="showAdminPage('free',this)"><span class="sb-icon">🆓</span> Free <span class="sb-badge" style="background:rgba(255,255,255,0.07);color:var(--muted)" id="freeCount">0</span></div>
+    <div class="sb-item" onclick="showAdminPage('pro',this)"><span class="sb-icon">⚡</span> Abonnés Pro <span class="sb-badge violet" id="proCount">0</span></div>
+    <div class="sb-item" onclick="showAdminPage('business',this)"><span class="sb-icon">🏢</span> Business <span class="sb-badge yellow" id="businessCount">0</span></div>
     <div class="sb-item" onclick="showAdminPage('suspendus',this)"><span class="sb-icon">🚫</span> Suspendus <span class="sb-badge red" id="suspendusCount">0</span></div>
     <div class="sb-section">Projets</div>
     <div class="sb-item" onclick="showAdminPage('generations',this)"><span class="sb-icon">✦</span> Générations</div>
@@ -325,6 +327,14 @@
       </div>
       <div class="panel">
         <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="allUsersBody"></tbody></table></div>
+      </div>
+    </div>
+
+    <!-- PAGE FREE -->
+    <div id="admin-page-free" class="admin-page">
+      <div class="page-title">Utilisateurs Free</div>
+      <div class="panel">
+        <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="freeUsersBody"></tbody></table></div>
       </div>
     </div>
 
@@ -483,6 +493,17 @@
   </div>
 </div>
 
+<!-- SITE PREVIEW MODAL -->
+<div id="sitePreviewModal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(3,2,10,0.95);backdrop-filter:blur(10px);flex-direction:column;">
+  <div style="background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;">
+    <div style="display:flex;gap:6px;"><div style="width:10px;height:10px;border-radius:50%;background:#ef4444"></div><div style="width:10px;height:10px;border-radius:50%;background:#f59e0b"></div><div style="width:10px;height:10px;border-radius:50%;background:#10b981"></div></div>
+    <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;font-size:0.75rem;color:var(--muted);font-family:Inter,sans-serif;" id="sitePreviewUrl">Aperçu</div>
+    <button onclick="downloadPreviewSite()" style="background:linear-gradient(135deg,var(--violet),#9333ea);border:none;color:white;padding:6px 14px;border-radius:7px;cursor:pointer;font-family:Inter,sans-serif;font-size:0.78rem;font-weight:600;">⬇ Télécharger</button>
+    <button onclick="closeSitePreview()" style="background:rgba(255,255,255,0.06);border:1px solid var(--border2);color:var(--muted);padding:6px 14px;border-radius:7px;cursor:pointer;font-family:Inter,sans-serif;font-size:0.78rem;">✕ Fermer</button>
+  </div>
+  <iframe id="sitePreviewFrame" style="flex:1;border:none;background:white;"></iframe>
+</div>
+
 <div class="toast" id="toast"><span id="toastIcon">✓</span><span id="toastMsg">Action effectuée</span></div>
 
 <script>
@@ -499,12 +520,13 @@ function showAdminPage(page, el) {
   if (el) el.classList.add('active');
   const labels = {
     overview:'Vue d\'ensemble', analytics:'Analytics', revenus:'Revenus',
-    users:'Tous les users', pro:'Abonnés Pro', business:'Business', suspendus:'Suspendus',
+    users:'Tous les users', free:'Utilisateurs Free', pro:'Abonnés Pro', business:'Business', suspendus:'Suspendus',
     generations:'Générations', sites:'Sites déployés', ecommerces:'E-commerces', saas:'SaaS générés',
     alertes:'Alertes', api:'API & Clés', emails:'Emails', parametres:'Paramètres', logs:'Logs'
   };
   document.getElementById('breadcrumbTitle').textContent = labels[page] || page;
   if (page === 'users') renderUsersPage('allUsersBody', users);
+  if (page === 'free') renderUsersPage('freeUsersBody', users.filter(u => u.plan === 'free'));
   if (page === 'pro') renderUsersPage('proUsersBody', users.filter(u => u.plan === 'pro'));
   if (page === 'business') renderUsersPage('businessUsersBody', users.filter(u => u.plan === 'business'));
   if (page === 'suspendus') renderUsersPage('suspendusUsersBody', users.filter(u => u.status === 'suspended'));
@@ -566,6 +588,7 @@ function renderGenerationsPage() {
       </div>
       <div class="gen-log-time">${new Date(p.created_at).toLocaleDateString('fr-FR')}</div>
       <span class="gen-status gs-done">Généré</span>
+      ${p.site_html ? `<button onclick="openSitePreview(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);color:var(--violet-glow);padding:3px 9px;border-radius:5px;font-size:0.65rem;cursor:pointer;font-family:Inter,sans-serif;">👁 Voir</button>` : ''}
     </div>`).join('');
 }
 
@@ -583,6 +606,7 @@ function renderTypePage(containerId, type) {
       <div class="gen-log-main"><div class="gen-log-name">${p.nom || 'Projet'}</div><div class="gen-log-user">${(p.idee || '').substring(0,50)}</div></div>
       <div class="gen-log-time">${new Date(p.created_at).toLocaleDateString('fr-FR')}</div>
       <span class="gen-status gs-done">Généré</span>
+      ${p.site_html ? `<button onclick="openSitePreview(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);color:var(--violet-glow);padding:3px 9px;border-radius:5px;font-size:0.65rem;cursor:pointer;font-family:Inter,sans-serif;">👁 Voir</button>` : ''}
     </div>`).join('');
 }
 
@@ -672,7 +696,35 @@ function showToast(msg, type) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); document.getElementById('confirmModal').classList.remove('open'); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); document.getElementById('confirmModal').classList.remove('open'); closeSitePreview(); } });
+
+let currentPreviewSite = null;
+
+function openSitePreview(p) {
+  if (!p.site_html) return;
+  currentPreviewSite = p;
+  const modal = document.getElementById('sitePreviewModal');
+  modal.style.display = 'flex';
+  document.getElementById('sitePreviewUrl').textContent = (p.domaine || p.nom || 'site') + ' — Aperçu admin';
+  const blob = new Blob([p.site_html], { type: 'text/html' });
+  document.getElementById('sitePreviewFrame').src = URL.createObjectURL(blob);
+}
+
+function closeSitePreview() {
+  document.getElementById('sitePreviewModal').style.display = 'none';
+  document.getElementById('sitePreviewFrame').src = '';
+}
+
+function downloadPreviewSite() {
+  if (!currentPreviewSite) return;
+  const blob = new Blob([currentPreviewSite.site_html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (currentPreviewSite.nom || 'site').toLowerCase().replace(/\s+/g,'-') + '.html';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -726,6 +778,9 @@ async function loadAdminData() {
     document.getElementById('kpiUsersDelta').textContent = total + ' inscrits';
     document.getElementById('sidebarUserCount').textContent = total;
     document.getElementById('suspendusCount').textContent = suspended;
+    document.getElementById('freeCount').textContent = free;
+    document.getElementById('proCount').textContent = pro;
+    document.getElementById('businessCount').textContent = business;
     document.getElementById('userCountBadge').textContent = total + ' total';
 
     if (total > 0) {
@@ -764,6 +819,7 @@ async function loadAdminData() {
           <div class="gen-log-main"><div class="gen-log-name">${p.nom || 'Projet'}</div><div class="gen-log-user">${p.type || 'Projet'}</div></div>
           <div class="gen-log-time">${new Date(p.created_at).toLocaleDateString('fr-FR')}</div>
           <span class="gen-status gs-done">Généré</span>
+          ${p.site_html ? `<button onclick="openSitePreview(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);color:var(--violet-glow);padding:3px 9px;border-radius:5px;font-size:0.65rem;cursor:pointer;font-family:Inter,sans-serif;">👁 Voir</button>` : ''}
         </div>`).join('');
     }
   }
