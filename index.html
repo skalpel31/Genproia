@@ -1109,22 +1109,51 @@ function selectDomain(el, domain) {
   el.classList.add('selected'); selectedDomain = domain;
 }
 
-function regenCell(type) {
-  const alts = {
-    name: [['VogueNest','UrbanThread, StyleFlow'],['StyleFlow','UrbanThread, VogueNest'],['PrimeCraft','NovaBrand, ZenVault']],
-    slogan: ['Le style sans limites.','Fait pour se démarquer.','Fais-en ta marque.'],
-    logo: ['VN','SF','PC'],
-    domains: [['voguenest.fr','voguenest.co','vogue-nest.com'],['styleflow.io','styleflow.fr','style-flow.co'],['primecraft.fr','primecraft.io','prime-craft.app']]
-  };
-  const idx = Math.floor(Math.random() * 3);
-  if (type === 'name') { document.getElementById('outName').textContent = alts.name[idx][0]; document.getElementById('outAlt').textContent = alts.name[idx][1]; }
-  else if (type === 'slogan') { document.getElementById('outSlogan').textContent = alts.slogan[idx]; }
-  else if (type === 'logo') { document.getElementById('outLogo').textContent = alts.logo[idx]; }
-  else if (type === 'domains') { renderDomains(alts.domains[idx], 'outDomains'); }
+async function regenCell(type) {
+  const idee = document.getElementById('ideaInput').value.trim();
   validated[type] = false;
   const ids = { name:'valName', slogan:'valSlogan', logo:'valLogo', domains:'valDomains' };
   const btn = document.getElementById(ids[type]);
-  if (btn) { btn.classList.remove('validated'); btn.textContent = 'Valider'; btn.disabled = false; }
+  if (btn) { btn.classList.remove('validated'); btn.textContent = '...'; btn.disabled = true; }
+
+  try {
+    const response = await fetch('/api/demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idee: idee || 'business en ligne' })
+    });
+    const data = await response.json();
+    if (data.success && data.result) {
+      const r = data.result;
+      if (type === 'name') {
+        document.getElementById('outName').textContent = r.nom || '—';
+        document.getElementById('outAlt').textContent = (r.nom_alternatives || []).join(', ');
+      } else if (type === 'slogan') {
+        document.getElementById('outSlogan').textContent = r.slogan || '—';
+      } else if (type === 'logo') {
+        const logo = document.getElementById('outLogo');
+        logo.textContent = r.initiales || (r.nom || 'GN').substring(0,2).toUpperCase();
+        logo.style.background = 'linear-gradient(135deg,' + (r.couleur_primaire||'#7c3aed') + ',' + (r.couleur_secondaire||'#ec4899') + ')';
+      } else if (type === 'domains') {
+        renderDomains(r.domaines || [(r.nom||'monsite').toLowerCase().replace(/\s/g,'')+'.fr'], 'outDomains');
+      }
+    } else { throw new Error('API error'); }
+  } catch(e) {
+    // Fallback statique
+    const alts = {
+      name: [['VogueNest','UrbanThread, StyleFlow'],['StyleFlow','UrbanThread, VogueNest'],['PrimeCraft','NovaBrand, ZenVault']],
+      slogan: ['Le style sans limites.','Fait pour se démarquer.','Fais-en ta marque.'],
+      logo: ['VN','SF','PC'],
+      domains: [['voguenest.fr','voguenest.co','vogue-nest.com'],['styleflow.io','styleflow.fr','style-flow.co'],['primecraft.fr','primecraft.io','prime-craft.app']]
+    };
+    const idx = Math.floor(Math.random() * 3);
+    if (type === 'name') { document.getElementById('outName').textContent = alts.name[idx][0]; document.getElementById('outAlt').textContent = alts.name[idx][1]; }
+    else if (type === 'slogan') { document.getElementById('outSlogan').textContent = alts.slogan[idx]; }
+    else if (type === 'logo') { document.getElementById('outLogo').textContent = alts.logo[idx]; }
+    else if (type === 'domains') { renderDomains(alts.domains[idx], 'outDomains'); }
+  }
+
+  if (btn) { btn.textContent = 'Valider'; btn.disabled = false; }
   checkAllValidated();
 }
 
