@@ -1079,7 +1079,7 @@ async function generateIdea() {
     else if (val.includes('livr') || val.includes('repas')) data = demoData['livraison'];
     else if (val.includes('fit') || val.includes('sport') || val.includes('coach')) data = demoData['fitness'];
     else if (val.includes('immob') || val.includes('maison')) data = demoData['immobilier'];
-    else if (val.includes('cbd') || val.includes('cannabis')) data = { name: 'CannaVibe', alt: 'GreenLeaf, HempCo', slogan: 'La nature à l'état pur.', logo: 'CV', domains: ['cannavibe.fr','cannavibe.co','canna-vibe.com'] };
+    else if (val.includes('cbd') || val.includes('cannabis')) data = { name: 'CannaVibe', alt: 'GreenLeaf, HempCo', slogan: 'La nature pure.', logo: 'CV', domains: ['cannavibe.fr','cannavibe.co','canna-vibe.com'] };
     document.getElementById('outName').textContent = data.name;
     document.getElementById('outAlt').textContent = data.alt;
     document.getElementById('outSlogan').textContent = data.slogan;
