@@ -235,11 +235,11 @@ L'utilisateur veut créer ce projet : "${idee}"
 Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.`;
 
   const imgInstructions = images && images.length > 0
-    ? `\n\nIMPORTANT — Images disponibles (Unsplash, libres de droits) à utiliser dans le HTML :
+    ? `\n\nIMPORTANT — Images disponibles (Unsplash, libres de droits) :
 ${images.map((img, i) => `Image ${i+1}: ${img.url} (alt: "${img.alt}")`).join('\n')}
-Utilise ces vraies URLs d'images dans les balises <img> du site. Ne génère PAS de placeholders CSS pour les images — utilise ces vraies photos Unsplash.
-Ajoute l'attribut loading="lazy" sur chaque image.`
-    : `\n\nPas d'images Unsplash disponibles — utilise des dégradés CSS colorés comme placeholder d'images.`;
+RÈGLE ABSOLUE : chaque produit doit avoir une image DIFFÉRENTE. Produit 1 → Image 1, Produit 2 → Image 2, etc. NE JAMAIS utiliser deux fois la même URL. Si tu n'as pas assez d'images, alterne dans l'ordre 1,2,3,4,5,6,1,2...
+Utilise loading="lazy" sur chaque image.`
+    : `\n\nPas d'images Unsplash disponibles — utilise des dégradés CSS colorés comme placeholder.`;
 
   const siteInstructions = {
 
@@ -276,7 +276,7 @@ Pour site_html, génère un vrai site e-commerce HTML complet et professionnel a
 - Header fixe avec logo SVG (LOGO_SVG_PLACEHOLDER), navigation, icône panier avec badge compteur
 - Hero section avec image de fond (utilise Image 1 si disponible), titre accrocheur, CTA "Découvrir la boutique"
 - Barre de réassurance (Livraison gratuite | Retours 30j | Paiement sécurisé | Service client 7j/7)
-- Section "Nos produits" : grille de 6 cards avec vraies photos Unsplash (Images 1-6), badge, nom, prix, bouton "Ajouter au panier"
+- Section "Nos produits" : grille de 6 cards. OBLIGATOIRE : chaque card utilise une image DIFFÉRENTE — card 1 → Image 1, card 2 → Image 2, card 3 → Image 3, card 4 → Image 4, card 5 → Image 5, card 6 → Image 6. JAMAIS la même URL deux fois.
 - Section "Pourquoi nous choisir" avec 4 avantages
 - Témoignages 5 étoiles cohérents avec le secteur
 - Newsletter + Footer complet
