@@ -595,8 +595,28 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
         svgLogo = `<img src="${logoUrl}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;" alt="${result.nom}">`;
         console.log('Logo: Ideogram téléchargé et encodé en base64 ✅');
       } catch(e) {
-        console.error('Logo: Erreur téléchargement Ideogram, fallback SVG', e.message);
-        svgLogo = identiteValidee.logo_svg || await generateSVGLogo(result.nom, result.logo_initiales || result.nom.substring(0,2).toUpperCase(), result.couleur_primaire || '#7c3aed', result.couleur_secondaire || '#ec4899');
+        console.error('Logo: Erreur téléchargement Ideogram, fallback generate-logo', e.message);
+        // Fallback : appeler generate-logo pour avoir le SVG avec icône secteur
+        try {
+          const logoResp = await fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://www.genproia.com'}/api/generate-logo`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              nom: result.nom,
+              initiales: identiteValidee.initiales || result.nom.substring(0,2).toUpperCase(),
+              couleur1: result.couleur_primaire || '#7c3aed',
+              couleur2: result.couleur_secondaire || '#ec4899',
+              idee
+            })
+          });
+          const logoData = await logoResp.json();
+          if (logoData.success && logoData.svg) {
+            svgLogo = logoData.svg;
+            console.log('Logo: SVG secteur généré en fallback ✅');
+          } else throw new Error('No SVG');
+        } catch(e2) {
+          svgLogo = identiteValidee.logo_svg || await generateSVGLogo(result.nom, result.nom.substring(0,2).toUpperCase(), result.couleur_primaire || '#7c3aed', result.couleur_secondaire || '#ec4899');
+        }
       }
     } else if (identiteValidee && identiteValidee.logo_svg) {
       svgLogo = identiteValidee.logo_svg;
