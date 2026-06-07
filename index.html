@@ -243,6 +243,10 @@
      MOBILE FIXES
      ═══════════════════════════════════════ */
   @media (max-width: 768px) {
+    /* EMPÊCHER SCROLL HORIZONTAL */
+    html, body { overflow-x: hidden; max-width: 100%; }
+    * { max-width: 100%; }
+
     /* NAV */
     nav { padding: 10px 10px 10px 14px; }
     nav ul { display: none; }
