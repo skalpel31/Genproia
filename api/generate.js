@@ -234,12 +234,34 @@ function getPrompt(type, idee, images) {
 L'utilisateur veut créer ce projet : "${idee}"
 Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.`;
 
+  // Préparer les URLs images directement dans les produits
+  const getImgUrl = (i) => images[i] ? images[i].url : '';
+  const getImgAlt = (i) => images[i] ? (images[i].alt || '') : '';
+
   const imgInstructions = images && images.length > 0
     ? `\n\nIMPORTANT — Images disponibles (Unsplash, libres de droits) :
-${images.map((img, i) => `Image ${i+1}: ${img.url} (alt: "${img.alt}")`).join('\n')}
-RÈGLE ABSOLUE : chaque produit doit avoir une image DIFFÉRENTE. Produit 1 → Image 1, Produit 2 → Image 2, etc. NE JAMAIS utiliser deux fois la même URL. Si tu n'as pas assez d'images, alterne dans l'ordre 1,2,3,4,5,6,1,2...
-Utilise loading="lazy" sur chaque image.`
-    : `\n\nPas d'images Unsplash disponibles — utilise des dégradés CSS colorés comme placeholder.`;
+${images.map((img, i) => `Image ${i+1}: ${img.url}`).join('\n')}
+RÈGLE ABSOLUE : chaque produit DOIT avoir son image assignée ci-dessus. Copie exactement ces URLs dans les balises img. Ne génère AUCUNE autre URL d'image. Utilise loading="lazy".`
+    : `\n\nPas d'images Unsplash — utilise des dégradés CSS colorés.`;
+
+  // Construire la liste produits avec URLs déjà assignées
+  const produitsAvecImages = images.length > 0
+    ? `  "produits": [
+    {"nom": "Nom produit 1", "prix": 49, "description": "Description courte", "badge": "Nouveau", "image": "${getImgUrl(0)}", "image_alt": "${getImgAlt(0)}"},
+    {"nom": "Nom produit 2", "prix": 79, "description": "Description courte", "badge": "Bestseller", "image": "${getImgUrl(1)}", "image_alt": "${getImgAlt(1)}"},
+    {"nom": "Nom produit 3", "prix": 39, "description": "Description courte", "badge": "", "image": "${getImgUrl(2)}", "image_alt": "${getImgAlt(2)}"},
+    {"nom": "Nom produit 4", "prix": 129, "description": "Description courte", "badge": "Premium", "image": "${getImgUrl(3)}", "image_alt": "${getImgAlt(3)}"},
+    {"nom": "Nom produit 5", "prix": 59, "description": "Description courte", "badge": "", "image": "${getImgUrl(4)}", "image_alt": "${getImgAlt(4)}"},
+    {"nom": "Nom produit 6", "prix": 89, "description": "Description courte", "badge": "Populaire", "image": "${getImgUrl(5)}", "image_alt": "${getImgAlt(5)}"}
+  ]`
+    : `  "produits": [
+    {"nom": "Nom produit 1", "prix": 49, "description": "Description courte", "badge": "Nouveau"},
+    {"nom": "Nom produit 2", "prix": 79, "description": "Description courte", "badge": "Bestseller"},
+    {"nom": "Nom produit 3", "prix": 39, "description": "Description courte", "badge": ""},
+    {"nom": "Nom produit 4", "prix": 129, "description": "Description courte", "badge": "Premium"},
+    {"nom": "Nom produit 5", "prix": 59, "description": "Description courte", "badge": ""},
+    {"nom": "Nom produit 6", "prix": 89, "description": "Description courte", "badge": "Populaire"}
+  ]`;
 
   const siteInstructions = {
 
@@ -260,14 +282,7 @@ Génère un business e-commerce complet et cohérent avec l'idée. Le JSON doit 
   "secteur": "secteur d'activité précis",
   "cible": "cible client précise",
   "fonctionnalites": ["Catalogue produits filtrable", "Panier et checkout sécurisé", "Paiement Stripe", "Fiches produits détaillées", "Système d'avis clients", "Programme fidélité"],
-  "produits": [
-    {"nom": "Nom produit 1 cohérent", "prix": 49, "description": "Description courte", "badge": "Nouveau"},
-    {"nom": "Nom produit 2", "prix": 79, "description": "Description courte", "badge": "Bestseller"},
-    {"nom": "Nom produit 3", "prix": 39, "description": "Description courte", "badge": ""},
-    {"nom": "Nom produit 4", "prix": 129, "description": "Description courte", "badge": "Premium"},
-    {"nom": "Nom produit 5", "prix": 59, "description": "Description courte", "badge": ""},
-    {"nom": "Nom produit 6", "prix": 89, "description": "Description courte", "badge": "Populaire"}
-  ],
+${produitsAvecImages},
   "site_html": "..."
 }
 ${imgInstructions}
@@ -276,7 +291,7 @@ Pour site_html, génère un vrai site e-commerce HTML complet et professionnel a
 - Header fixe avec logo SVG (LOGO_SVG_PLACEHOLDER), navigation, icône panier avec badge compteur
 - Hero section avec image de fond (utilise Image 1 si disponible), titre accrocheur, CTA "Découvrir la boutique"
 - Barre de réassurance (Livraison gratuite | Retours 30j | Paiement sécurisé | Service client 7j/7)
-- Section "Nos produits" : grille de 6 cards. OBLIGATOIRE : chaque card utilise une image DIFFÉRENTE — card 1 → Image 1, card 2 → Image 2, card 3 → Image 3, card 4 → Image 4, card 5 → Image 5, card 6 → Image 6. JAMAIS la même URL deux fois.
+- Section "Nos produits" : grille de 6 cards. OBLIGATOIRE : utilise EXACTEMENT l'URL "image" de chaque produit dans le JSON ci-dessus. Chaque card a sa propre image différente. Balise : <img src="[image du produit]" alt="[image_alt]" loading="lazy">
 - Section "Pourquoi nous choisir" avec 4 avantages
 - Témoignages 5 étoiles cohérents avec le secteur
 - Newsletter + Footer complet
@@ -565,15 +580,24 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
       if (identiteValidee.domaine) result.domaines = [identiteValidee.domaine, ...(result.domaines || []).filter(d => d !== identiteValidee.domaine)];
     }
 
-    // 4. Logo SVG — utiliser celui validé ou en générer un nouveau
-    const svgLogo = (identiteValidee && identiteValidee.logo_svg)
-      ? identiteValidee.logo_svg
-      : await generateSVGLogo(
-          result.nom,
-          result.logo_initiales || result.nom.substring(0, 2).toUpperCase(),
-          result.couleur_primaire || '#7c3aed',
-          result.couleur_secondaire || '#ec4899'
-        );
+    // 4. Logo — utiliser celui validé ou en générer un nouveau
+    let svgLogo = '';
+    let logoUrl = '';
+
+    if (identiteValidee && identiteValidee.logo_url) {
+      // Image Ideogram validée
+      logoUrl = identiteValidee.logo_url;
+      svgLogo = `<img src="${logoUrl}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;" alt="${result.nom}">`;
+    } else if (identiteValidee && identiteValidee.logo_svg) {
+      svgLogo = identiteValidee.logo_svg;
+    } else {
+      svgLogo = await generateSVGLogo(
+        result.nom,
+        result.logo_initiales || result.nom.substring(0, 2).toUpperCase(),
+        result.couleur_primaire || '#7c3aed',
+        result.couleur_secondaire || '#ec4899'
+      );
+    }
 
     // 5. Injecter le logo SVG dans le site HTML
     if (result.site_html && result.site_html.includes('LOGO_SVG_PLACEHOLDER')) {
