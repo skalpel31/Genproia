@@ -370,9 +370,14 @@
           </div>
         </div>
       </div>
-      <div style="display:flex;gap:12px;margin-top:8px">
-        <button class="regen-btn" style="margin-top:0" onclick="goBack(2)">← Retour</button>
-        <button class="generate-main-btn" style="margin-top:0" onclick="goStep3()">Continuer →</button>
+      <div style="display:flex;gap:12px;margin-top:8px;flex-direction:column;">
+        <div style="display:flex;gap:12px;">
+          <button class="regen-btn" style="margin-top:0" onclick="goBack(2)">← Retour</button>
+          <button class="generate-main-btn" style="margin-top:0" id="step2Btn" onclick="goStep3Btn()">Continuer →</button>
+        </div>
+        <div id="step2Loading" style="display:none;text-align:center;font-size:0.82rem;color:var(--violet-glow);padding:6px 0;animation:pulse 1.5s infinite;">
+          ✦ Génération de votre identité de marque en cours, veuillez patienter…
+        </div>
       </div>
     </div>
 
@@ -435,8 +440,8 @@
         <div class="loading-orb"></div>
         <div class="loading-orb-inner">✦</div>
       </div>
-      <div class="loading-title">L'IA génère ton business…</div>
-      <div class="loading-sub">Claude analyse ton idée et construit tout. ~30 secondes.</div>
+      <div class="loading-title">Genproia génère ton business…</div>
+      <div class="loading-sub">Genproia analyse ton idée et construit tout en quelques minutes.</div>
       <div class="loading-steps">
         <div class="ls" id="ls1"><div class="ls-dot">✓</div>Analyse de l'idée</div>
         <div class="ls" id="ls2"><div class="ls-dot"></div>Génération du nom & slogan</div>
@@ -451,7 +456,7 @@
 
       <!-- HEADER MARQUE -->
       <div class="result-header">
-        <div class="result-logo" id="rLogo"></div>
+        <div class="result-logo" id="rLogo" onclick="openResultLogo()" style="cursor:pointer;" title="Cliquer pour agrandir"></div>
         <div class="result-brand">
           <div class="result-name" id="rNom">—</div>
           <div class="result-slogan" id="rSlogan">—</div>
@@ -1041,8 +1046,42 @@ function openLogo() {
   modal.classList.add('open');
 }
 
+function openResultLogo() {
+  const src = document.getElementById('rLogo');
+  const modal = document.getElementById('logoModal');
+  const content = document.getElementById('logoModalContent');
+  content.innerHTML = '';
+  const img = src.querySelector('img');
+  if (img) {
+    const bigImg = document.createElement('img');
+    bigImg.src = img.src;
+    bigImg.style.cssText = 'width:260px;height:260px;border-radius:24px;object-fit:cover;box-shadow:0 8px 40px rgba(0,0,0,0.5);';
+    content.appendChild(bigImg);
+  } else {
+    content.innerHTML = src.innerHTML;
+    const svg = content.querySelector('svg');
+    if (svg) { svg.setAttribute('width','260'); svg.setAttribute('height','260'); svg.style.borderRadius='24px'; }
+  }
+  modal.classList.add('open');
+}
+
 function closeLogo() {
   document.getElementById('logoModal').classList.remove('open');
+}
+
+// Wrapper goStep3 avec désactivation bouton
+async function goStep3Btn() {
+  const btn = document.getElementById('step2Btn');
+  const loading = document.getElementById('step2Loading');
+  btn.disabled = true;
+  btn.style.opacity = '0.5';
+  btn.style.cursor = 'not-allowed';
+  loading.style.display = 'block';
+  await goStep3();
+  btn.disabled = false;
+  btn.style.opacity = '1';
+  btn.style.cursor = 'pointer';
+  loading.style.display = 'none';
 }
 
 // ── INIT ──
