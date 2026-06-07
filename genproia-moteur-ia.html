@@ -195,13 +195,21 @@
   .valid-cell-label { font-family: 'Inter', sans-serif; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
   .valid-cell-value { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--white); margin-bottom: 10px; word-break: break-word; }
   .valid-cell-sub { font-size: 0.72rem; color: var(--muted); margin-bottom: 10px; }
-  .valid-logo-preview { width: 48px; height: 48px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 800; margin-bottom: 10px; overflow: hidden; }
+  .valid-logo-preview { width: 80px; height: 80px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 800; margin-bottom: 10px; overflow: hidden; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border: 2px solid rgba(139,92,246,0.2); }
+  .valid-logo-preview:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(139,92,246,0.3); }
   .valid-actions { display: flex; gap: 6px; }
   .valid-regen { flex: 1; padding: 7px 4px; border-radius: 8px; background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.25); color: var(--violet-glow); font-size: 0.7rem; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 500; transition: all 0.2s; text-align: center; }
   .valid-regen:hover { background: rgba(139,92,246,0.18); border-color: var(--violet-bright); }
   .valid-validate { flex: 1; padding: 7px 4px; border-radius: 8px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.35); color: #fcd34d; font-size: 0.7rem; cursor: pointer; font-family: 'Inter', sans-serif; font-weight: 600; transition: all 0.2s; text-align: center; }
   .valid-validate:hover { background: rgba(245,158,11,0.2); }
   .valid-validate.validated { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.4); color: #6ee7b7; cursor: default; pointer-events: none; }
+
+  /* LOGO MODALE */
+  .logo-modal { position: fixed; inset: 0; z-index: 400; background: rgba(5,3,15,0.92); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; flex-direction: column; gap: 16px; }
+  .logo-modal.open { display: flex; animation: fadeIn 0.2s ease; }
+  .logo-modal img, .logo-modal svg { width: 260px; height: 260px; border-radius: 24px; object-fit: cover; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+  .logo-modal-close { color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.85rem; cursor: pointer; padding: 8px 20px; border: 1px solid var(--border2); border-radius: 8px; background: rgba(255,255,255,0.04); transition: all 0.2s; }
+  .logo-modal-close:hover { color: var(--white); background: rgba(255,255,255,0.08); }
 
   /* ERROR */
   .error-box { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 12px; padding: 14px 18px; font-size: 0.83rem; color: #fca5a5; display: none; margin-bottom: 16px; }
@@ -395,7 +403,7 @@
           <!-- LOGO -->
           <div class="valid-cell">
             <div class="valid-cell-label">Logo preview</div>
-            <div class="valid-logo-preview" id="vLogo">—</div>
+            <div class="valid-logo-preview" id="vLogo" onclick="openLogo()">—</div>
             <div class="valid-actions">
               <button class="valid-regen" onclick="regenIdent('logo')">↺ Régénérer</button>
               <button class="valid-validate" id="valLogo" onclick="validateIdent('logo')">✓ Valider</button>
@@ -496,6 +504,12 @@
     </div>
 
   </div>
+</div>
+
+<!-- MODALE LOGO -->
+<div class="logo-modal" id="logoModal" onclick="closeLogo()">
+  <div id="logoModalContent" onclick="event.stopPropagation()"></div>
+  <div class="logo-modal-close" onclick="closeLogo()">✕ Fermer</div>
 </div>
 
 <script translate="no">
@@ -1007,6 +1021,29 @@ function showError(msg) {
 function hideError() { document.getElementById('errorBox').classList.remove('visible'); }
 function showUpgrade() { document.getElementById('upgradeBox').classList.add('visible'); }
 function hideUpgrade() { document.getElementById('upgradeBox').classList.remove('visible'); }
+
+// ── MODALE LOGO ──
+function openLogo() {
+  const src = document.getElementById('vLogo');
+  const modal = document.getElementById('logoModal');
+  const content = document.getElementById('logoModalContent');
+  content.innerHTML = '';
+  if (identData.logoData?.type === 'image') {
+    const img = document.createElement('img');
+    img.src = identData.logoData.url;
+    img.style.cssText = 'width:260px;height:260px;border-radius:24px;object-fit:cover;box-shadow:0 8px 40px rgba(0,0,0,0.5);';
+    content.appendChild(img);
+  } else {
+    content.innerHTML = src.innerHTML;
+    const svg = content.querySelector('svg');
+    if (svg) { svg.setAttribute('width','260'); svg.setAttribute('height','260'); svg.style.borderRadius='24px'; }
+  }
+  modal.classList.add('open');
+}
+
+function closeLogo() {
+  document.getElementById('logoModal').classList.remove('open');
+}
 
 // ── INIT ──
 checkAuth();
