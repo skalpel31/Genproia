@@ -823,7 +823,20 @@ async function lancerGeneration() {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + userToken
       },
-      body: JSON.stringify({ idee, type: currentType })
+      body: JSON.stringify({
+        idee,
+        type: currentType,
+        // ✅ Passer toutes les données validées à l'étape 3
+        identiteValidee: {
+          nom: identData.nom,
+          slogan: identData.slogan,
+          couleur_primaire: identData.couleur1,
+          couleur_secondaire: identData.couleur2,
+          domaine: identData.domaine,
+          initiales: identData.initiales,
+          logo_svg: identData.svgLogo
+        }
+      })
     });
 
     const data = await response.json();
