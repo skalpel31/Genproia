@@ -958,7 +958,8 @@ function dismissInstall() {
 function adjustChatBtn(bannerVisible) {
   const btn = document.querySelector('.pub-chat-btn');
   if (!btn || window.innerWidth > 768) return;
-  btn.style.bottom = bannerVisible ? '80px' : '28px';
+  btn.style.bottom = bannerVisible ? '90px' : '28px';
+  btn.style.right = bannerVisible ? '14px' : '28px';
 }
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault(); deferredPrompt = e;
