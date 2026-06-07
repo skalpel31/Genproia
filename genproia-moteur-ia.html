@@ -1118,10 +1118,18 @@ function animateLoadingSteps() {
 
 function afficherResultat(r) {
   const logo = document.getElementById('rLogo');
-  if (r.logo_svg) {
+  logo.innerHTML = '';
+
+  // ✅ Priorité : logo validé à l'étape 3 (identData) — c'est exactement celui dans le site
+  if (identData.logoData?.type === 'image') {
+    const img = document.createElement('img');
+    img.src = identData.logoData.url;
+    img.style.cssText = 'width:64px;height:64px;border-radius:14px;object-fit:cover;';
+    logo.appendChild(img);
+  } else if (identData.logoData?.svg) {
+    logo.innerHTML = identData.logoData.svg;
+  } else if (r.logo_svg) {
     logo.innerHTML = r.logo_svg;
-  } else {
-    logo.innerHTML = makeSvgLogo(r.logo_initiales || r.nom?.substring(0,2).toUpperCase(), r.couleur_primaire || '#7c3aed', r.couleur_secondaire || '#ec4899');
   }
 
   document.getElementById('rNom').textContent = r.nom;
