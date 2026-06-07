@@ -654,8 +654,10 @@ async function loadDashboard() {
         : colors[i % 4];
       const initiales = (p.logo_initiales || (p.nom||'PR').substring(0,2)).toUpperCase();
       const logoHtml = p.logo_svg
-        ? '<div class="project-logo" style="overflow:hidden;padding:0;">' + p.logo_svg.replace(/width="[^"]*"/, 'width="40"').replace(/height="[^"]*"/, 'height="40"') + '</div>'
-        : '<div class="project-logo" style="background:' + couleur + '">' + initiales + '</div>';
+        ? '<div class="project-logo" style="overflow:hidden;padding:0;background:none;">' +
+          p.logo_svg.replace(/width="[^"]*"/, 'width="40"').replace(/height="[^"]*"/, 'height="40"').replace(/viewBox="[^"]*"/, 'viewBox="0 0 100 100"') +
+          '</div>'
+        : '<div class="project-logo" style="background:' + (couleur || 'linear-gradient(135deg,#7c3aed,#ec4899)') + '">' + initiales + '</div>';
       const isLive = p.statut === 'live' || p.site_url;
       const statusHtml = isLive
         ? '<div class="project-status ps-live">🟢 Live</div>'
@@ -703,8 +705,10 @@ function renderAllProjets() {
       : colors[i % 4];
     const initiales = (p.logo_initiales || (p.nom||'PR').substring(0,2)).toUpperCase();
     const logoHtml2 = p.logo_svg
-      ? '<div class="project-logo" style="overflow:hidden;padding:0;width:48px;height:48px;">' + p.logo_svg.replace(/width="[^"]*"/, 'width="48"').replace(/height="[^"]*"/, 'height="48"') + '</div>'
-      : '<div class="project-logo" style="background:' + couleur + ';width:48px;height:48px;">' + initiales + '</div>';
+      ? '<div class="project-logo" style="overflow:hidden;padding:0;background:none;width:48px;height:48px;">' +
+        p.logo_svg.replace(/width="[^"]*"/, 'width="48"').replace(/height="[^"]*"/, 'height="48"').replace(/viewBox="[^"]*"/, 'viewBox="0 0 100 100"') +
+        '</div>'
+      : '<div class="project-logo" style="background:' + (couleur || 'linear-gradient(135deg,#7c3aed,#ec4899)') + ';width:48px;height:48px;">' + initiales + '</div>';
     const isLive = p.statut === 'live' || p.site_url;
     const statusHtml2 = isLive
       ? '<div class="project-status ps-live">🟢 Live</div>'
@@ -746,8 +750,13 @@ function renderIdentite() {
       : 'linear-gradient(135deg,#7c3aed,#ec4899)';
     const initiales = (p.logo_initiales || (p.nom||'PR').substring(0,2)).toUpperCase();
     const logoHtml3 = p.logo_svg
-      ? '<div class="identity-logo" style="overflow:hidden;padding:0;">' + p.logo_svg.replace(/width="[^"]*"/, 'width="50"').replace(/height="[^"]*"/, 'height="50"') + '</div>'
-      : '<div class="identity-logo" style="background:' + couleur + '">' + initiales + '</div>';
+      ? '<div class="identity-logo" style="overflow:hidden;padding:0;background:none;">' +
+        p.logo_svg
+          .replace(/width="[^"]*"/, 'width="50"')
+          .replace(/height="[^"]*"/, 'height="50"')
+          .replace(/viewBox="[^"]*"/, 'viewBox="0 0 100 100"') +
+        '</div>'
+      : '<div class="identity-logo" style="background:' + (couleur || 'linear-gradient(135deg,#7c3aed,#ec4899)') + '">' + initiales + '</div>';
     const div = document.createElement('div');
     div.className = 'identity-card';
     div.innerHTML =
