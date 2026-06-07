@@ -30,6 +30,10 @@
       "dest": "/api/deploy.js"
     },
     {
+      "src": "/api/generate-logo",
+      "dest": "/api/generate-logo.js"
+    },
+    {
       "src": "/(.*\\.html)",
       "dest": "/$1"
     },
