@@ -655,7 +655,12 @@ async function loadDashboard() {
       const initiales = (p.logo_initiales || (p.nom||'PR').substring(0,2)).toUpperCase();
       const logoHtml = p.logo_svg
         ? '<div class="project-logo" style="overflow:hidden;padding:0;background:none;">' +
-          p.logo_svg.replace(/width="[^"]*"/, 'width="40"').replace(/height="[^"]*"/, 'height="40"').replace(/viewBox="[^"]*"/, 'viewBox="0 0 100 100"') +
+          p.logo_svg
+            .replace(/id="([^"]*)"/g, 'id="$1_ov' + i + '"')
+            .replace(/url\(#([^)]*)\)/g, 'url(#$1_ov' + i + ')')
+            .replace(/width="[^"]*"/, 'width="40"')
+            .replace(/height="[^"]*"/, 'height="40"')
+            .replace(/viewBox="[^"]*"/, 'viewBox="0 0 100 100"') +
           '</div>'
         : '<div class="project-logo" style="background:' + (couleur || 'linear-gradient(135deg,#7c3aed,#ec4899)') + '">' + initiales + '</div>';
       const isLive = p.statut === 'live' || p.site_url;
@@ -706,7 +711,12 @@ function renderAllProjets() {
     const initiales = (p.logo_initiales || (p.nom||'PR').substring(0,2)).toUpperCase();
     const logoHtml2 = p.logo_svg
       ? '<div class="project-logo" style="overflow:hidden;padding:0;background:none;width:48px;height:48px;">' +
-        p.logo_svg.replace(/width="[^"]*"/, 'width="48"').replace(/height="[^"]*"/, 'height="48"').replace(/viewBox="[^"]*"/, 'viewBox="0 0 100 100"') +
+        p.logo_svg
+          .replace(/id="([^"]*)"/g, 'id="$1_pr' + i + '"')
+          .replace(/url\(#([^)]*)\)/g, 'url(#$1_pr' + i + ')')
+          .replace(/width="[^"]*"/, 'width="48"')
+          .replace(/height="[^"]*"/, 'height="48"')
+          .replace(/viewBox="[^"]*"/, 'viewBox="0 0 100 100"') +
         '</div>'
       : '<div class="project-logo" style="background:' + (couleur || 'linear-gradient(135deg,#7c3aed,#ec4899)') + ';width:48px;height:48px;">' + initiales + '</div>';
     const isLive = p.statut === 'live' || p.site_url;
@@ -752,6 +762,8 @@ function renderIdentite() {
     const logoHtml3 = p.logo_svg
       ? '<div class="identity-logo" style="overflow:hidden;padding:0;background:none;">' +
         p.logo_svg
+          .replace(/id="([^"]*)"/g, 'id="$1_id' + p.id.substring(0,8) + '"')
+          .replace(/url\(#([^)]*)\)/g, 'url(#$1_id' + p.id.substring(0,8) + ')')
           .replace(/width="[^"]*"/, 'width="50"')
           .replace(/height="[^"]*"/, 'height="50"')
           .replace(/viewBox="[^"]*"/, 'viewBox="0 0 100 100"') +
