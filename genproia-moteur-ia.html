@@ -470,12 +470,14 @@
               <button class="valid-validate" id="valSlogan" onclick="validateIdent('slogan')">✓ Valider</button>
             </div>
           </div>
-          <div class="valid-cell">
-            <div class="valid-cell-label">Logo preview</div>
-            <div class="valid-logo-preview" id="vLogo" onclick="openLogo()">—</div>
-            <div class="valid-actions">
-              <button class="valid-regen" onclick="regenIdent('logo')">↺ Régénérer</button>
-              <button class="valid-validate" id="valLogo" onclick="validateIdent('logo')">✓ Valider</button>
+          <!-- LOGO — Info uniquement -->
+          <div class="valid-cell" style="grid-column:1/-1;background:rgba(139,92,246,0.06);border:1px dashed rgba(139,92,246,0.3);">
+            <div style="display:flex;align-items:center;gap:14px;padding:4px 0;">
+              <div style="font-size:2rem;">🎨</div>
+              <div>
+                <div style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:700;color:var(--white);margin-bottom:4px;">Logo généré automatiquement</div>
+                <div style="font-size:0.78rem;color:var(--muted);line-height:1.5;">L'IA créera un logo professionnel unique adapté à ton secteur lors de la génération du site. Tu pourras le voir dans le résultat final.</div>
+              </div>
             </div>
           </div>
           <div class="valid-cell">
@@ -488,7 +490,7 @@
           </div>
         </div>
         <div id="validHint" style="text-align:center;font-size:0.8rem;color:var(--muted);padding:10px;">
-          Valide les 4 éléments pour débloquer la génération du site
+          Valide les 3 éléments pour débloquer la génération du site
         </div>
       </div>
 
@@ -940,12 +942,12 @@ async function genererIdentiteAuto() {
       const c1 = r.couleur_primaire || '#7c3aed';
       const c2 = r.couleur_secondaire || '#ec4899';
       const initiales = r.initiales || r.nom.substring(0,2).toUpperCase();
-      const logoData = await makeSvgLogo(r.nom, initiales, c1, c2, idee);
-      identData = { nom: r.nom, slogan: r.slogan, initiales, couleur1: c1, couleur2: c2, domaine: nomToDomaine(r.nom), logoData };
+      identData = { nom: r.nom, slogan: r.slogan, initiales, couleur1: c1, couleur2: c2, domaine: nomToDomaine(r.nom) };
       appliquerSuggestions(identData);
-      identValidated = { nom: false, slogan: false, logo: false, domaine: false };
-      ['valNom','valSlogan','valLogo','valDomaine'].forEach(id => {
+      identValidated = { nom: false, slogan: false, logo: true, domaine: false };
+      ['valNom','valSlogan','valDomaine'].forEach(id => {
         const btn = document.getElementById(id);
+        if (!btn) return;
         btn.classList.remove('validated');
         btn.textContent = '✓ Valider';
         btn.disabled = false;
