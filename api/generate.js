@@ -181,17 +181,69 @@ async function getUnsplashQuery(type, idee) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// SVG LOGO — Généré par Claude
+// SVG LOGO — Généré par Claude avec prompt professionnel
 // ══════════════════════════════════════════════════════════════
 
-async function generateSVGLogo(nom, initiales, couleur1, couleur2) {
-  try {
-    const prompt = `Génère un logo SVG minimaliste et professionnel pour une marque nommée "${nom}" avec les initiales "${initiales}".
-Utilise ces couleurs : primaire ${couleur1}, secondaire ${couleur2}.
-Le logo doit être dans un carré de 100x100px, avec un fond dégradé et les initiales en blanc centré.
-Réponds UNIQUEMENT avec le code SVG complet, rien d'autre.
-Exemple de format attendu : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">...</svg>`;
+function getLogoIconPrompt(idee, nom) {
+  const idea = (idee + ' ' + nom).toLowerCase();
+  if (idea.includes('cbd') || idea.includes('cannabis') || idea.includes('chanvre'))
+    return `Dessine une feuille de cannabis stylisée (5-7 folioles pointues) en blanc, centrée dans le logo. La feuille doit être reconnaissable et élégante, tracée avec des paths SVG précis.`;
+  if (idea.includes('bougie') || idea.includes('chandelle') || idea.includes('cire'))
+    return `Dessine une flamme de bougie stylisée en blanc — forme de goutte inversée avec une base rectangulaire représentant la bougie. Élégant et minimaliste.`;
+  if (idea.includes('restaurant') || idea.includes('repas') || idea.includes('food') || idea.includes('pizza') || idea.includes('burger'))
+    return `Dessine une fourchette et un couteau croisés en blanc, ou une cloche de restaurant stylisée. Propre et professionnel.`;
+  if (idea.includes('café') || idea.includes('coffee') || idea.includes('barista'))
+    return `Dessine une tasse de café vue de côté avec de la vapeur stylisée (2-3 vagues) en blanc. Simple et reconnaissable.`;
+  if (idea.includes('fitness') || idea.includes('sport') || idea.includes('gym') || idea.includes('muscl') || idea.includes('coach'))
+    return `Dessine un haltère stylisé en blanc — deux cercles reliés par une barre horizontale. Ou un éclair/bolt pour l'énergie.`;
+  if (idea.includes('saas') || idea.includes('tech') || idea.includes('logiciel') || idea.includes('app') || idea.includes('digital'))
+    return `Dessine des accolades de code { } stylisées en blanc, ou un circuit imprimé abstrait. Style tech moderne.`;
+  if (idea.includes('immo') || idea.includes('maison') || idea.includes('appart') || idea.includes('logement'))
+    return `Dessine une maison stylisée en blanc — toit triangulaire simple, porte rectangulaire. Minimaliste et professionnel.`;
+  if (idea.includes('mode') || idea.includes('vêtement') || idea.includes('fashion') || idea.includes('street') || idea.includes('hype') || idea.includes('urban'))
+    return `Dessine une forme géométrique abstraite et moderne en blanc — losange, hexagone, ou forme unique qui évoque le style et la mode urbaine. PAS de cintre.`;
+  if (idea.includes('voyage') || idea.includes('tourisme') || idea.includes('hotel') || idea.includes('vacances'))
+    return `Dessine une boussole stylisée en blanc, ou un avion en papier origami. Évoque le voyage et l'aventure.`;
+  if (idea.includes('bio') || idea.includes('naturel') || idea.includes('plante') || idea.includes('organic') || idea.includes('vegan'))
+    return `Dessine une feuille simple ou un bourgeon stylisé en blanc — formes courbes naturelles. Évoque la nature et l'organique.`;
+  if (idea.includes('bijou') || idea.includes('joaill') || idea.includes('luxe') || idea.includes('premium'))
+    return `Dessine un diamant géométrique stylisé en blanc — hexagone avec des facettes intérieures. Élégant et luxueux.`;
+  if (idea.includes('musique') || idea.includes('music') || idea.includes('studio'))
+    return `Dessine une note de musique stylisée en blanc, ou des ondes sonores abstraites. Simple et reconnaissable.`;
+  if (idea.includes('photo') || idea.includes('photographe'))
+    return `Dessine un objectif photo stylisé en blanc — cercle avec des cercles concentriques. Professionnel.`;
+  if (idea.includes('beauté') || idea.includes('cosmétique') || idea.includes('soin') || idea.includes('spa'))
+    return `Dessine une fleur stylisée à 5 pétales en blanc, ou un cristal/diamant. Évoque la beauté et le soin.`;
+  return `Dessine une forme géométrique abstraite, moderne et unique en blanc — hexagone, pentagone, ou forme custom qui reflète l'identité de la marque "${nom}". Style startup professionnel.`;
+}
 
+async function generateSVGLogo(nom, initiales, couleur1, couleur2, idee) {
+  const iconPrompt = getLogoIconPrompt(idee || nom, nom);
+  const uid = Date.now().toString(36);
+
+  const prompt = `Tu es un designer logo professionnel. Crée un logo SVG haute qualité pour la marque "${nom}".
+
+SPÉCIFICATIONS TECHNIQUES :
+- viewBox="0 0 100 100", width="100", height="100"
+- Fond : rect 100x100 rx="18" avec dégradé de ${couleur1} (0%) à ${couleur2} (100%), diagonal (x1="0%" y1="0%" x2="100%" y2="100%")
+- ID gradient unique : "grad_${uid}"
+
+ICÔNE (zone 20-65% de la hauteur, centrée horizontalement) :
+${iconPrompt}
+- L'icône doit être en blanc (fill="white") ou blanc avec opacity
+- Taille de l'icône : environ 35-40px de hauteur, centrée à x=50
+- Utilise des paths SVG réels, pas d'emoji ou de caractères unicode
+
+TEXTE :
+- Le nom "${nom}" en bas (y≈82), centré (text-anchor="middle" x="50")
+- Font: font-family="Arial,sans-serif" font-weight="800" font-size="${nom.length > 8 ? '9' : nom.length > 5 ? '11' : '13'}" fill="white"
+- Letter-spacing="1"
+
+STYLE : flat design, minimaliste, professionnel, style startup moderne.
+
+Réponds UNIQUEMENT avec le code SVG complet commençant par <svg, sans markdown, sans explication.`;
+
+  try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -201,7 +253,7 @@ Exemple de format attendu : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-5',
-        max_tokens: 1000,
+        max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -209,19 +261,24 @@ Exemple de format attendu : <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0
     const data = await response.json();
     const text = data.content[0].text.trim();
     const svgMatch = text.match(/<svg[\s\S]*<\/svg>/);
-    if (svgMatch) return svgMatch[0];
+    if (svgMatch) {
+      console.log(`Logo SVG généré pour "${nom}" ✅`);
+      return svgMatch[0];
+    }
   } catch (e) {
     console.error('SVG logo error:', e);
   }
 
-  // Fallback SVG simple
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
-    <stop offset="0%" style="stop-color:${couleur1}"/>
-    <stop offset="100%" style="stop-color:${couleur2}"/>
+  // Fallback SVG propre
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <defs><linearGradient id="g${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="${couleur1}"/>
+    <stop offset="100%" stop-color="${couleur2}"/>
   </linearGradient></defs>
-  <rect width="100" height="100" rx="20" fill="url(#g)"/>
-  <text x="50" y="62" font-family="Inter,sans-serif" font-size="${initiales.length > 2 ? '26' : '32'}" font-weight="800" fill="white" text-anchor="middle">${initiales}</text>
+  <rect width="100" height="100" rx="18" fill="url(#g${uid})"/>
+  <rect x="10" y="10" width="80" height="80" rx="12" fill="rgba(255,255,255,0.1)"/>
+  <text x="50" y="52" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="${initiales.length > 2 ? '24' : '30'}" fill="white">${initiales}</text>
+  <text x="50" y="72" text-anchor="middle" font-family="Arial,sans-serif" font-weight="600" font-size="8" fill="rgba(255,255,255,0.8)">${nom.toUpperCase()}</text>
 </svg>`;
 }
 
@@ -626,7 +683,8 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
         result.nom,
         result.logo_initiales || result.nom.substring(0, 2).toUpperCase(),
         result.couleur_primaire || '#7c3aed',
-        result.couleur_secondaire || '#ec4899'
+        result.couleur_secondaire || '#ec4899',
+        idee
       );
       console.log('Logo: SVG fallback généré');
     }
