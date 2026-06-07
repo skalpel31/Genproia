@@ -585,16 +585,23 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
     let logoUrl = '';
 
     if (identiteValidee && identiteValidee.logo_url) {
-      // ✅ Image Ideogram validée — priorité absolue
-      logoUrl = identiteValidee.logo_url;
-      svgLogo = `<img src="${logoUrl}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;" alt="${result.nom}">`;
-      console.log('Logo: Ideogram URL utilisée →', logoUrl);
+      // ✅ Image Ideogram — télécharger et convertir en base64 pour URL permanente
+      try {
+        const imgRes = await fetch(identiteValidee.logo_url);
+        const imgBuffer = await imgRes.arrayBuffer();
+        const base64 = Buffer.from(imgBuffer).toString('base64');
+        const contentType = imgRes.headers.get('content-type') || 'image/jpeg';
+        logoUrl = `data:${contentType};base64,${base64}`;
+        svgLogo = `<img src="${logoUrl}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;" alt="${result.nom}">`;
+        console.log('Logo: Ideogram téléchargé et encodé en base64 ✅');
+      } catch(e) {
+        console.error('Logo: Erreur téléchargement Ideogram, fallback SVG', e.message);
+        svgLogo = identiteValidee.logo_svg || await generateSVGLogo(result.nom, result.logo_initiales || result.nom.substring(0,2).toUpperCase(), result.couleur_primaire || '#7c3aed', result.couleur_secondaire || '#ec4899');
+      }
     } else if (identiteValidee && identiteValidee.logo_svg) {
-      // ✅ SVG validé à l'étape 3
       svgLogo = identiteValidee.logo_svg;
       console.log('Logo: SVG validé utilisé');
     } else {
-      // Fallback : générer un SVG basique
       svgLogo = await generateSVGLogo(
         result.nom,
         result.logo_initiales || result.nom.substring(0, 2).toUpperCase(),
@@ -612,15 +619,12 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
       result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, logoInline);
     }
 
-    // ✅ POST-TRAITEMENT FORCÉ : remplacer les images produits une par une
-    // Claude ignore souvent les URLs — on les force après coup
+    // ✅ POST-TRAITEMENT FORCÉ : assigner une URL différente à chaque img produit
     if (images.length > 0 && result.site_html) {
-      // Trouver toutes les balises img dans le HTML et remplacer par les vraies URLs Unsplash
       let imgIndex = 0;
       result.site_html = result.site_html.replace(/<img([^>]*?)src="([^"]*?)"([^>]*?)>/gi, (match, before, src, after) => {
-        // Ne pas remplacer le logo (LOGO_SVG_PLACEHOLDER déjà remplacé)
-        // Ne pas remplacer les images qui ont déjà une URL Unsplash valide
-        if (src.includes('images.unsplash.com') || src.includes('logo') || src.includes('data:')) {
+        // Ne pas toucher les logos (contient 'logo', 'data:', ou est une balise avec width/height 50px)
+        if (src.includes('data:') || before.includes('logo') || after.includes('logo') || match.includes('width:50px')) {
           return match;
         }
         if (imgIndex < images.length) {
