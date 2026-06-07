@@ -599,10 +599,13 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
       );
     }
 
-    // 5. Injecter le logo SVG dans le site HTML
+    // 5. Injecter le logo dans le site HTML
     if (result.site_html && result.site_html.includes('LOGO_SVG_PLACEHOLDER')) {
-      const svgInline = svgLogo.replace(/"/g, "'");
-      result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, svgInline);
+      // Pour les img tags (Ideogram) on garde les guillemets, pour SVG on les échappe
+      const logoInline = logoUrl
+        ? `<img src="${logoUrl}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;" alt="${result.nom}">`
+        : svgLogo.replace(/"/g, "'");
+      result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, logoInline);
     }
 
     // ✅ Forcer aussi le nom dans le HTML si Claude l'a changé
