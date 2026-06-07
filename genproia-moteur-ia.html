@@ -560,7 +560,7 @@ function nomToDomaine(nom, ext) {
     + ext;
 }
 
-// Génère un vrai logo SVG via /api/generate-logo
+// Génère un logo via /api/generate-logo (Ideogram ou fallback SVG)
 async function makeSvgLogo(nom, initiales, c1, c2, idee) {
   try {
     const resp = await fetch('/api/generate-logo', {
@@ -569,9 +569,16 @@ async function makeSvgLogo(nom, initiales, c1, c2, idee) {
       body: JSON.stringify({ nom, initiales, couleur1: c1, couleur2: c2, idee: idee || nom })
     });
     const data = await resp.json();
-    if (data.success && data.svg) return data.svg;
-  } catch(e) {}
-  return fallbackSvgLogo(initiales, c1, c2);
+    if (data.success) {
+      if (data.type === 'image' && data.imageUrl) {
+        // Image Ideogram — stocker l'URL pour l'afficher
+        return { type: 'image', url: data.imageUrl };
+      } else if (data.svg) {
+        return { type: 'svg', svg: data.svg };
+      }
+    }
+  } catch(e) { console.error('Logo error:', e); }
+  return { type: 'svg', svg: fallbackSvgLogo(initiales, c1, c2) };
 }
 
 function fallbackSvgLogo(initiales, c1, c2) {
@@ -606,6 +613,7 @@ async function goStep3() {
         const c1 = r.couleur_primaire || '#7c3aed';
         const c2 = r.couleur_secondaire || '#ec4899';
         const initiales = r.initiales || r.nom.substring(0,2).toUpperCase();
+        const logoData = await makeSvgLogo(r.nom, initiales, c1, c2, idee);
         suggestions = {
           nom: r.nom,
           slogan: r.slogan,
@@ -613,7 +621,7 @@ async function goStep3() {
           couleur1: c1,
           couleur2: c2,
           domaine: nomToDomaine(r.nom),
-          svgLogo: await makeSvgLogo(r.nom, initiales, c1, c2, idee)
+          logoData
         };
       } else { throw new Error('API error'); }
     } catch(e) {
@@ -638,16 +646,26 @@ async function goStep3() {
   showStep(3);
 }
 
-// Applique les suggestions dans l'UI (sans ligne Alt)
+// Applique les suggestions dans l'UI
 function appliquerSuggestions(s) {
   document.getElementById('vNom').textContent = s.nom;
   document.getElementById('vSlogan').textContent = s.slogan;
   document.getElementById('vDomaine').textContent = s.domaine;
   const logo = document.getElementById('vLogo');
-  if (s.svgLogo) {
+  logo.innerHTML = '';
+  logo.style.background = '';
+  if (s.logoData) {
+    if (s.logoData.type === 'image') {
+      const img = document.createElement('img');
+      img.src = s.logoData.url;
+      img.style.cssText = 'width:48px;height:48px;border-radius:10px;object-fit:cover;';
+      logo.appendChild(img);
+    } else if (s.logoData.svg) {
+      logo.innerHTML = s.logoData.svg;
+    }
+  } else if (s.svgLogo) {
     logo.innerHTML = s.svgLogo;
   } else {
-    logo.innerHTML = '';
     logo.textContent = s.initiales;
     logo.style.background = 'linear-gradient(135deg,' + s.couleur1 + ',' + s.couleur2 + ')';
     logo.style.fontFamily = 'Inter,sans-serif';
@@ -713,14 +731,22 @@ async function regenIdent(type) {
         identData.couleur1 = c1;
         identData.couleur2 = c2;
         identData.domaine = nomToDomaine(r.nom);
-        identData.svgLogo = await makeSvgLogo(r.nom, initiales, c1, c2, idee);
+        const logoDataNom = await makeSvgLogo(r.nom, initiales, c1, c2, idee);
+        identData.logoData = logoDataNom;
 
         document.getElementById('vNom').textContent = r.nom;
-        // Mise à jour auto du slogan et du domaine pour rester cohérents
         document.getElementById('vSlogan').textContent = r.slogan;
         document.getElementById('vDomaine').textContent = identData.domaine;
-        const logo = document.getElementById('vLogo');
-        logo.innerHTML = identData.svgLogo;
+        const logoElNom = document.getElementById('vLogo');
+        logoElNom.innerHTML = '';
+        if (logoDataNom.type === 'image') {
+          const img = document.createElement('img');
+          img.src = logoDataNom.url;
+          img.style.cssText = 'width:48px;height:48px;border-radius:10px;object-fit:cover;';
+          logoElNom.appendChild(img);
+        } else {
+          logoElNom.innerHTML = logoDataNom.svg || '';
+        }
 
         // Réinitialiser la validation du slogan et du domaine (ils ont changé)
         identValidated.slogan = false;
@@ -741,8 +767,18 @@ async function regenIdent(type) {
         identData.initiales = initiales;
         identData.couleur1 = c1;
         identData.couleur2 = c2;
-        identData.svgLogo = await makeSvgLogo(identData.nom || r.nom, initiales, c1, c2, idee);
-        document.getElementById('vLogo').innerHTML = identData.svgLogo;
+        const logoData = await makeSvgLogo(identData.nom || r.nom, initiales, c1, c2, idee);
+        identData.logoData = logoData;
+        const logo = document.getElementById('vLogo');
+        logo.innerHTML = '';
+        if (logoData.type === 'image') {
+          const img = document.createElement('img');
+          img.src = logoData.url;
+          img.style.cssText = 'width:48px;height:48px;border-radius:10px;object-fit:cover;';
+          logo.appendChild(img);
+        } else {
+          logo.innerHTML = logoData.svg || '';
+        }
 
       } else if (type === 'domaine') {
         // Domaine toujours basé sur le nom actuel, avec une extension différente
@@ -834,7 +870,8 @@ async function lancerGeneration() {
           couleur_secondaire: identData.couleur2,
           domaine: identData.domaine,
           initiales: identData.initiales,
-          logo_svg: identData.svgLogo
+          logo_svg: identData.logoData?.svg || identData.logoData?.url || null,
+          logo_url: identData.logoData?.type === 'image' ? identData.logoData.url : null
         }
       })
     });
