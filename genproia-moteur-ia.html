@@ -575,25 +575,9 @@ function makeSvgLogo(initiales, c1, c2) {
 async function goStep3() {
   const idee = document.getElementById('ideaInput').value.trim();
 
-  let savedProj = null;
-  try { savedProj = JSON.parse(localStorage.getItem('genproia_project')); } catch(e) {}
-
+  // Toujours appeler Claude avec la vraie idée saisie — jamais le localStorage
   let suggestions;
-  if (savedProj && savedProj.validated && savedProj.nom && savedProj.nom !== '—') {
-    const c1 = savedProj.couleurPrimaire || '#7c3aed';
-    const c2 = savedProj.couleurSecondaire || '#ec4899';
-    const initiales = savedProj.logoInitiales || savedProj.nom.substring(0,2).toUpperCase();
-    suggestions = {
-      nom: savedProj.nom,
-      slogan: savedProj.slogan,
-      initiales,
-      couleur1: c1,
-      couleur2: c2,
-      domaine: nomToDomaine(savedProj.nom),
-      svgLogo: makeSvgLogo(initiales, c1, c2)
-    };
-  } else {
-    try {
+  try {
       const resp = await fetch('/api/demo', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -618,7 +602,6 @@ async function goStep3() {
     } catch(e) {
       suggestions = genererSuggestions(idee);
     }
-  }
 
   identData = suggestions;
   appliquerSuggestions(suggestions);
