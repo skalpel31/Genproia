@@ -26,6 +26,10 @@
       "dest": "/api/chat-public.js"
     },
     {
+      "src": "/api/deploy",
+      "dest": "/api/deploy.js"
+    },
+    {
       "src": "/(.*\\.html)",
       "dest": "/$1"
     },
