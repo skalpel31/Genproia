@@ -637,64 +637,24 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
       if (identiteValidee.domaine) result.domaines = [identiteValidee.domaine, ...(result.domaines || []).filter(d => d !== identiteValidee.domaine)];
     }
 
-    // 4. Logo — utiliser celui validé (Ideogram ou SVG) ou en générer un nouveau
+    // 4. Logo — laisser Claude générer son propre logo dans le site
+    // On ne force plus de logo externe — Claude fait de meilleurs logos inline
     let svgLogo = '';
-    let logoUrl = '';
-
-    if (identiteValidee && identiteValidee.logo_url) {
-      // ✅ Image Ideogram — télécharger et convertir en base64 pour URL permanente
-      try {
-        const imgRes = await fetch(identiteValidee.logo_url);
-        const imgBuffer = await imgRes.arrayBuffer();
-        const base64 = Buffer.from(imgBuffer).toString('base64');
-        const contentType = imgRes.headers.get('content-type') || 'image/jpeg';
-        logoUrl = `data:${contentType};base64,${base64}`;
-        svgLogo = `<img src="${logoUrl}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;" alt="${result.nom}">`;
-        console.log('Logo: Ideogram téléchargé et encodé en base64 ✅');
-      } catch(e) {
-        console.error('Logo: Erreur téléchargement Ideogram, fallback generate-logo', e.message);
-        // Fallback : appeler generate-logo pour avoir le SVG avec icône secteur
-        try {
-          const logoResp = await fetch(`${process.env.VERCEL_URL ? 'https://' + process.env.VERCEL_URL : 'https://www.genproia.com'}/api/generate-logo`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              nom: result.nom,
-              initiales: identiteValidee.initiales || result.nom.substring(0,2).toUpperCase(),
-              couleur1: result.couleur_primaire || '#7c3aed',
-              couleur2: result.couleur_secondaire || '#ec4899',
-              idee
-            })
-          });
-          const logoData = await logoResp.json();
-          if (logoData.success && logoData.svg) {
-            svgLogo = logoData.svg;
-            console.log('Logo: SVG secteur généré en fallback ✅');
-          } else throw new Error('No SVG');
-        } catch(e2) {
-          svgLogo = identiteValidee.logo_svg || await generateSVGLogo(result.nom, result.nom.substring(0,2).toUpperCase(), result.couleur_primaire || '#7c3aed', result.couleur_secondaire || '#ec4899');
-        }
-      }
-    } else if (identiteValidee && identiteValidee.logo_svg) {
+    if (identiteValidee && identiteValidee.logo_svg) {
+      // Si l'utilisateur a uploadé son propre logo
       svgLogo = identiteValidee.logo_svg;
-      console.log('Logo: SVG validé utilisé');
-    } else {
-      svgLogo = await generateSVGLogo(
-        result.nom,
-        result.logo_initiales || result.nom.substring(0, 2).toUpperCase(),
-        result.couleur_primaire || '#7c3aed',
-        result.couleur_secondaire || '#ec4899',
-        idee
-      );
-      console.log('Logo: SVG fallback généré');
+      console.log('Logo: logo uploadé par utilisateur utilisé');
     }
+    // Sinon Claude génère son propre logo dans le HTML via LOGO_SVG_PLACEHOLDER
 
-    // 5. Injecter le logo dans le site HTML
-    if (result.site_html && result.site_html.includes('LOGO_SVG_PLACEHOLDER')) {
-      const logoInline = logoUrl
-        ? `<img src="${logoUrl}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;" alt="${result.nom}">`
-        : svgLogo.replace(/"/g, "'");
-      result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, logoInline);
+    // 5. Injecter le logo si fourni, sinon retirer le placeholder
+    if (result.site_html) {
+      if (svgLogo && result.site_html.includes('LOGO_SVG_PLACEHOLDER')) {
+        result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, svgLogo.replace(/"/g, "'"));
+      } else if (result.site_html.includes('LOGO_SVG_PLACEHOLDER')) {
+        // Pas de logo fourni — retirer le placeholder, Claude a mis son propre logo
+        result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, '');
+      }
     }
 
     // ✅ POST-TRAITEMENT FORCÉ : assigner une URL différente à chaque img produit
@@ -721,8 +681,8 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
       result.site_html = result.site_html.replace(/<title>[^<]*<\/title>/, `<title>${identiteValidee.nom}</title>`);
     }
 
-    // 6. Sauvegarder le SVG logo dans le résultat
-    result.logo_svg = svgLogo;
+    // 6. Extraire et sauvegarder le logo depuis le HTML généré
+    result.logo_svg = svgLogo || '';
     result.images_unsplash = images;
 
     // 7. Sauvegarder dans Supabase
