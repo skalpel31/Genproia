@@ -561,12 +561,12 @@ function nomToDomaine(nom, ext) {
 }
 
 // Génère un vrai logo SVG via /api/generate-logo
-async function makeSvgLogo(nom, initiales, c1, c2) {
+async function makeSvgLogo(nom, initiales, c1, c2, idee) {
   try {
     const resp = await fetch('/api/generate-logo', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nom, initiales, couleur1: c1, couleur2: c2 })
+      body: JSON.stringify({ nom, initiales, couleur1: c1, couleur2: c2, idee: idee || nom })
     });
     const data = await resp.json();
     if (data.success && data.svg) return data.svg;
@@ -613,7 +613,7 @@ async function goStep3() {
           couleur1: c1,
           couleur2: c2,
           domaine: nomToDomaine(r.nom),
-          svgLogo: await makeSvgLogo(r.nom, initiales, c1, c2)
+          svgLogo: await makeSvgLogo(r.nom, initiales, c1, c2, idee)
         };
       } else { throw new Error('API error'); }
     } catch(e) {
@@ -713,7 +713,7 @@ async function regenIdent(type) {
         identData.couleur1 = c1;
         identData.couleur2 = c2;
         identData.domaine = nomToDomaine(r.nom);
-        identData.svgLogo = await makeSvgLogo(r.nom, initiales, c1, c2);
+        identData.svgLogo = await makeSvgLogo(r.nom, initiales, c1, c2, idee);
 
         document.getElementById('vNom').textContent = r.nom;
         // Mise à jour auto du slogan et du domaine pour rester cohérents
@@ -741,7 +741,7 @@ async function regenIdent(type) {
         identData.initiales = initiales;
         identData.couleur1 = c1;
         identData.couleur2 = c2;
-        identData.svgLogo = await makeSvgLogo(identData.nom || r.nom, initiales, c1, c2);
+        identData.svgLogo = await makeSvgLogo(identData.nom || r.nom, initiales, c1, c2, idee);
         document.getElementById('vLogo').innerHTML = identData.svgLogo;
 
       } else if (type === 'domaine') {
