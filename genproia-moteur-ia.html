@@ -643,7 +643,7 @@ function nomToDomaine(nom, ext) {
     + ext;
 }
 
-// Génère un logo via /api/generate-logo (Ideogram ou fallback SVG)
+// Génère un logo SVG via /api/generate-logo (Claude SVG uniquement)
 async function makeSvgLogo(nom, initiales, c1, c2, idee) {
   try {
     const resp = await fetch('/api/generate-logo', {
@@ -652,13 +652,8 @@ async function makeSvgLogo(nom, initiales, c1, c2, idee) {
       body: JSON.stringify({ nom, initiales, couleur1: c1, couleur2: c2, idee: idee || nom })
     });
     const data = await resp.json();
-    if (data.success) {
-      if (data.type === 'image' && data.imageUrl) {
-        // Image Ideogram — stocker l'URL pour l'afficher
-        return { type: 'image', url: data.imageUrl };
-      } else if (data.svg) {
-        return { type: 'svg', svg: data.svg };
-      }
+    if (data.success && data.svg) {
+      return { type: 'svg', svg: data.svg };
     }
   } catch(e) { console.error('Logo error:', e); }
   return { type: 'svg', svg: fallbackSvgLogo(initiales, c1, c2) };
@@ -1057,7 +1052,7 @@ async function lancerGeneration() {
       domaine: identData.domaine,
       initiales: identData.initiales,
       logo_svg: identData.logoData?.svg || null,
-      logo_url: identData.logoData?.type === 'image' ? identData.logoData.url : null
+      logo_url: null
     };
   }
 
@@ -1120,12 +1115,27 @@ function afficherResultat(r) {
   const logo = document.getElementById('rLogo');
   logo.innerHTML = '';
 
-  // ✅ Priorité : logo validé à l'étape 3 (identData) — c'est exactement celui dans le site
-  if (identData.logoData?.type === 'image') {
-    const img = document.createElement('img');
-    img.src = identData.logoData.url;
-    img.style.cssText = 'width:64px;height:64px;border-radius:14px;object-fit:cover;';
-    logo.appendChild(img);
+  // ✅ Extraire le logo directement depuis le site HTML généré
+  // C'est la seule source de vérité — c'est exactement ce qui est dans le site
+  if (r.site_html) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(r.site_html, 'text/html');
+    // Chercher le logo dans le header (premier svg ou img dans le header/nav)
+    const headerSvg = doc.querySelector('header svg, nav svg, .header svg, .navbar svg');
+    const headerImg = doc.querySelector('header img, nav img, .header img, .navbar img');
+    if (headerSvg) {
+      headerSvg.setAttribute('width', '64');
+      headerSvg.setAttribute('height', '64');
+      headerSvg.style.borderRadius = '14px';
+      logo.appendChild(headerSvg.cloneNode(true));
+    } else if (headerImg) {
+      const img = document.createElement('img');
+      img.src = headerImg.src;
+      img.style.cssText = 'width:64px;height:64px;border-radius:14px;object-fit:cover;';
+      logo.appendChild(img);
+    } else if (r.logo_svg) {
+      logo.innerHTML = r.logo_svg;
+    }
   } else if (identData.logoData?.svg) {
     logo.innerHTML = identData.logoData.svg;
   } else if (r.logo_svg) {
