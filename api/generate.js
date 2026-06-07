@@ -6,7 +6,7 @@ const supabase = createClient(
 );
 
 // ══════════════════════════════════════════════════════════════
-// UNSPLASH — Récupérer des images par secteur
+// UNSPLASH — Récupérer des images
 // ══════════════════════════════════════════════════════════════
 
 const UNSPLASH_KEY = process.env.UNSPLASH_ACCESS_KEY;
@@ -33,11 +33,50 @@ async function getUnsplashImages(query, count = 6) {
 }
 
 // ══════════════════════════════════════════════════════════════
-// UNSPLASH — Détection secteur (~60 secteurs + fallback intelligent)
+// CLAUDE HAIKU — Traduction automatique si mot inconnu
 // ══════════════════════════════════════════════════════════════
 
-function getUnsplashQuery(type, idee) {
+async function translateWithClaude(idee) {
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 30,
+        messages: [{
+          role: 'user',
+          content: `Traduis cette idée de business en exactement 3 mots-clés anglais pour recherche photo Unsplash. Réponds UNIQUEMENT avec 3 mots en anglais séparés par des espaces, rien d'autre : "${idee}"`
+        }]
+      })
+    });
+    const data = await response.json();
+    const result = data.content[0].text.trim().toLowerCase().replace(/[^a-z\s]/g, '');
+    console.log(`Claude translate: "${idee}" → "${result}"`);
+    return result;
+  } catch (e) {
+    console.error('Claude translate error:', e);
+    return 'business product professional';
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// UNSPLASH QUERY — Liste de mots-clés connus + fallback Claude
+// ══════════════════════════════════════════════════════════════
+
+async function getUnsplashQuery(type, idee) {
   const idea = idee.toLowerCase();
+
+  // ── MAISON & DÉCO ──
+  if (idea.includes('bougie') || idea.includes('chandelle') || idea.includes('cire')) return 'candle scented wax home';
+  if (idea.includes('déco') || idea.includes('décoration') || idea.includes('intérieur')) return 'interior design home decor';
+  if (idea.includes('jardin') || idea.includes('paysag') || idea.includes('garden')) return 'garden landscape nature green';
+  if (idea.includes('mobilier') || idea.includes('meuble') || idea.includes('furniture')) return 'furniture home interior design';
+  if (idea.includes('plante') || idea.includes('fleur') || idea.includes('floral')) return 'plant flower botanical nature';
 
   // ── MODE & VÊTEMENTS ──
   if (idea.includes('cbd') || idea.includes('cannabis') || idea.includes('chanvre')) return 'cbd hemp wellness natural';
@@ -50,15 +89,16 @@ function getUnsplashQuery(type, idee) {
   if (idea.includes('bijou') || idea.includes('joaill') || idea.includes('bijoux')) return 'jewelry gold luxury accessories';
   if (idea.includes('maroquin') || idea.includes('sac') || idea.includes('bag')) return 'leather bag accessories luxury';
   if (idea.includes('chapeau') || idea.includes('casquette') || idea.includes('bonnet')) return 'hat cap fashion accessories';
+  if (idea.includes('montre') || idea.includes('horlog')) return 'watch luxury timepiece minimal';
 
   // ── BEAUTÉ & BIEN-ÊTRE ──
   if (idea.includes('cosmétique') || idea.includes('maquillage') || idea.includes('makeup')) return 'cosmetics makeup beauty products';
   if (idea.includes('soin') || idea.includes('skincare') || idea.includes('crème')) return 'skincare beauty natural products';
   if (idea.includes('parfum') || idea.includes('fragrance')) return 'perfume fragrance luxury bottle';
-  if (idea.includes('coiffure') || idea.includes('salon') || idea.includes('barbier') || idea.includes('barber')) return 'hair salon barbershop grooming';
+  if (idea.includes('coiffure') || idea.includes('barbier') || idea.includes('barber')) return 'hair salon barbershop grooming';
   if (idea.includes('spa') || idea.includes('massage') || idea.includes('détente')) return 'spa massage wellness relaxation';
   if (idea.includes('yoga') || idea.includes('méditation') || idea.includes('bien-être')) return 'yoga meditation wellness mindfulness';
-  if (idea.includes('fit') || idea.includes('sport') || idea.includes('gym') || idea.includes('muscl')) return 'fitness gym workout training';
+  if (idea.includes('fit') || idea.includes('gym') || idea.includes('muscl')) return 'fitness gym workout training';
   if (idea.includes('nutrition') || idea.includes('complément') || idea.includes('protéine')) return 'nutrition supplements health food';
   if (idea.includes('tattoo') || idea.includes('tatouage') || idea.includes('piercing')) return 'tattoo art body art studio';
 
@@ -71,15 +111,14 @@ function getUnsplashQuery(type, idee) {
   if (idea.includes('livraison') || idea.includes('delivery') || idea.includes('repas')) return 'food delivery meal service';
   if (idea.includes('bio') || idea.includes('organique') || idea.includes('vegan') || idea.includes('végétal')) return 'organic vegan healthy food natural';
   if (idea.includes('vin') || idea.includes('wine') || idea.includes('cave') || idea.includes('alcool')) return 'wine vineyard bottle cellar';
-  if (idea.includes('bière') || idea.includes('brasserie') || idea.includes('craft beer')) return 'craft beer brewery bar';
+  if (idea.includes('bière') || idea.includes('craft beer')) return 'craft beer brewery bar';
   if (idea.includes('chocolat') || idea.includes('confiserie') || idea.includes('bonbon')) return 'chocolate sweets candy confectionery';
   if (idea.includes('traiteur') || idea.includes('catering')) return 'catering food event service';
+  if (idea.includes('épicerie') || idea.includes('grocery') || idea.includes('alimentation')) return 'grocery food market store';
 
   // ── IMMOBILIER & CONSTRUCTION ──
-  if (idea.includes('immo') || idea.includes('agence') && idea.includes('maison')) return 'real estate house property luxury';
+  if (idea.includes('immo') || (idea.includes('agence') && idea.includes('maison'))) return 'real estate house property luxury';
   if (idea.includes('architecte') || idea.includes('architecture')) return 'architecture building design modern';
-  if (idea.includes('déco') || idea.includes('intérieur') || idea.includes('design') && idea.includes('maison')) return 'interior design home decor';
-  if (idea.includes('jardin') || idea.includes('paysag') || idea.includes('garden')) return 'garden landscape nature green';
   if (idea.includes('construct') || idea.includes('bâtiment') || idea.includes('btp')) return 'construction building architecture';
   if (idea.includes('nettoy') || idea.includes('ménage') || idea.includes('cleaning')) return 'cleaning service home professional';
 
@@ -91,7 +130,7 @@ function getUnsplashQuery(type, idee) {
   if (idea.includes('cybersécurité') || idea.includes('securité') || idea.includes('security')) return 'cybersecurity technology protection digital';
   if (idea.includes('data') || idea.includes('analytics') || idea.includes('analyse')) return 'data analytics dashboard technology';
   if (idea.includes('ecommerce') || idea.includes('e-commerce') || idea.includes('boutique en ligne')) return 'ecommerce online shopping product';
-  if (idea.includes('web') || idea.includes('site') || idea.includes('digital') || idea.includes('agence')) return 'digital agency technology web design';
+  if (idea.includes('web') || idea.includes('digital') || idea.includes('agence')) return 'digital agency technology web design';
 
   // ── SERVICES & B2B ──
   if (idea.includes('comptable') || idea.includes('comptabilité') || idea.includes('factur')) return 'accounting finance business office';
@@ -103,14 +142,14 @@ function getUnsplashQuery(type, idee) {
   if (idea.includes('école') || idea.includes('université') || idea.includes('éducation')) return 'education school learning students';
   if (idea.includes('événement') || idea.includes('wedding') || idea.includes('mariage')) return 'event wedding celebration party';
   if (idea.includes('traduct') || idea.includes('langue') || idea.includes('translation')) return 'language translation communication global';
-  if (idea.includes('graphiste') || idea.includes('design') || idea.includes('créatif')) return 'graphic design creative studio art';
+  if (idea.includes('graphiste') || idea.includes('créatif')) return 'graphic design creative studio art';
 
   // ── TRANSPORT & MOBILITÉ ──
   if (idea.includes('voiture') || idea.includes('auto') || idea.includes('garage')) return 'car automobile automotive dealership';
   if (idea.includes('moto') || idea.includes('scooter')) return 'motorcycle scooter urban transport';
   if (idea.includes('vélo') || idea.includes('cyclisme') || idea.includes('vtt')) return 'bicycle cycling sport outdoor';
   if (idea.includes('taxi') || idea.includes('vtc') || idea.includes('chauffeur')) return 'taxi driver urban transport city';
-  if (idea.includes('déménag') || idea.includes('transport') && idea.includes('meubl')) return 'moving transport logistics boxes';
+  if (idea.includes('déménag') || (idea.includes('transport') && idea.includes('meubl'))) return 'moving transport logistics boxes';
   if (idea.includes('voyage') || idea.includes('tourisme') || idea.includes('vacances')) return 'travel tourism vacation destination';
   if (idea.includes('camping') || idea.includes('randonnée') || idea.includes('outdoor')) return 'camping outdoor adventure nature';
 
@@ -136,36 +175,9 @@ function getUnsplashQuery(type, idee) {
   if (idea.includes('seconde main') || idea.includes('occasion') || idea.includes('vintage')) return 'vintage second hand thrift market';
   if (idea.includes('communauté') || idea.includes('réseau') || idea.includes('platform')) return 'community people network connection';
 
-  // ── FALLBACK INTELLIGENT ──
-  // Extraire les mots significatifs de l'idée et construire une query anglaise
-  const stopWords = ['je', 'veux', 'veut', 'créer', 'faire', 'lancer', 'ouvrir', 'une', 'un', 'des', 'les', 'mon', 'ma', 'pour', 'avec', 'qui', 'dans', 'sur', 'de', 'du', 'la', 'le', 'et', 'ou', 'en', 'par', 'à', 'au', 'aux'];
-  const words = idea.split(/\s+/).filter(w => w.length > 3 && !stopWords.includes(w));
-
-  // Traductions français -> anglais pour les mots courants
-  const translations = {
-    'boutique': 'store', 'magasin': 'shop', 'vente': 'sale', 'produit': 'product',
-    'service': 'service', 'entreprise': 'business', 'société': 'company',
-    'professionnel': 'professional', 'moderne': 'modern', 'luxe': 'luxury',
-    'qualité': 'quality', 'artisan': 'artisan', 'local': 'local',
-    'naturel': 'natural', 'écologique': 'eco', 'durable': 'sustainable',
-    'innovant': 'innovative', 'technologie': 'technology', 'numérique': 'digital',
-    'créatif': 'creative', 'design': 'design', 'agence': 'agency'
-  };
-
-  const translated = words.slice(0, 3).map(w => translations[w] || w).join(' ');
-
-  // Fallback par type si pas assez de mots
-  if (translated.length < 4) {
-    if (type === 'ecommerce') return 'ecommerce products shopping';
-    if (type === 'saas') return 'technology software business';
-    if (type === 'vitrine') return 'professional business service';
-    if (type === 'landing') return 'modern minimal design';
-    if (type === 'marketplace') return 'marketplace community people';
-    if (type === 'blog') return 'lifestyle content writing';
-    return 'business professional modern';
-  }
-
-  return translated;
+  // ── FALLBACK : Claude Haiku traduit automatiquement ──
+  console.log(`Aucun mot-clé trouvé pour "${idee}" → appel Claude Haiku pour traduction`);
+  return await translateWithClaude(idee);
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -222,7 +234,6 @@ function getPrompt(type, idee, images) {
 L'utilisateur veut créer ce projet : "${idee}"
 Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.`;
 
-  // Instructions images Unsplash à injecter dans les prompts
   const imgInstructions = images && images.length > 0
     ? `\n\nIMPORTANT — Images disponibles (Unsplash, libres de droits) à utiliser dans le HTML :
 ${images.map((img, i) => `Image ${i+1}: ${img.url} (alt: "${img.alt}")`).join('\n')}
@@ -481,7 +492,6 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Méthode non autorisée' });
 
-  // Auth
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token) return res.status(401).json({ error: 'Token manquant' });
 
@@ -494,8 +504,8 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    // 1. Récupérer les images Unsplash en parallèle
-    const unsplashQuery = getUnsplashQuery(type || 'ecommerce', idee);
+    // 1. Récupérer les images Unsplash — getUnsplashQuery est maintenant async
+    const unsplashQuery = await getUnsplashQuery(type || 'ecommerce', idee);
     const images = await getUnsplashImages(unsplashQuery, 6);
     console.log(`Unsplash: ${images.length} images pour "${unsplashQuery}"`);
 
