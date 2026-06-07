@@ -560,15 +560,32 @@ function nomToDomaine(nom, ext) {
     + ext;
 }
 
-// Génère un SVG logo simple à partir du nom et des couleurs
-function makeSvgLogo(initiales, c1, c2) {
+// Génère un vrai logo SVG via /api/generate-logo
+async function makeSvgLogo(nom, initiales, c1, c2) {
+  try {
+    const resp = await fetch('/api/generate-logo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nom, initiales, couleur1: c1, couleur2: c2 })
+    });
+    const data = await resp.json();
+    if (data.success && data.svg) return data.svg;
+  } catch(e) {}
+  return fallbackSvgLogo(initiales, c1, c2);
+}
+
+function fallbackSvgLogo(initiales, c1, c2) {
+  const uid = Math.random().toString(36).substring(2, 8);
   return `<svg width="48" height="48" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-    <defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${c1}"/>
-      <stop offset="100%" stop-color="${c2}"/>
-    </linearGradient></defs>
-    <rect width="48" height="48" rx="10" fill="url(#lg)"/>
-    <text x="24" y="33" text-anchor="middle" font-family="Inter,sans-serif" font-weight="800" font-size="${initiales.length > 2 ? '13' : '16'}" fill="white">${initiales}</text>
+    <defs>
+      <linearGradient id="lg${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${c1}"/>
+        <stop offset="100%" stop-color="${c2}"/>
+      </linearGradient>
+    </defs>
+    <rect width="48" height="48" rx="12" fill="url(#lg${uid})"/>
+    <rect x="8" y="8" width="32" height="32" rx="8" fill="rgba(255,255,255,0.1)"/>
+    <text x="24" y="31" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-weight="800" font-size="${initiales.length > 2 ? '12' : '15'}" fill="white" letter-spacing="1">${initiales}</text>
   </svg>`;
 }
 
@@ -596,7 +613,7 @@ async function goStep3() {
           couleur1: c1,
           couleur2: c2,
           domaine: nomToDomaine(r.nom),
-          svgLogo: makeSvgLogo(initiales, c1, c2)
+          svgLogo: await makeSvgLogo(r.nom, initiales, c1, c2)
         };
       } else { throw new Error('API error'); }
     } catch(e) {
@@ -658,7 +675,7 @@ function genererSuggestions(idea) {
   return {
     ...base,
     domaine: nomToDomaine(base.nom),
-    svgLogo: makeSvgLogo(base.initiales, base.couleur1, base.couleur2)
+    svgLogo: fallbackSvgLogo(base.initiales, base.couleur1, base.couleur2)
   };
 }
 
@@ -696,7 +713,7 @@ async function regenIdent(type) {
         identData.couleur1 = c1;
         identData.couleur2 = c2;
         identData.domaine = nomToDomaine(r.nom);
-        identData.svgLogo = makeSvgLogo(initiales, c1, c2);
+        identData.svgLogo = await makeSvgLogo(r.nom, initiales, c1, c2);
 
         document.getElementById('vNom').textContent = r.nom;
         // Mise à jour auto du slogan et du domaine pour rester cohérents
@@ -724,7 +741,7 @@ async function regenIdent(type) {
         identData.initiales = initiales;
         identData.couleur1 = c1;
         identData.couleur2 = c2;
-        identData.svgLogo = makeSvgLogo(initiales, c1, c2);
+        identData.svgLogo = await makeSvgLogo(identData.nom || r.nom, initiales, c1, c2);
         document.getElementById('vLogo').innerHTML = identData.svgLogo;
 
       } else if (type === 'domaine') {
