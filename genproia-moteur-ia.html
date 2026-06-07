@@ -430,13 +430,9 @@
             <label style="font-family:'Inter',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Slogan</label>
             <input type="text" class="brand-input" id="manuelSlogan" placeholder="Ex : L'art de la lumière parfumée">
           </div>
-          <div>
+          <div style="grid-column:1/-1;">
             <label style="font-family:'Inter',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Domaine souhaité</label>
             <input type="text" class="brand-input" id="manuelDomaine" placeholder="Ex : lumiscent.fr">
-          </div>
-          <div>
-            <label style="font-family:'Inter',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Couleur principale</label>
-            <input type="color" class="brand-input" id="manuelCouleur" value="#7c3aed" style="height:42px;padding:4px 8px;cursor:pointer;">
           </div>
         </div>
         <div style="margin-top:10px;">
@@ -907,16 +903,31 @@ function choisirMarque(choix) {
     document.getElementById('validHint') && (document.getElementById('validHint').style.display = 'none');
   } else {
     document.getElementById('step3Manuel').style.display = 'none';
-    document.getElementById('step3Auto').style.display = 'block';
+    document.getElementById('step3Auto').style.display = 'none';
+    // Afficher un message de chargement
+    const choiceCard = document.getElementById('step3Choice');
+    choiceCard.querySelector('.section-card-sub').textContent = '✦ Génération de ton identité en cours, patiente quelques secondes…';
+    choiceCard.querySelector('.section-card-sub').style.color = 'var(--violet-glow)';
+    document.getElementById('choiceNon').style.opacity = '0.5';
+    document.getElementById('choiceOui').style.opacity = '0.5';
+    document.getElementById('choiceOui').style.pointerEvents = 'none';
+    document.getElementById('choiceNon').style.pointerEvents = 'none';
+    // Lancer la génération auto
+    genererIdentiteAuto().then(() => {
+      // Restaurer l'UI et afficher les cards
+      choiceCard.querySelector('.section-card-sub').textContent = 'Régénère ou valide chaque élément avant de lancer la génération du site complet.';
+      choiceCard.querySelector('.section-card-sub').style.color = '';
+      document.getElementById('choiceOui').style.opacity = '1';
+      document.getElementById('choiceNon').style.opacity = '1';
+      document.getElementById('choiceOui').style.pointerEvents = 'auto';
+      document.getElementById('choiceNon').style.pointerEvents = 'auto';
+      document.getElementById('step3Auto').style.display = 'block';
+    });
     // Remettre le bouton en attente de validation
     const btn = document.getElementById('launchGenBtn');
     btn.disabled = true;
     btn.style.opacity = '0.4';
     btn.style.cursor = 'not-allowed';
-    // Lancer la génération auto si pas encore fait
-    if (!identData.nom) {
-      genererIdentiteAuto();
-    }
   }
 }
 
@@ -1002,21 +1013,39 @@ async function lancerGeneration() {
   let identiteValidee = {};
 
   if (modeMarque === 'oui') {
-    // Mode manuel — utiliser les données saisies
     const nom = document.getElementById('manuelNom').value.trim();
     if (!nom) { showError('Le nom de marque est obligatoire.'); return; }
     const slogan = document.getElementById('manuelSlogan').value.trim();
     const domaine = document.getElementById('manuelDomaine').value.trim() || nomToDomaine(nom);
-    const couleur = document.getElementById('manuelCouleur').value;
+    const idee = document.getElementById('ideaInput').value.trim();
+
+    // Si pas de logo uploadé → générer avec Ideogram
+    let logoUrl = null;
+    let logoSvg = null;
+    if (manuelLogoData?.url) {
+      logoUrl = manuelLogoData.url;
+    } else {
+      try {
+        const logoResp = await fetch('/api/generate-logo', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nom, initiales: nom.substring(0,2).toUpperCase(), idee })
+        });
+        const logoData = await logoResp.json();
+        if (logoData.type === 'image') logoUrl = logoData.imageUrl;
+        else if (logoData.svg) logoSvg = logoData.svg;
+      } catch(e) {}
+    }
+
     identiteValidee = {
       nom,
       slogan: slogan || null,
-      couleur_primaire: couleur,
-      couleur_secondaire: couleur,
+      couleur_primaire: '#7c3aed',
+      couleur_secondaire: '#ec4899',
       domaine,
       initiales: nom.substring(0,2).toUpperCase(),
-      logo_url: manuelLogoData?.type === 'image' ? manuelLogoData.url : null,
-      logo_svg: null
+      logo_url: logoUrl,
+      logo_svg: logoSvg
     };
   } else {
     // Mode auto — utiliser les données validées
