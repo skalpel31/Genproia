@@ -93,6 +93,8 @@
   .proj-btn { display: flex; align-items: center; gap: 4px; padding: 5px 9px; border-radius: 7px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); cursor: pointer; transition: background 0.2s; font-size: 0.7rem; color: var(--muted); font-family: 'Inter', sans-serif; white-space: nowrap; }
   .proj-btn:hover { background: rgba(139,92,246,0.14); border-color: var(--border); color: var(--white); }
   .proj-btn.danger:hover { background: rgba(239,68,68,0.12); border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+  .proj-btn.deploy { background: rgba(124,58,237,0.15); border-color: rgba(139,92,246,0.35); color: #a78bfa; }
+  .proj-btn.deploy:hover { background: rgba(124,58,237,0.28); border-color: var(--violet-bright); color: var(--white); }
   .new-project-card { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; background: rgba(124,58,237,0.05); border: 1px dashed rgba(139,92,246,0.28); cursor: pointer; transition: background 0.2s, border-color 0.2s; }
   .new-project-card:hover { background: rgba(124,58,237,0.1); border-color: rgba(139,92,246,0.45); }
   .new-plus { width: 40px; height: 40px; border-radius: 10px; background: rgba(124,58,237,0.12); border: 1px solid rgba(139,92,246,0.28); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--violet-glow); }
@@ -214,6 +216,11 @@
   .chat-suggestions { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 14px 10px; }
   .chat-suggestion { background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.2); border-radius: 100px; padding: 4px 10px; font-size: 0.72rem; color: var(--violet-glow); cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; white-space: nowrap; }
   .chat-suggestion:hover { background: rgba(139,92,246,0.18); border-color: var(--violet-bright); }
+
+  /* URL DEPLOIEMENT */
+  .deploy-url-row { margin-top: 6px; font-size: 0.7rem; }
+  .deploy-url-row a { color: var(--cyan); text-decoration: none; }
+  .deploy-url-row a:hover { text-decoration: underline; }
 
   @media (max-width: 900px) {
     .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); }
@@ -570,13 +577,10 @@ function showPage(page, el) {
   document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   if (el) {
-    // Ne retirer active QUE sur les items qui utilisent showPage (pas Générer ni Assistant IA)
     document.querySelectorAll('.nav-item[onclick*="showPage"]').forEach(i => i.classList.remove('active'));
     el.classList.add('active');
   }
-  // Fermer le chat si on navigue ailleurs
   if (chatOpen) toggleChat();
-  // Remplir les pages dynamiques
   if (page === 'projets') renderAllProjets();
   if (page === 'identite') renderIdentite();
   if (page === 'domaines') renderDomaines();
@@ -599,18 +603,15 @@ async function loadDashboard() {
 
   setDate();
 
-  // Infos user
   const prenom = (user.nom || user.email || '').split(' ')[0].split('@')[0];
   document.getElementById('topGreeting').textContent = 'Bonjour, ' + prenom;
   document.getElementById('userName').textContent = user.nom || user.email;
   document.getElementById('userAvatar').textContent = (user.nom || user.email || 'U').substring(0,2).toUpperCase();
 
-  // Bouton Super Admin si admin
   if (user.email === 'alex.skp31@gmail.com') {
     document.getElementById('adminLink').style.display = 'block';
   }
 
-  // Plan réel depuis Supabase (pas localStorage)
   let plan = user.plan || 'free';
   try {
     const { data: userData } = await _sb.from('users').select('plan').eq('id', user.id).single();
@@ -624,11 +625,9 @@ async function loadDashboard() {
   document.getElementById('userPlan').textContent = planLabel;
   document.getElementById('planBadge').textContent = planLabel;
 
-  // Pré-remplir paramètres
   document.getElementById('settingsNom').value = user.nom || '';
   document.getElementById('settingsEmail').value = user.email || '';
 
-  // Charger projets
   const { data: projets } = await _sb.from('projets').select('*').eq('user_id', user.id).order('created_at', { ascending: false });
   allProjets = projets || [];
 
@@ -641,11 +640,14 @@ async function loadDashboard() {
   document.getElementById('planProgress').style.width = plan === 'free' ? Math.min(count * 100, 100) + '%' : '20%';
   document.getElementById('planInfo').textContent = plan === 'free' ? 'Plan gratuit · 1 projet inclus' : 'Plan ' + planLabel + ' · Projets illimités';
 
+  // Compter les sites live
+  const liveSites = allProjets.filter(p => p.statut === 'live' || p.site_url).length;
+  document.getElementById('statSites').textContent = liveSites;
+
   if (count > 0) {
     document.getElementById('projectsEmpty').style.display = 'none';
     const colors = ['linear-gradient(135deg,#7c3aed,#ec4899)','linear-gradient(135deg,#06b6d4,#7c3aed)','linear-gradient(135deg,#10b981,#06b6d4)','linear-gradient(135deg,#f59e0b,#ec4899)'];
     const list = document.getElementById('projectsList');
-    // Afficher max 3 projets dans vue d'ensemble
     allProjets.slice(0, 3).forEach(function(p, i) {
       const couleur = p.couleur_primaire && p.couleur_secondaire
         ? 'linear-gradient(135deg,' + p.couleur_primaire + ',' + p.couleur_secondaire + ')'
@@ -654,13 +656,20 @@ async function loadDashboard() {
       const logoHtml = p.logo_svg
         ? '<div class="project-logo" style="overflow:hidden;padding:0;">' + p.logo_svg.replace(/width="[^"]*"/, 'width="40"').replace(/height="[^"]*"/, 'height="40"') + '</div>'
         : '<div class="project-logo" style="background:' + couleur + '">' + initiales + '</div>';
+      const isLive = p.statut === 'live' || p.site_url;
+      const statusHtml = isLive
+        ? '<div class="project-status ps-live">🟢 Live</div>'
+        : '<div class="project-status ps-generated">Généré</div>';
+      const urlHtml = p.site_url
+        ? '<div class="deploy-url-row">🌐 <a href="' + p.site_url + '" target="_blank">' + p.site_url + '</a></div>'
+        : '';
       const div = document.createElement('div');
       div.className = 'project-item';
       div.onclick = () => openPreview(p);
       div.innerHTML =
         logoHtml +
-        '<div class="project-info"><div class="project-name">' + (p.nom||'Projet') + '</div><div class="project-type">' + (p.type||'Projet') + ' · ' + (p.idee||'').substring(0,35) + '</div></div>' +
-        '<div class="project-status ps-generated">Généré</div>' +
+        '<div class="project-info"><div class="project-name">' + (p.nom||'Projet') + '</div><div class="project-type">' + (p.type||'Projet') + ' · ' + (p.idee||'').substring(0,35) + '</div>' + urlHtml + '</div>' +
+        statusHtml +
         '<div class="project-actions">' +
           '<div class="proj-btn" onclick="event.stopPropagation();openPreview(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')">👁 Aperçu</div>' +
           '<div class="proj-btn danger" onclick="event.stopPropagation();deleteProjet(\'' + p.id + '\')">🗑 Supprimer</div>' +
@@ -668,13 +677,12 @@ async function loadDashboard() {
       list.insertBefore(div, list.lastElementChild);
     });
 
-    // Activité récente
     const actList = document.getElementById('activityList');
     actList.innerHTML = '';
     allProjets.slice(0, 5).forEach(function(p) {
       const date = new Date(p.created_at);
       const item = document.createElement('div');
-      item.style.cssText = 'display:flex;align-items:center;gap:11px;padding:9px 8px;border-radius:7px;font-size:0.78px;';
+      item.style.cssText = 'display:flex;align-items:center;gap:11px;padding:9px 8px;border-radius:7px;';
       item.innerHTML = '<div style="width:7px;height:7px;border-radius:50%;background:var(--violet-glow);flex-shrink:0"></div><div style="flex:1;font-size:0.78rem;color:var(--muted)">Projet <strong style="color:var(--white)">' + (p.nom||'') + '</strong> généré</div><div style="font-size:0.68rem;color:var(--muted2)">' + date.toLocaleDateString('fr-FR') + '</div>';
       actList.appendChild(item);
     });
@@ -695,6 +703,13 @@ function renderAllProjets() {
     const logoHtml2 = p.logo_svg
       ? '<div class="project-logo" style="overflow:hidden;padding:0;width:48px;height:48px;">' + p.logo_svg.replace(/width="[^"]*"/, 'width="48"').replace(/height="[^"]*"/, 'height="48"') + '</div>'
       : '<div class="project-logo" style="background:' + couleur + ';width:48px;height:48px;">' + initiales + '</div>';
+    const isLive = p.statut === 'live' || p.site_url;
+    const statusHtml2 = isLive
+      ? '<div class="project-status ps-live">🟢 Live</div>'
+      : '<div class="project-status ps-generated">Généré</div>';
+    const urlHtml2 = p.site_url
+      ? '<div class="deploy-url-row">🌐 <a href="' + p.site_url + '" target="_blank">' + p.site_url + '</a></div>'
+      : '';
     const div = document.createElement('div');
     div.className = 'project-item';
     div.style.padding = '16px 18px';
@@ -705,11 +720,13 @@ function renderAllProjets() {
         '<div class="project-name" style="font-size:0.9rem">' + (p.nom||'Projet') + '</div>' +
         '<div class="project-type">' + (p.type||'Projet') + ' · ' + (p.idee||'').substring(0,50) + '</div>' +
         '<div style="font-size:0.68rem;color:var(--muted2);margin-top:3px;">' + new Date(p.created_at).toLocaleDateString('fr-FR') + '</div>' +
+        urlHtml2 +
       '</div>' +
-      '<div class="project-status ps-generated">Généré</div>' +
+      statusHtml2 +
       '<div class="project-actions">' +
         '<div class="proj-btn" onclick="event.stopPropagation();openPreview(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')">👁 Aperçu</div>' +
         '<div class="proj-btn" onclick="event.stopPropagation();downloadSite(\'' + p.id + '\',\'' + (p.nom||'site') + '\')">⬇ Télécharger</div>' +
+        '<div class="proj-btn deploy" id="deploy-btn-' + p.id + '" onclick="event.stopPropagation();deployProjet(\'' + p.id + '\',\'' + (p.nom||'site').replace(/'/g,"\\'") + '\')">🚀 Déployer</div>' +
         '<div class="proj-btn danger" onclick="event.stopPropagation();deleteProjet(\'' + p.id + '\')">🗑 Supprimer</div>' +
       '</div>';
     container.appendChild(div);
@@ -808,6 +825,78 @@ async function deleteProjet(id) {
   location.reload();
 }
 
+// ── DEPLOIEMENT ──
+async function deployProjet(id, nom) {
+  const p = allProjets.find(x => x.id === id);
+  if (!p || !p.site_html) { alert('Pas de HTML disponible pour ce projet.'); return; }
+
+  const btn = document.getElementById('deploy-btn-' + id);
+  if (btn) {
+    btn.textContent = '⏳ Déploiement...';
+    btn.style.opacity = '0.6';
+    btn.style.pointerEvents = 'none';
+  }
+
+  try {
+    const token = localStorage.getItem('genproia_token');
+    const res = await fetch('/api/deploy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ projetId: id, nom: nom, html: p.site_html })
+    });
+    const data = await res.json();
+
+    if (data.url) {
+      // Sauvegarder l'URL dans Supabase
+      await _sb.from('projets').update({ site_url: data.url, statut: 'live' }).eq('id', id);
+      p.site_url = data.url;
+      p.statut = 'live';
+
+      if (btn) {
+        btn.textContent = '✅ En ligne !';
+        btn.classList.remove('deploy');
+        btn.style.background = 'rgba(16,185,129,0.15)';
+        btn.style.borderColor = 'rgba(16,185,129,0.35)';
+        btn.style.color = '#6ee7b7';
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+      }
+
+      // Afficher l'URL sous le nom du projet
+      const projectInfo = btn ? btn.closest('.project-item').querySelector('.project-info') : null;
+      if (projectInfo) {
+        const existing = projectInfo.querySelector('.deploy-url-row');
+        if (existing) existing.remove();
+        const urlDiv = document.createElement('div');
+        urlDiv.className = 'deploy-url-row';
+        urlDiv.innerHTML = '🌐 <a href="' + data.url + '" target="_blank">' + data.url + '</a>';
+        projectInfo.appendChild(urlDiv);
+      }
+
+      // Mettre à jour le badge statut
+      const statusEl = btn ? btn.closest('.project-item').querySelector('.project-status') : null;
+      if (statusEl) {
+        statusEl.className = 'project-status ps-live';
+        statusEl.textContent = '🟢 Live';
+      }
+
+      // Mettre à jour le compteur "Sites en ligne"
+      const liveSites = allProjets.filter(x => x.statut === 'live' || x.site_url).length;
+      document.getElementById('statSites').textContent = liveSites;
+
+    } else {
+      throw new Error(data.error || 'Erreur inconnue');
+    }
+  } catch(e) {
+    if (btn) {
+      btn.textContent = '🚀 Déployer';
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }
+    alert('Erreur déploiement : ' + e.message);
+  }
+}
+
 // ── PARAMETRES ──
 async function saveSettings() {
   const nom = document.getElementById('settingsNom').value.trim();
@@ -851,7 +940,6 @@ function sendSupport() {
 // ── INIT ──
 document.addEventListener('DOMContentLoaded', function() {
   loadDashboard();
-  // Lire le paramètre page dans l'URL
   const urlParams = new URLSearchParams(window.location.search);
   const pageParam = urlParams.get('page');
   if (pageParam) setTimeout(() => showPage(pageParam, null), 500);
@@ -886,7 +974,6 @@ async function sendChat() {
   addChatMsg(msg, 'user');
   chatHistory.push({ role: 'user', content: msg });
 
-  // Typing indicator
   const typingId = 'typing_' + Date.now();
   const typingEl = document.createElement('div');
   typingEl.className = 'chat-msg ai chat-typing';
@@ -909,7 +996,6 @@ async function sendChat() {
     if (data.success) {
       addChatMsg(data.reply, 'ai');
       chatHistory.push({ role: 'assistant', content: data.reply });
-      // Si modification effectuée → recharger dashboard
       if (data.action) setTimeout(() => location.reload(), 1500);
     } else {
       addChatMsg('Désolé, une erreur est survenue. Réessaie.', 'ai');
