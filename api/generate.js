@@ -580,32 +580,57 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
       if (identiteValidee.domaine) result.domaines = [identiteValidee.domaine, ...(result.domaines || []).filter(d => d !== identiteValidee.domaine)];
     }
 
-    // 4. Logo — utiliser celui validé ou en générer un nouveau
+    // 4. Logo — utiliser celui validé (Ideogram ou SVG) ou en générer un nouveau
     let svgLogo = '';
     let logoUrl = '';
 
     if (identiteValidee && identiteValidee.logo_url) {
-      // Image Ideogram validée
+      // ✅ Image Ideogram validée — priorité absolue
       logoUrl = identiteValidee.logo_url;
       svgLogo = `<img src="${logoUrl}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;" alt="${result.nom}">`;
+      console.log('Logo: Ideogram URL utilisée →', logoUrl);
     } else if (identiteValidee && identiteValidee.logo_svg) {
+      // ✅ SVG validé à l'étape 3
       svgLogo = identiteValidee.logo_svg;
+      console.log('Logo: SVG validé utilisé');
     } else {
+      // Fallback : générer un SVG basique
       svgLogo = await generateSVGLogo(
         result.nom,
         result.logo_initiales || result.nom.substring(0, 2).toUpperCase(),
         result.couleur_primaire || '#7c3aed',
         result.couleur_secondaire || '#ec4899'
       );
+      console.log('Logo: SVG fallback généré');
     }
 
     // 5. Injecter le logo dans le site HTML
     if (result.site_html && result.site_html.includes('LOGO_SVG_PLACEHOLDER')) {
-      // Pour les img tags (Ideogram) on garde les guillemets, pour SVG on les échappe
       const logoInline = logoUrl
         ? `<img src="${logoUrl}" style="width:50px;height:50px;border-radius:10px;object-fit:cover;" alt="${result.nom}">`
         : svgLogo.replace(/"/g, "'");
       result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, logoInline);
+    }
+
+    // ✅ POST-TRAITEMENT FORCÉ : remplacer les images produits une par une
+    // Claude ignore souvent les URLs — on les force après coup
+    if (images.length > 0 && result.site_html) {
+      // Trouver toutes les balises img dans le HTML et remplacer par les vraies URLs Unsplash
+      let imgIndex = 0;
+      result.site_html = result.site_html.replace(/<img([^>]*?)src="([^"]*?)"([^>]*?)>/gi, (match, before, src, after) => {
+        // Ne pas remplacer le logo (LOGO_SVG_PLACEHOLDER déjà remplacé)
+        // Ne pas remplacer les images qui ont déjà une URL Unsplash valide
+        if (src.includes('images.unsplash.com') || src.includes('logo') || src.includes('data:')) {
+          return match;
+        }
+        if (imgIndex < images.length) {
+          const newSrc = images[imgIndex].url;
+          const newAlt = images[imgIndex].alt || '';
+          imgIndex++;
+          return `<img${before}src="${newSrc}"${after} alt="${newAlt}" loading="lazy">`;
+        }
+        return match;
+      });
     }
 
     // ✅ Forcer aussi le nom dans le HTML si Claude l'a changé
