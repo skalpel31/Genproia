@@ -498,19 +498,29 @@ module.exports = async function handler(req, res) {
   const { data: { user }, error: authError } = await supabase.auth.getUser(token);
   if (authError || !user) return res.status(401).json({ error: 'Token invalide ou expiré' });
 
-  const { idee, type } = req.body;
+  const { idee, type, identiteValidee } = req.body;
   if (!idee || idee.trim().length < 10) {
     return res.status(400).json({ error: 'Décris ton idée en au moins 10 caractères.' });
   }
 
   try {
-    // 1. Récupérer les images Unsplash — getUnsplashQuery est maintenant async
+    // 1. Récupérer les images Unsplash
     const unsplashQuery = await getUnsplashQuery(type || 'ecommerce', idee);
     const images = await getUnsplashImages(unsplashQuery, 6);
     console.log(`Unsplash: ${images.length} images pour "${unsplashQuery}"`);
 
-    // 2. Construire le prompt avec les images
-    const prompt = getPrompt(type || 'ecommerce', idee, images);
+    // 2. Construire le prompt — injecter l'identité validée si disponible
+    const identiteContext = identiteValidee && identiteValidee.nom
+      ? `\n\nIDENTITÉ DE MARQUE DÉJÀ VALIDÉE PAR L'UTILISATEUR — À RESPECTER ABSOLUMENT :
+- Nom de marque : "${identiteValidee.nom}" (NE PAS changer ce nom)
+- Slogan : "${identiteValidee.slogan}"
+- Couleur primaire : ${identiteValidee.couleur_primaire}
+- Couleur secondaire : ${identiteValidee.couleur_secondaire}
+- Domaine principal : ${identiteValidee.domaine}
+Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
+      : '';
+
+    const prompt = getPrompt(type || 'ecommerce', idee, images) + identiteContext;
 
     // 3. Appel Claude
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -546,18 +556,35 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: 'Erreur de format IA. Réessaie.' });
     }
 
-    // 4. Générer le logo SVG
-    const svgLogo = await generateSVGLogo(
-      result.nom,
-      result.logo_initiales || result.nom.substring(0, 2).toUpperCase(),
-      result.couleur_primaire || '#7c3aed',
-      result.couleur_secondaire || '#ec4899'
-    );
+    // ✅ Forcer les données validées dans le résultat
+    if (identiteValidee && identiteValidee.nom) {
+      result.nom = identiteValidee.nom;
+      result.slogan = identiteValidee.slogan;
+      result.couleur_primaire = identiteValidee.couleur_primaire;
+      result.couleur_secondaire = identiteValidee.couleur_secondaire;
+      if (identiteValidee.domaine) result.domaines = [identiteValidee.domaine, ...(result.domaines || []).filter(d => d !== identiteValidee.domaine)];
+    }
+
+    // 4. Logo SVG — utiliser celui validé ou en générer un nouveau
+    const svgLogo = (identiteValidee && identiteValidee.logo_svg)
+      ? identiteValidee.logo_svg
+      : await generateSVGLogo(
+          result.nom,
+          result.logo_initiales || result.nom.substring(0, 2).toUpperCase(),
+          result.couleur_primaire || '#7c3aed',
+          result.couleur_secondaire || '#ec4899'
+        );
 
     // 5. Injecter le logo SVG dans le site HTML
     if (result.site_html && result.site_html.includes('LOGO_SVG_PLACEHOLDER')) {
       const svgInline = svgLogo.replace(/"/g, "'");
       result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, svgInline);
+    }
+
+    // ✅ Forcer aussi le nom dans le HTML si Claude l'a changé
+    if (identiteValidee && identiteValidee.nom && result.site_html) {
+      // Remplacer tout nom de marque différent dans le titre HTML
+      result.site_html = result.site_html.replace(/<title>[^<]*<\/title>/, `<title>${identiteValidee.nom}</title>`);
     }
 
     // 6. Sauvegarder le SVG logo dans le résultat
