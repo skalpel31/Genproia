@@ -672,6 +672,8 @@ async function loadDashboard() {
         statusHtml +
         '<div class="project-actions">' +
           '<div class="proj-btn" onclick="event.stopPropagation();openPreview(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')">👁 Aperçu</div>' +
+          '<div class="proj-btn" onclick="event.stopPropagation();downloadSite(\'' + p.id + '\',\'' + (p.nom||'site').replace(/'/g,"\\'") + '\')">⬇ Télécharger</div>' +
+          '<div class="proj-btn deploy" id="deploy-btn-overview-' + p.id + '" onclick="event.stopPropagation();deployProjet(\'' + p.id + '\',\'' + (p.nom||'site').replace(/'/g,"\\'") + '\')">🚀 Déployer</div>' +
           '<div class="proj-btn danger" onclick="event.stopPropagation();deleteProjet(\'' + p.id + '\')">🗑 Supprimer</div>' +
         '</div>';
       list.insertBefore(div, list.lastElementChild);
@@ -830,7 +832,7 @@ async function deployProjet(id, nom) {
   const p = allProjets.find(x => x.id === id);
   if (!p || !p.site_html) { alert('Pas de HTML disponible pour ce projet.'); return; }
 
-  const btn = document.getElementById('deploy-btn-' + id);
+  const btn = document.getElementById('deploy-btn-' + id) || document.getElementById('deploy-btn-overview-' + id);
   if (btn) {
     btn.textContent = '⏳ Déploiement...';
     btn.style.opacity = '0.6';
