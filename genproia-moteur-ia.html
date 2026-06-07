@@ -702,29 +702,12 @@ async function goStep3() {
 
 // Applique les suggestions dans l'UI
 function appliquerSuggestions(s) {
-  document.getElementById('vNom').textContent = s.nom;
-  document.getElementById('vSlogan').textContent = s.slogan;
-  document.getElementById('vDomaine').textContent = s.domaine;
-  const logo = document.getElementById('vLogo');
-  logo.innerHTML = '';
-  logo.style.background = '';
-  if (s.logoData) {
-    if (s.logoData.type === 'image') {
-      const img = document.createElement('img');
-      img.src = s.logoData.url;
-      img.style.cssText = 'width:48px;height:48px;border-radius:10px;object-fit:cover;';
-      logo.appendChild(img);
-    } else if (s.logoData.svg) {
-      logo.innerHTML = s.logoData.svg;
-    }
-  } else if (s.svgLogo) {
-    logo.innerHTML = s.svgLogo;
-  } else {
-    logo.textContent = s.initiales;
-    logo.style.background = 'linear-gradient(135deg,' + s.couleur1 + ',' + s.couleur2 + ')';
-    logo.style.fontFamily = 'Inter,sans-serif';
-    logo.style.color = 'white';
-  }
+  const vNom = document.getElementById('vNom');
+  const vSlogan = document.getElementById('vSlogan');
+  const vDomaine = document.getElementById('vDomaine');
+  if (vNom) vNom.textContent = s.nom;
+  if (vSlogan) vSlogan.textContent = s.slogan;
+  if (vDomaine) vDomaine.textContent = s.domaine;
 }
 
 function genererSuggestions(idea) {
@@ -943,6 +926,7 @@ async function genererIdentiteAuto() {
       const c2 = r.couleur_secondaire || '#ec4899';
       const initiales = r.initiales || r.nom.substring(0,2).toUpperCase();
       identData = { nom: r.nom, slogan: r.slogan, initiales, couleur1: c1, couleur2: c2, domaine: nomToDomaine(r.nom) };
+      document.getElementById('step3Auto').style.display = 'block';
       appliquerSuggestions(identData);
       identValidated = { nom: false, slogan: false, logo: true, domaine: false };
       ['valNom','valSlogan','valDomaine'].forEach(id => {
