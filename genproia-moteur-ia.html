@@ -745,6 +745,13 @@ async function regenIdent(type) {
   btn.textContent = '...';
   btn.disabled = true;
 
+  // ✅ Désactiver TOUS les boutons Régénérer pendant l'appel
+  document.querySelectorAll('.valid-regen').forEach(b => {
+    b.disabled = true;
+    b.style.opacity = '0.4';
+    b.style.cursor = 'not-allowed';
+  });
+
   try {
     const response = await fetch('/api/demo', {
       method: 'POST',
@@ -837,6 +844,14 @@ async function regenIdent(type) {
 
   btn.textContent = '✓ Valider';
   btn.disabled = false;
+
+  // ✅ Réactiver tous les boutons Régénérer
+  document.querySelectorAll('.valid-regen').forEach(b => {
+    b.disabled = false;
+    b.style.opacity = '1';
+    b.style.cursor = 'pointer';
+  });
+
   checkAllIdentValidated();
 }
 
@@ -1043,6 +1058,14 @@ async function lancerGeneration() {
   showStep(4);
   animateLoadingSteps();
 
+  // ✅ Bloquer la sidebar pendant la génération
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.style.pointerEvents = 'none';
+    el.style.opacity = '0.4';
+  });
+  document.querySelector('.back-btn').style.pointerEvents = 'none';
+  document.querySelector('.back-btn').style.opacity = '0.4';
+
   try {
     const response = await fetch(API_BASE + '/api/generate', {
       method: 'POST',
@@ -1055,10 +1078,15 @@ async function lancerGeneration() {
 
     const data = await response.json();
 
+    // ✅ Débloquer la sidebar
+    document.querySelectorAll('.nav-item').forEach(el => { el.style.pointerEvents = ''; el.style.opacity = ''; });
+    document.querySelector('.back-btn').style.pointerEvents = '';
+    document.querySelector('.back-btn').style.opacity = '';
+
     if (!response.ok) {
       if (data.upgrade) { showStep(3); showUpgrade(); return; }
       showStep(3);
-      showError(data.error || 'Erreur lors de la génération. Réessaie.');
+      showError((data.error || 'Erreur lors de la génération.') + ' — Clique sur "Générer mon site complet" pour réessayer.');
       return;
     }
 
@@ -1068,8 +1096,12 @@ async function lancerGeneration() {
 
   } catch (err) {
     console.error('Generation error:', err);
+    // ✅ Débloquer la sidebar en cas d'erreur
+    document.querySelectorAll('.nav-item').forEach(el => { el.style.pointerEvents = ''; el.style.opacity = ''; });
+    document.querySelector('.back-btn').style.pointerEvents = '';
+    document.querySelector('.back-btn').style.opacity = '';
     showStep(3);
-    showError('Erreur réseau. Vérifie ta connexion et réessaie.');
+    showError('Erreur réseau. Vérifie ta connexion et clique sur "Générer mon site complet" pour réessayer.');
   }
 }
 
