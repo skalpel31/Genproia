@@ -211,6 +211,21 @@
   .logo-modal-close { color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.85rem; cursor: pointer; padding: 8px 20px; border: 1px solid var(--border2); border-radius: 8px; background: rgba(255,255,255,0.04); transition: all 0.2s; }
   .logo-modal-close:hover { color: var(--white); background: rgba(255,255,255,0.08); }
 
+  /* MARQUE EXISTANTE */
+  .brand-choice { display: flex; gap: 14px; margin-bottom: 20px; }
+  .brand-choice-btn { flex: 1; padding: 18px; border-radius: 14px; border: 1.5px solid var(--border); background: rgba(255,255,255,0.03); cursor: pointer; text-align: center; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+  .brand-choice-btn:hover { border-color: var(--violet-bright); background: rgba(139,92,246,0.08); }
+  .brand-choice-btn.selected { border-color: var(--violet-bright); background: rgba(139,92,246,0.13); }
+  .brand-choice-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .brand-choice-title { font-size: 0.88rem; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .brand-choice-sub { font-size: 0.72rem; color: var(--muted); }
+  .brand-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(139,92,246,0.2); border-radius: 10px; padding: 10px 14px; color: var(--white); font-family: var(--font-body); font-size: 0.88rem; outline: none; transition: border-color 0.2s; margin-bottom: 10px; }
+  .brand-input:focus { border-color: var(--violet-bright); }
+  .brand-input::placeholder { color: var(--muted); }
+  .brand-upload-btn { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 10px; border: 1px dashed rgba(139,92,246,0.35); background: rgba(139,92,246,0.05); color: var(--violet-glow); cursor: pointer; font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 500; transition: all 0.2s; width: 100%; justify-content: center; margin-bottom: 10px; }
+  .brand-upload-btn:hover { border-color: var(--violet-bright); background: rgba(139,92,246,0.1); }
+  .brand-logo-preview { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; border: 2px solid rgba(139,92,246,0.3); margin-bottom: 8px; display: none; }
+
   /* ERROR */
   .error-box { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 12px; padding: 14px 18px; font-size: 0.83rem; color: #fca5a5; display: none; margin-bottom: 16px; }
   .error-box.visible { display: block; animation: fadeIn 0.3s ease; }
@@ -383,11 +398,66 @@
 
     <!-- ÉTAPE 3 — IDENTITÉ & VALIDATION -->
     <div id="step3" style="display:none" class="idea-section">
-      <div class="section-card">
+
+      <!-- CHOIX : marque existante ou génération -->
+      <div id="step3Choice" class="section-card">
+        <div class="section-card-title">Tu as déjà une identité de marque ?</div>
+        <div class="section-card-sub">Si tu as déjà un nom, un logo ou un slogan, tu peux les utiliser directement. Sinon on génère tout pour toi.</div>
+        <div class="brand-choice">
+          <div class="brand-choice-btn" id="choiceOui" onclick="choisirMarque('oui')">
+            <div class="brand-choice-icon">✅</div>
+            <div class="brand-choice-title">Oui, j'ai ma marque</div>
+            <div class="brand-choice-sub">Je saisis mon nom, slogan et logo</div>
+          </div>
+          <div class="brand-choice-btn" id="choiceNon" onclick="choisirMarque('non')">
+            <div class="brand-choice-icon">✨</div>
+            <div class="brand-choice-title">Non, génère pour moi</div>
+            <div class="brand-choice-sub">L'IA crée mon identité complète</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FORMULAIRE : marque existante -->
+      <div id="step3Manuel" style="display:none" class="section-card">
+        <div class="section-card-title">Saisis ton identité de marque</div>
+        <div class="section-card-sub">Ces informations seront utilisées telles quelles dans ton site.</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div>
+            <label style="font-family:'Inter',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Nom de marque *</label>
+            <input type="text" class="brand-input" id="manuelNom" placeholder="Ex : LumiScent" oninput="updateManuelDomaine()">
+          </div>
+          <div>
+            <label style="font-family:'Inter',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Slogan</label>
+            <input type="text" class="brand-input" id="manuelSlogan" placeholder="Ex : L'art de la lumière parfumée">
+          </div>
+          <div>
+            <label style="font-family:'Inter',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Domaine souhaité</label>
+            <input type="text" class="brand-input" id="manuelDomaine" placeholder="Ex : lumiscent.fr">
+          </div>
+          <div>
+            <label style="font-family:'Inter',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Couleur principale</label>
+            <input type="color" class="brand-input" id="manuelCouleur" value="#7c3aed" style="height:42px;padding:4px 8px;cursor:pointer;">
+          </div>
+        </div>
+        <div style="margin-top:10px;">
+          <label style="font-family:'Inter',sans-serif;font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:6px;">Logo (PNG, JPG, SVG)</label>
+          <img id="manuelLogoPreview" class="brand-logo-preview" alt="Logo preview">
+          <label class="brand-upload-btn" for="manuelLogoInput">
+            📁 Importer mon logo
+          </label>
+          <input type="file" id="manuelLogoInput" accept="image/*,.svg" style="display:none" onchange="handleLogoUpload(this)">
+          <div id="manuelLogoNom" style="font-size:0.72rem;color:var(--muted);text-align:center;"></div>
+        </div>
+        <div style="margin-top:14px;padding:10px 14px;background:rgba(139,92,246,0.06);border-radius:8px;font-size:0.75rem;color:var(--muted);">
+          💡 Les champs non remplis seront générés automatiquement par l'IA.
+        </div>
+      </div>
+
+      <!-- CARDS : génération automatique -->
+      <div id="step3Auto" style="display:none" class="section-card">
         <div class="section-card-title">Valide ton identité de marque</div>
         <div class="section-card-sub">Régénère ou valide chaque élément avant de lancer la génération du site complet.</div>
         <div class="valid-grid">
-          <!-- NOM -->
           <div class="valid-cell">
             <div class="valid-cell-label">Nom de marque</div>
             <div class="valid-cell-value" id="vNom">—</div>
@@ -396,7 +466,6 @@
               <button class="valid-validate" id="valNom" onclick="validateIdent('nom')">✓ Valider</button>
             </div>
           </div>
-          <!-- SLOGAN -->
           <div class="valid-cell">
             <div class="valid-cell-label">Slogan</div>
             <div class="valid-cell-value" style="font-size:0.88rem" id="vSlogan">—</div>
@@ -405,7 +474,6 @@
               <button class="valid-validate" id="valSlogan" onclick="validateIdent('slogan')">✓ Valider</button>
             </div>
           </div>
-          <!-- LOGO -->
           <div class="valid-cell">
             <div class="valid-cell-label">Logo preview</div>
             <div class="valid-logo-preview" id="vLogo" onclick="openLogo()">—</div>
@@ -414,7 +482,6 @@
               <button class="valid-validate" id="valLogo" onclick="validateIdent('logo')">✓ Valider</button>
             </div>
           </div>
-          <!-- DOMAINE -->
           <div class="valid-cell">
             <div class="valid-cell-label">Domaine suggéré</div>
             <div class="valid-cell-value" id="vDomaine">—</div>
@@ -428,6 +495,7 @@
           Valide les 4 éléments pour débloquer la génération du site
         </div>
       </div>
+
       <div style="display:flex;gap:12px;margin-top:8px">
         <button class="regen-btn" style="margin-top:0" onclick="goBack(3)">← Retour</button>
         <button class="generate-main-btn" style="margin-top:0;opacity:0.4;cursor:not-allowed" id="launchGenBtn" disabled onclick="lancerGeneration()">Générer mon site complet ✦</button>
@@ -616,52 +684,26 @@ function fallbackSvgLogo(initiales, c1, c2) {
 }
 
 async function goStep3() {
-  const idee = document.getElementById('ideaInput').value.trim();
-
-  // Toujours appeler Claude avec la vraie idée saisie — jamais le localStorage
-  let suggestions;
-  try {
-      const resp = await fetch('/api/demo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idee })
-      });
-      const dat = await resp.json();
-      if (dat.success && dat.result) {
-        const r = dat.result;
-        const c1 = r.couleur_primaire || '#7c3aed';
-        const c2 = r.couleur_secondaire || '#ec4899';
-        const initiales = r.initiales || r.nom.substring(0,2).toUpperCase();
-        const logoData = await makeSvgLogo(r.nom, initiales, c1, c2, idee);
-        suggestions = {
-          nom: r.nom,
-          slogan: r.slogan,
-          initiales,
-          couleur1: c1,
-          couleur2: c2,
-          domaine: nomToDomaine(r.nom),
-          logoData
-        };
-      } else { throw new Error('API error'); }
-    } catch(e) {
-      suggestions = genererSuggestions(idee);
-    }
-
-  identData = suggestions;
-  appliquerSuggestions(suggestions);
-
+  // Réinitialiser le choix
+  modeMarque = null;
+  manuelLogoData = null;
+  identData = {};
   identValidated = { nom: false, slogan: false, logo: false, domaine: false };
-  ['valNom','valSlogan','valLogo','valDomaine'].forEach(id => {
-    const btn = document.getElementById(id);
-    btn.classList.remove('validated');
-    btn.textContent = '✓ Valider';
-    btn.disabled = false;
-  });
-  document.getElementById('launchGenBtn').disabled = true;
-  document.getElementById('launchGenBtn').style.opacity = '0.4';
-  document.getElementById('launchGenBtn').style.cursor = 'not-allowed';
-  document.getElementById('validHint').style.display = 'block';
-
+  document.getElementById('step3Choice').style.display = 'block';
+  document.getElementById('step3Manuel').style.display = 'none';
+  document.getElementById('step3Auto').style.display = 'none';
+  document.getElementById('choiceOui').classList.remove('selected');
+  document.getElementById('choiceNon').classList.remove('selected');
+  const btn = document.getElementById('launchGenBtn');
+  btn.disabled = true;
+  btn.style.opacity = '0.4';
+  btn.style.cursor = 'not-allowed';
+  // Reset champs manuel
+  document.getElementById('manuelNom').value = '';
+  document.getElementById('manuelSlogan').value = '';
+  document.getElementById('manuelDomaine').value = '';
+  document.getElementById('manuelLogoPreview').style.display = 'none';
+  document.getElementById('manuelLogoNom').textContent = '';
   showStep(3);
 }
 
@@ -845,6 +887,93 @@ function checkAllIdentValidated() {
 
 function goBack(step) { showStep(step - 1); }
 
+// ── FEATURE MARQUE EXISTANTE ──
+let modeMarque = null; // 'oui' ou 'non'
+let manuelLogoData = null; // { type: 'image', url: '...base64...' }
+
+function choisirMarque(choix) {
+  modeMarque = choix;
+  document.getElementById('choiceOui').classList.toggle('selected', choix === 'oui');
+  document.getElementById('choiceNon').classList.toggle('selected', choix === 'non');
+
+  if (choix === 'oui') {
+    document.getElementById('step3Manuel').style.display = 'block';
+    document.getElementById('step3Auto').style.display = 'none';
+    // Débloquer le bouton générer directement
+    const btn = document.getElementById('launchGenBtn');
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+    document.getElementById('validHint') && (document.getElementById('validHint').style.display = 'none');
+  } else {
+    document.getElementById('step3Manuel').style.display = 'none';
+    document.getElementById('step3Auto').style.display = 'block';
+    // Remettre le bouton en attente de validation
+    const btn = document.getElementById('launchGenBtn');
+    btn.disabled = true;
+    btn.style.opacity = '0.4';
+    btn.style.cursor = 'not-allowed';
+    // Lancer la génération auto si pas encore fait
+    if (!identData.nom) {
+      genererIdentiteAuto();
+    }
+  }
+}
+
+async function genererIdentiteAuto() {
+  const idee = document.getElementById('ideaInput').value.trim();
+  try {
+    const resp = await fetch('/api/demo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ idee })
+    });
+    const dat = await resp.json();
+    if (dat.success && dat.result) {
+      const r = dat.result;
+      const c1 = r.couleur_primaire || '#7c3aed';
+      const c2 = r.couleur_secondaire || '#ec4899';
+      const initiales = r.initiales || r.nom.substring(0,2).toUpperCase();
+      const logoData = await makeSvgLogo(r.nom, initiales, c1, c2, idee);
+      identData = { nom: r.nom, slogan: r.slogan, initiales, couleur1: c1, couleur2: c2, domaine: nomToDomaine(r.nom), logoData };
+      appliquerSuggestions(identData);
+      identValidated = { nom: false, slogan: false, logo: false, domaine: false };
+      ['valNom','valSlogan','valLogo','valDomaine'].forEach(id => {
+        const btn = document.getElementById(id);
+        btn.classList.remove('validated');
+        btn.textContent = '✓ Valider';
+        btn.disabled = false;
+      });
+    }
+  } catch(e) {
+    const suggestions = genererSuggestions(idee);
+    identData = suggestions;
+    appliquerSuggestions(suggestions);
+  }
+}
+
+function updateManuelDomaine() {
+  const nom = document.getElementById('manuelNom').value.trim();
+  if (nom) {
+    document.getElementById('manuelDomaine').placeholder = nomToDomaine(nom);
+  }
+}
+
+function handleLogoUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const url = e.target.result;
+    manuelLogoData = { type: 'image', url };
+    const preview = document.getElementById('manuelLogoPreview');
+    preview.src = url;
+    preview.style.display = 'block';
+    document.getElementById('manuelLogoNom').textContent = file.name;
+  };
+  reader.readAsDataURL(file);
+}
+
 function selectType(el, type) {
   document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
   el.classList.add('selected');
@@ -868,6 +997,41 @@ async function lancerGeneration() {
   const idee = document.getElementById('ideaInput').value.trim();
   hideError();
   hideUpgrade();
+
+  // Construire identiteValidee selon le mode
+  let identiteValidee = {};
+
+  if (modeMarque === 'oui') {
+    // Mode manuel — utiliser les données saisies
+    const nom = document.getElementById('manuelNom').value.trim();
+    if (!nom) { showError('Le nom de marque est obligatoire.'); return; }
+    const slogan = document.getElementById('manuelSlogan').value.trim();
+    const domaine = document.getElementById('manuelDomaine').value.trim() || nomToDomaine(nom);
+    const couleur = document.getElementById('manuelCouleur').value;
+    identiteValidee = {
+      nom,
+      slogan: slogan || null,
+      couleur_primaire: couleur,
+      couleur_secondaire: couleur,
+      domaine,
+      initiales: nom.substring(0,2).toUpperCase(),
+      logo_url: manuelLogoData?.type === 'image' ? manuelLogoData.url : null,
+      logo_svg: null
+    };
+  } else {
+    // Mode auto — utiliser les données validées
+    identiteValidee = {
+      nom: identData.nom,
+      slogan: identData.slogan,
+      couleur_primaire: identData.couleur1,
+      couleur_secondaire: identData.couleur2,
+      domaine: identData.domaine,
+      initiales: identData.initiales,
+      logo_svg: identData.logoData?.svg || null,
+      logo_url: identData.logoData?.type === 'image' ? identData.logoData.url : null
+    };
+  }
+
   showStep(4);
   animateLoadingSteps();
 
@@ -878,21 +1042,7 @@ async function lancerGeneration() {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + userToken
       },
-      body: JSON.stringify({
-        idee,
-        type: currentType,
-        // ✅ Passer toutes les données validées à l'étape 3
-        identiteValidee: {
-          nom: identData.nom,
-          slogan: identData.slogan,
-          couleur_primaire: identData.couleur1,
-          couleur_secondaire: identData.couleur2,
-          domaine: identData.domaine,
-          initiales: identData.initiales,
-          logo_svg: identData.logoData?.svg || identData.logoData?.url || null,
-          logo_url: identData.logoData?.type === 'image' ? identData.logoData.url : null
-        }
-      })
+      body: JSON.stringify({ idee, type: currentType, identiteValidee })
     });
 
     const data = await response.json();
