@@ -14,7 +14,8 @@ module.exports = async function handler(req, res) {
   const { data: { user }, error: authError } = await supabase.auth.getUser(token);
   if (authError || !user) return res.status(401).json({ error: 'Token invalide' });
 
-  const { projet_id } = req.body;
+  // ✅ CORRECTION : accepte projetId (dashboard) OU projet_id (ancien nom)
+  const projet_id = req.body.projet_id || req.body.projetId;
   if (!projet_id) return res.status(400).json({ error: 'projet_id manquant' });
 
   // Récupérer le projet
