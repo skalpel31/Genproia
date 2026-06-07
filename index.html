@@ -291,8 +291,8 @@
     .modal-overlay { padding: 16px; align-items: flex-end; }
 
     /* CHAT bien au-dessus de la barre PWA */
-    .pub-chat-btn { bottom: 76px !important; right: 14px !important; padding: 9px 14px; font-size: 0.8rem; }
-    .pub-chat-win { bottom: 136px !important; right: 8px !important; left: 8px; width: auto !important; }
+    .pub-chat-btn { bottom: 68px !important; right: 14px !important; padding: 9px 14px; font-size: 0.8rem; }
+    .pub-chat-win { bottom: 128px !important; right: 8px !important; left: 8px; width: auto !important; }
   }
 
   /* Cacher barre PWA sur desktop */
@@ -949,12 +949,24 @@ async function sendResetEmail() {
 }
 
 let deferredPrompt;
+function installApp() { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(function() { dismissInstall(); }); } }
+function dismissInstall() {
+  const banner = document.getElementById('installBanner');
+  if (banner) banner.style.transform = 'translateY(120px)';
+  adjustChatBtn(false);
+}
+function adjustChatBtn(bannerVisible) {
+  const btn = document.querySelector('.pub-chat-btn');
+  if (!btn || window.innerWidth > 768) return;
+  btn.style.bottom = bannerVisible ? '68px' : '28px';
+}
 window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault(); deferredPrompt = e;
-  setTimeout(function() { const banner = document.getElementById('installBanner'); if (banner) banner.style.transform = 'translateY(0)'; }, 3000);
+  setTimeout(function() {
+    const banner = document.getElementById('installBanner');
+    if (banner) { banner.style.transform = 'translateY(0)'; adjustChatBtn(true); }
+  }, 3000);
 });
-function installApp() { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(function() { dismissInstall(); }); } }
-function dismissInstall() { const banner = document.getElementById('installBanner'); if (banner) banner.style.transform = 'translateY(120px)'; }
 </script>
 
 <!-- CHAT PUBLIC -->
