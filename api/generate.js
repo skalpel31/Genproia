@@ -6,6 +6,93 @@ const supabase = createClient(
 );
 
 // ══════════════════════════════════════════════════════════════
+// LIMITES PAR PLAN
+// ══════════════════════════════════════════════════════════════
+
+const PLAN_LIMITS = {
+  free:     0,   // Pas de site complet
+  oneshot:  1,   // 1 site une seule fois (total, pas par mois)
+  pro:      4,   // 4 projets par mois
+  business: 999  // Illimité
+};
+
+// ══════════════════════════════════════════════════════════════
+// VÉRIFICATION DU PLAN
+// ══════════════════════════════════════════════════════════════
+
+async function checkPlanLimit(userId) {
+  const { data: userData, error } = await supabase
+    .from('users')
+    .select('plan, projets_ce_mois, date_reset')
+    .eq('id', userId)
+    .single();
+
+  if (error || !userData) return { allowed: false, reason: 'Utilisateur introuvable' };
+
+  const plan = userData.plan || 'free';
+  const limit = PLAN_LIMITS[plan] ?? 0;
+
+  // Plan free → toujours bloqué pour la génération de site
+  if (plan === 'free') {
+    return {
+      allowed: false,
+      plan,
+      reason: 'free',
+      message: 'Le plan gratuit ne permet pas de générer un site complet. Passe au One-Shot (49€) ou Pro (29€/mois).'
+    };
+  }
+
+  // Plan oneshot → vérifier le total de projets (pas par mois)
+  if (plan === 'oneshot') {
+    const { count } = await supabase
+      .from('projets')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId);
+    if (count >= 1) {
+      return {
+        allowed: false,
+        plan,
+        reason: 'oneshot_used',
+        message: 'Tu as déjà utilisé ton One-Shot. Passe au plan Pro pour générer plusieurs projets.'
+      };
+    }
+    return { allowed: true, plan, projets_restants: 1 };
+  }
+
+  // Plans pro / business → vérifier et remettre à zéro si nouveau mois
+  const today = new Date().toISOString().split('T')[0];
+  const dateReset = userData.date_reset;
+  let projetsCeMois = userData.projets_ce_mois || 0;
+
+  // Nouveau mois → remise à zéro
+  if (!dateReset || today.substring(0, 7) !== dateReset.substring(0, 7)) {
+    await supabase.from('users').update({
+      projets_ce_mois: 0,
+      date_reset: today
+    }).eq('id', userId);
+    projetsCeMois = 0;
+  }
+
+  if (projetsCeMois >= limit) {
+    return {
+      allowed: false,
+      plan,
+      reason: 'limit_reached',
+      projets_ce_mois: projetsCeMois,
+      limite: limit,
+      message: `Tu as atteint ta limite de ${limit} projets ce mois. Passe au plan Business pour des projets illimités.`
+    };
+  }
+
+  return {
+    allowed: true,
+    plan,
+    projets_ce_mois: projetsCeMois,
+    projets_restants: limit - projetsCeMois
+  };
+}
+
+// ══════════════════════════════════════════════════════════════
 // UNSPLASH — Récupérer des images
 // ══════════════════════════════════════════════════════════════
 
@@ -291,7 +378,6 @@ function getPrompt(type, idee, images) {
 L'utilisateur veut créer ce projet : "${idee}"
 Réponds UNIQUEMENT en JSON valide, sans markdown, sans texte avant ou après.`;
 
-  // Préparer les URLs images directement dans les produits
   const getImgUrl = (i) => images[i] ? images[i].url : '';
   const getImgAlt = (i) => images[i] ? (images[i].alt || '') : '';
 
@@ -301,7 +387,6 @@ ${images.map((img, i) => `Image ${i+1}: ${img.url}`).join('\n')}
 RÈGLE ABSOLUE : chaque produit DOIT avoir son image assignée ci-dessus. Copie exactement ces URLs dans les balises img. Ne génère AUCUNE autre URL d'image. Utilise loading="lazy".`
     : `\n\nPas d'images Unsplash — utilise des dégradés CSS colorés.`;
 
-  // Construire la liste produits avec URLs déjà assignées
   const produitsAvecImages = images.length > 0
     ? `  "produits": [
     {"nom": "Nom produit 1", "prix": 49, "description": "Description courte", "badge": "Nouveau", "image": "${getImgUrl(0)}", "image_alt": "${getImgAlt(0)}"},
@@ -575,13 +660,26 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Décris ton idée en au moins 10 caractères.' });
   }
 
+  // ══════════════════════════════════════════════════════════════
+  // VÉRIFICATION DU PLAN AVANT GÉNÉRATION
+  // ══════════════════════════════════════════════════════════════
+  const planCheck = await checkPlanLimit(user.id);
+  if (!planCheck.allowed) {
+    return res.status(403).json({
+      error: planCheck.message,
+      reason: planCheck.reason,
+      plan: planCheck.plan
+    });
+  }
+  console.log(`Plan check OK: ${planCheck.plan}, projets restants: ${planCheck.projets_restants}`);
+
   try {
     // 1. Récupérer les images Unsplash
     const unsplashQuery = await getUnsplashQuery(type || 'ecommerce', idee);
     const images = await getUnsplashImages(unsplashQuery, 6);
     console.log(`Unsplash: ${images.length} images pour "${unsplashQuery}"`);
 
-    // 2. Construire le prompt — injecter l'identité validée si disponible
+    // 2. Construire le prompt
     const identiteContext = identiteValidee && identiteValidee.nom
       ? `\n\nIDENTITÉ DE MARQUE DÉJÀ VALIDÉE PAR L'UTILISATEUR — À RESPECTER ABSOLUMENT :
 - Nom de marque : "${identiteValidee.nom}" (NE PAS changer ce nom)
@@ -628,7 +726,7 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
       return res.status(500).json({ error: 'Erreur de format IA. Réessaie.' });
     }
 
-    // ✅ Forcer les données validées dans le résultat
+    // ✅ Forcer les données validées
     if (identiteValidee && identiteValidee.nom) {
       result.nom = identiteValidee.nom;
       result.slogan = identiteValidee.slogan;
@@ -637,22 +735,18 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
       if (identiteValidee.domaine) result.domaines = [identiteValidee.domaine, ...(result.domaines || []).filter(d => d !== identiteValidee.domaine)];
     }
 
-    // 4. Logo — laisser Claude générer son propre logo dans le site
-    // On ne force plus de logo externe — Claude fait de meilleurs logos inline
+    // 4. Logo
     let svgLogo = '';
     if (identiteValidee && identiteValidee.logo_svg) {
-      // Si l'utilisateur a uploadé son propre logo
       svgLogo = identiteValidee.logo_svg;
       console.log('Logo: logo uploadé par utilisateur utilisé');
     }
-    // Sinon Claude génère son propre logo dans le HTML via LOGO_SVG_PLACEHOLDER
 
-    // 5. Injecter le logo si fourni, sinon retirer le placeholder
+    // 5. Injecter le logo
     if (result.site_html) {
       if (svgLogo && result.site_html.includes('LOGO_SVG_PLACEHOLDER')) {
         result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, svgLogo.replace(/"/g, "'"));
       } else if (result.site_html.includes('LOGO_SVG_PLACEHOLDER')) {
-        // Pas de logo fourni — retirer le placeholder, Claude a mis son propre logo
         result.site_html = result.site_html.replace(/LOGO_SVG_PLACEHOLDER/g, '');
       }
     }
@@ -661,7 +755,6 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
     if (images.length > 0 && result.site_html) {
       let imgIndex = 0;
       result.site_html = result.site_html.replace(/<img([^>]*?)src="([^"]*?)"([^>]*?)>/gi, (match, before, src, after) => {
-        // Ne pas toucher les logos (contient 'logo', 'data:', ou est une balise avec width/height 50px)
         if (src.includes('data:') || before.includes('logo') || after.includes('logo') || match.includes('width:50px')) {
           return match;
         }
@@ -675,17 +768,15 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
       });
     }
 
-    // ✅ Forcer aussi le nom dans le HTML si Claude l'a changé
+    // ✅ Forcer le nom dans le titre HTML
     if (identiteValidee && identiteValidee.nom && result.site_html) {
-      // Remplacer tout nom de marque différent dans le titre HTML
       result.site_html = result.site_html.replace(/<title>[^<]*<\/title>/, `<title>${identiteValidee.nom}</title>`);
     }
 
-    // 6. Extraire et sauvegarder le logo depuis le HTML généré
     result.logo_svg = svgLogo || '';
     result.images_unsplash = images;
 
-    // 7. Sauvegarder dans Supabase
+    // 6. Sauvegarder dans Supabase + incrémenter le compteur
     try {
       const { data: projet, error: projetError } = await supabase.from('projets').insert({
         user_id: user.id,
@@ -707,6 +798,15 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
         console.error('Supabase insert error:', projetError);
       } else if (projet) {
         result.projet_id = projet.id;
+
+        // ✅ Incrémenter le compteur selon le plan
+        if (planCheck.plan === 'pro' || planCheck.plan === 'business') {
+          await supabase.from('users').update({
+            projets_ce_mois: (planCheck.projets_ce_mois || 0) + 1
+          }).eq('id', user.id);
+        }
+
+        // Incrémenter projets_count général
         const { data: userData } = await supabase
           .from('users')
           .select('projets_count')
@@ -720,7 +820,14 @@ Tu DOIS utiliser exactement ce nom et ces couleurs dans tout le site généré.`
       console.error('DB error (non-blocking):', dbErr);
     }
 
-    return res.status(200).json({ success: true, result });
+    return res.status(200).json({
+      success: true,
+      result,
+      plan_info: {
+        plan: planCheck.plan,
+        projets_restants: planCheck.projets_restants ? planCheck.projets_restants - 1 : null
+      }
+    });
 
   } catch (err) {
     console.error('Generate error:', err);
