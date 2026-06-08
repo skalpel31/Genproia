@@ -580,7 +580,7 @@
       <div class="secure-badge">🔒 Données chiffrées · SSL</div>
       <div style="text-align:center;margin-top:14px;font-size:0.78rem;color:var(--muted)">Déjà un compte ? <a href="#" onclick="closeSignup();openLogin();return false;" style="color:var(--violet-glow);text-decoration:none;font-weight:600;">Se connecter</a></div>
     </div>
-    <div id="signupSuccessSection" style="display:none; text-align:center"><div style="font-size:2.8rem; margin-bottom:16px">🎉</div><div class="modal-title">Bienvenue sur Genproia !</div><div class="modal-sub" style="margin-bottom:22px">Ton compte est actif. Tu peux maintenant générer ton premier business complet.</div><button class="submit-btn" onclick="closeSignup();window.location.href='/genproia-dashboard.html'">Aller sur mon dashboard →</button></div>
+    <div id="signupSuccessSection" style="display:none; text-align:center"><div style="font-size:2.8rem; margin-bottom:16px">🎉</div><div class="modal-title">Bienvenue sur Genproia !</div><div class="modal-sub" style="margin-bottom:22px">Ton compte est actif. Tu peux maintenant générer ton premier business complet.</div><button class="submit-btn" id="signupSuccessBtn" onclick="handleSignupSuccess()">Aller sur mon dashboard →</button></div>
   </div>
 </div>
 
@@ -742,6 +742,14 @@ async function validateSignup() {
     const redirect = localStorage.getItem('genproia_redirect_after_login');
     if (redirect) { localStorage.removeItem('genproia_redirect_after_login'); closeSignup(); window.location.href = redirect; return; }
   }
+  // Double vérification plan en attente
+  const pendingPlanCheck = localStorage.getItem('genproia_pending_plan');
+  if (pendingPlanCheck) {
+    localStorage.removeItem('genproia_pending_plan');
+    closeSignup();
+    startStripeCheckout(pendingPlanCheck);
+    return;
+  }
   document.getElementById('signupSection').style.display = 'none';
   document.getElementById('signupSuccessSection').style.display = 'block';
   btn.disabled = false; btn.textContent = 'Continuer →';
@@ -767,6 +775,11 @@ async function processLogin() {
   const redirect = localStorage.getItem('genproia_redirect_after_login');
   if (redirect) { localStorage.removeItem('genproia_redirect_after_login'); window.location.href = redirect; }
   else { window.location.href = '/genproia-dashboard.html'; }
+}
+
+function handleSignupSuccess() {
+  closeSignup();
+  window.location.href = '/genproia-dashboard.html';
 }
 
 function openModal(type) { if (type === 'login') openLogin(); else openSignup(); }
