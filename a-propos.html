@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="À propos de Genproia — La mission, l'histoire et l'équipe derrière le SaaS qui génère des business complets par IA.">
+  <title>À propos — Genproia</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#7c3aed">
+  <style>
+    :root {
+      --violet: #7c3aed;
+      --violet-light: #a855f7;
+      --pink: #ec4899;
+      --noir: #0a0a0f;
+      --noir2: #13131a;
+      --noir3: #1a1a25;
+      --gris: #6b7280;
+      --gris-light: #9ca3af;
+      --blanc: #ffffff;
+      --grad: linear-gradient(135deg, var(--violet), var(--pink));
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--noir);
+      color: var(--blanc);
+      line-height: 1.7;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(124,58,237,0.15);
+      padding: 0 24px; height: 60px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none; font-weight: 700; font-size: 1.1rem; color: var(--blanc);
+    }
+    .nav-logo-icon {
+      width: 32px; height: 32px; background: var(--grad);
+      border-radius: 8px; display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 0.95rem;
+    }
+    .nav-back {
+      color: var(--gris-light); text-decoration: none; font-size: 0.875rem; transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--violet-light); }
+
+    /* HERO */
+    .hero {
+      padding: 80px 24px 64px;
+      max-width: 800px; margin: 0 auto; text-align: center;
+      position: relative;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 50%; transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(124,58,237,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(124,58,237,0.12); border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 999px; padding: 6px 14px; font-size: 0.8rem; color: var(--violet-light); margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 800;
+      line-height: 1.15; margin-bottom: 20px;
+    }
+    .hero h1 span {
+      background: var(--grad); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero p { color: var(--gris-light); font-size: 1rem; max-width: 580px; margin: 0 auto; }
+
+    /* CONTENT */
+    .content { max-width: 800px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* MISSION */
+    .mission {
+      background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(236,72,153,0.06));
+      border: 1px solid rgba(124,58,237,0.2);
+      border-radius: 20px; padding: 40px; margin-bottom: 24px; text-align: center;
+    }
+    .mission .emoji { font-size: 2.5rem; margin-bottom: 16px; display: block; }
+    .mission h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; }
+    .mission p { color: var(--gris-light); font-size: 0.95rem; max-width: 560px; margin: 0 auto; }
+
+    /* STATS */
+    .stats {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 24px;
+    }
+    .stat {
+      background: var(--noir2); border: 1px solid rgba(124,58,237,0.12);
+      border-radius: 16px; padding: 24px; text-align: center;
+    }
+    .stat .val {
+      font-size: 2rem; font-weight: 800;
+      background: var(--grad); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+      display: block; margin-bottom: 4px;
+    }
+    .stat .label { color: var(--gris-light); font-size: 0.8rem; }
+
+    /* SECTION */
+    .section {
+      background: var(--noir2); border: 1px solid rgba(124,58,237,0.12);
+      border-radius: 16px; padding: 32px; margin-bottom: 16px;
+    }
+    .section h2 {
+      font-size: 1.1rem; font-weight: 700; color: var(--blanc);
+      margin-bottom: 16px; display: flex; align-items: center; gap: 10px;
+    }
+    .section h2 .icon {
+      width: 36px; height: 36px;
+      background: rgba(124,58,237,0.12); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .section p { color: var(--gris-light); font-size: 0.9rem; margin-bottom: 12px; }
+    .section p:last-child { margin-bottom: 0; }
+
+    /* VALEURS */
+    .valeurs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
+    .valeur {
+      background: var(--noir2); border: 1px solid rgba(124,58,237,0.12);
+      border-radius: 14px; padding: 24px;
+    }
+    .valeur .v-icon { font-size: 1.5rem; margin-bottom: 10px; display: block; }
+    .valeur h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+    .valeur p { color: var(--gris-light); font-size: 0.82rem; line-height: 1.5; }
+
+    /* CTA */
+    .cta-box {
+      background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(236,72,153,0.1));
+      border: 1px solid rgba(124,58,237,0.25);
+      border-radius: 20px; padding: 40px; text-align: center; margin-top: 24px;
+    }
+    .cta-box h2 { font-size: 1.5rem; font-weight: 800; margin-bottom: 10px; }
+    .cta-box p { color: var(--gris-light); font-size: 0.9rem; margin-bottom: 24px; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--grad); color: white; text-decoration: none;
+      padding: 14px 28px; border-radius: 12px; font-weight: 700; font-size: 0.95rem;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .cta-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    footer { border-top: 1px solid rgba(255,255,255,0.06); padding: 32px 24px; text-align: center; }
+    footer p { color: var(--gris); font-size: 0.8rem; }
+    .footer-links { display: flex; justify-content: center; gap: 20px; margin-top: 12px; flex-wrap: wrap; }
+    .footer-links a { color: var(--gris); text-decoration: none; font-size: 0.8rem; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--violet-light); }
+
+    @media (max-width: 600px) {
+      .stats { grid-template-columns: 1fr; }
+      .valeurs { grid-template-columns: 1fr; }
+      .mission { padding: 28px 20px; }
+      .cta-box { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/index.html" class="nav-logo">
+      <div class="nav-logo-icon">G</div>
+      Genproia
+    </a>
+    <a href="/index.html" class="nav-back">← Retour à l'accueil</a>
+  </nav>
+
+  <div class="hero">
+    <div class="badge">✦ Notre histoire</div>
+    <h1>L'IA qui transforme<br><span>une idée en business</span></h1>
+    <p>Genproia est né d'une conviction simple : lancer un business ne devrait pas prendre des mois et coûter des milliers d'euros.</p>
+  </div>
+
+  <div class="content">
+
+    <div class="mission">
+      <span class="emoji">🚀</span>
+      <h2>Notre mission</h2>
+      <p>Permettre à n'importe qui — que tu sois développeur, commerçant, créatif ou simple curieux — de transformer une idée en business complet et en ligne en quelques minutes, grâce à l'intelligence artificielle.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <span class="val">5 min</span>
+        <span class="label">Pour générer un business complet</span>
+      </div>
+      <div class="stat">
+        <span class="val">100%</span>
+        <span class="label">IA — nom, logo, site, déploiement</span>
+      </div>
+      <div class="stat">
+        <span class="val">0€</span>
+        <span class="label">Pour commencer sur le plan Starter</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="icon">💡</span> Pourquoi Genproia ?</h2>
+      <p>Créer un business from scratch, c'est compliqué. Il faut trouver un nom disponible, créer un logo, rédiger du contenu, coder un site, gérer l'hébergement, brancher les paiements… Des semaines de travail et souvent plusieurs milliers d'euros d'agence.</p>
+      <p>Genproia automatise tout ça. Tu décris ton idée en une phrase. Notre IA génère le nom, le logo SVG, le slogan, les suggestions de domaine, et un site web complet — prêt à recevoir tes premiers clients.</p>
+    </div>
+
+    <div class="valeurs">
+      <div class="valeur">
+        <span class="v-icon">⚡</span>
+        <h3>Rapidité</h3>
+        <p>Ce qui prenait des semaines se fait en minutes. L'IA travaille à ta place, tu te concentres sur ton business.</p>
+      </div>
+      <div class="valeur">
+        <span class="v-icon">🎯</span>
+        <h3>Pertinence</h3>
+        <p>Chaque élément généré est adapté à ton secteur, ton marché et tes besoins spécifiques.</p>
+      </div>
+      <div class="valeur">
+        <span class="v-icon">🔒</span>
+        <h3>Confiance</h3>
+        <p>Tes données sont protégées, tes paiements sécurisés par Stripe. On ne vend rien à personne.</p>
+      </div>
+      <div class="valeur">
+        <span class="v-icon">🌱</span>
+        <h3>Accessibilité</h3>
+        <p>Plan gratuit disponible. Pas besoin de coder. Genproia est fait pour tous les entrepreneurs.</p>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2><span class="icon">🛠️</span> Comment ça marche ?</h2>
+      <p>Genproia utilise Claude (Anthropic), l'un des modèles d'IA les plus avancés au monde, pour générer du contenu cohérent et de qualité professionnelle.</p>
+      <p>L'infrastructure repose sur Vercel pour le déploiement, Supabase pour la gestion des utilisateurs et des projets, et Stripe pour les paiements sécurisés. Une stack moderne, fiable et scalable.</p>
+    </div>
+
+    <div class="section">
+      <h2><span class="icon">📍</span> Qui est derrière Genproia ?</h2>
+      <p>Genproia est un projet indépendant, fondé en France, construit par un entrepreneur qui a voulu résoudre son propre problème : lancer des idées rapidement, sans dépendre d'agences ou de développeurs.</p>
+      <p>Le projet est en pleine croissance. Raison sociale en cours d'immatriculation.</p>
+      <p>Une question ? Un partenariat ? <strong>contact@genproia.com</strong></p>
+    </div>
+
+    <div class="cta-box">
+      <h2>Prêt à lancer ton idée ?</h2>
+      <p>Rejoins les entrepreneurs qui ont déjà créé leur business avec Genproia.</p>
+      <a href="/index.html#demo" class="cta-btn">✦ Essayer gratuitement</a>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>© 2026 Genproia. Tous droits réservés.</p>
+    <div class="footer-links">
+      <a href="/index.html">Accueil</a>
+      <a href="/confidentialite.html">Confidentialité</a>
+      <a href="/cgu.html">CGU</a>
+      <a href="mailto:contact@genproia.com">Contact</a>
+    </div>
+  </footer>
+
+</body>
+</html>
