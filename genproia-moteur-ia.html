@@ -322,11 +322,15 @@
     <!-- ERREUR -->
     <div class="error-box" id="errorBox"></div>
 
-    <!-- UPGRADE -->
+    <!-- UPGRADE — dynamique selon la raison -->
     <div class="upgrade-box" id="upgradeBox">
-      <div class="upgrade-title">Limite du plan gratuit atteinte</div>
-      <div class="upgrade-sub">Tu as déjà généré ton projet gratuit. Passe au plan Pro pour des générations illimitées.</div>
-      <button class="upgrade-btn" onclick="window.location.href='/index.html#pricing'">Passer au plan Pro →</button>
+      <div style="font-size:2rem;margin-bottom:10px" id="upgradeIcon">🚀</div>
+      <div class="upgrade-title" id="upgradeTitle">Limite atteinte</div>
+      <div class="upgrade-sub" id="upgradeSub">Passe à un plan supérieur pour continuer.</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:4px">
+        <button class="upgrade-btn" onclick="window.location.href='/index.html#pricing'">Voir les plans →</button>
+        <button style="padding:10px 20px;background:transparent;color:var(--muted);border:1px solid var(--border2);cursor:pointer;border-radius:10px;font-family:Inter,sans-serif;font-size:0.82rem;" onclick="hideUpgrade()">Fermer</button>
+      </div>
     </div>
 
     <!-- ÉTAPE 1 — IDÉE -->
@@ -596,7 +600,7 @@ function checkAuth() {
   const user = JSON.parse(userRaw);
   document.getElementById('userName').textContent = user.nom || user.email;
   document.getElementById('userAvatar').textContent = (user.nom || user.email).substring(0,2).toUpperCase();
-  document.getElementById('userPlan').textContent = user.plan === 'pro' ? 'Pro' : user.plan === 'business' ? 'Business' : 'Free';
+  document.getElementById('userPlan').textContent = user.plan === 'pro' ? 'Pro' : user.plan === 'business' ? 'Business' : user.plan === 'oneshot' ? 'One-Shot' : 'Free';
 }
 
 function logout() {
@@ -634,7 +638,6 @@ function goStep2() {
 }
 
 // ── ÉTAPE 3 — IDENTITÉ ──
-// Génère un domaine propre à partir du nom
 function nomToDomaine(nom, ext) {
   ext = ext || '.fr';
   return nom.toLowerCase()
@@ -643,7 +646,6 @@ function nomToDomaine(nom, ext) {
     + ext;
 }
 
-// Génère un logo SVG via /api/generate-logo (Claude SVG uniquement)
 async function makeSvgLogo(nom, initiales, c1, c2, idee) {
   try {
     const resp = await fetch('/api/generate-logo', {
@@ -675,7 +677,6 @@ function fallbackSvgLogo(initiales, c1, c2) {
 }
 
 async function goStep3() {
-  // Réinitialiser le choix
   modeMarque = null;
   manuelLogoData = null;
   identData = {};
@@ -689,7 +690,6 @@ async function goStep3() {
   btn.disabled = true;
   btn.style.opacity = '0.4';
   btn.style.cursor = 'not-allowed';
-  // Reset champs manuel
   document.getElementById('manuelNom').value = '';
   document.getElementById('manuelSlogan').value = '';
   document.getElementById('manuelDomaine').value = '';
@@ -698,7 +698,6 @@ async function goStep3() {
   showStep(3);
 }
 
-// Applique les suggestions dans l'UI
 function appliquerSuggestions(s) {
   const vNom = document.getElementById('vNom');
   const vSlogan = document.getElementById('vSlogan');
@@ -735,7 +734,6 @@ function genererSuggestions(idea) {
 let identData = {};
 let identValidated = { nom: false, slogan: false, logo: false, domaine: false };
 
-// ── REGEN — chaque élément appelle Claude et reste cohérent ──
 async function regenIdent(type) {
   const idee = document.getElementById('ideaInput').value.trim() || 'business en ligne';
   identValidated[type] = false;
@@ -745,7 +743,6 @@ async function regenIdent(type) {
   btn.textContent = '...';
   btn.disabled = true;
 
-  // ✅ Désactiver TOUS les boutons Régénérer pendant l'appel
   document.querySelectorAll('.valid-regen').forEach(b => {
     b.disabled = true;
     b.style.opacity = '0.4';
@@ -766,7 +763,6 @@ async function regenIdent(type) {
       const initiales = r.initiales || (r.nom || 'GN').substring(0,2).toUpperCase();
 
       if (type === 'nom') {
-        // Quand le nom change → met à jour nom + domaine automatiquement
         identData.nom = r.nom;
         identData.slogan = r.slogan;
         identData.initiales = initiales;
@@ -780,22 +776,24 @@ async function regenIdent(type) {
         document.getElementById('vSlogan').textContent = r.slogan;
         document.getElementById('vDomaine').textContent = identData.domaine;
         const logoElNom = document.getElementById('vLogo');
-        logoElNom.innerHTML = '';
-        if (logoDataNom.type === 'image') {
-          const img = document.createElement('img');
-          img.src = logoDataNom.url;
-          img.style.cssText = 'width:48px;height:48px;border-radius:10px;object-fit:cover;';
-          logoElNom.appendChild(img);
-        } else {
-          logoElNom.innerHTML = logoDataNom.svg || '';
+        if (logoElNom) {
+          logoElNom.innerHTML = '';
+          if (logoDataNom.type === 'image') {
+            const img = document.createElement('img');
+            img.src = logoDataNom.url;
+            img.style.cssText = 'width:48px;height:48px;border-radius:10px;object-fit:cover;';
+            logoElNom.appendChild(img);
+          } else {
+            logoElNom.innerHTML = logoDataNom.svg || '';
+          }
         }
 
-        // Réinitialiser la validation du slogan et du domaine (ils ont changé)
         identValidated.slogan = false;
         identValidated.domaine = false;
         identValidated.logo = false;
         ['valSlogan','valDomaine','valLogo'].forEach(id => {
           const b = document.getElementById(id);
+          if (!b) return;
           b.classList.remove('validated');
           b.textContent = '✓ Valider';
           b.disabled = false;
@@ -812,18 +810,19 @@ async function regenIdent(type) {
         const logoData = await makeSvgLogo(identData.nom || r.nom, initiales, c1, c2, idee);
         identData.logoData = logoData;
         const logo = document.getElementById('vLogo');
-        logo.innerHTML = '';
-        if (logoData.type === 'image') {
-          const img = document.createElement('img');
-          img.src = logoData.url;
-          img.style.cssText = 'width:48px;height:48px;border-radius:10px;object-fit:cover;';
-          logo.appendChild(img);
-        } else {
-          logo.innerHTML = logoData.svg || '';
+        if (logo) {
+          logo.innerHTML = '';
+          if (logoData.type === 'image') {
+            const img = document.createElement('img');
+            img.src = logoData.url;
+            img.style.cssText = 'width:48px;height:48px;border-radius:10px;object-fit:cover;';
+            logo.appendChild(img);
+          } else {
+            logo.innerHTML = logoData.svg || '';
+          }
         }
 
       } else if (type === 'domaine') {
-        // Domaine toujours basé sur le nom actuel, avec une extension différente
         const exts = ['.com', '.fr', '.io', '.co', '.app'];
         const currentExt = identData.domaine ? identData.domaine.substring(identData.domaine.lastIndexOf('.')) : '.fr';
         const nextExt = exts[(exts.indexOf(currentExt) + 1) % exts.length];
@@ -832,7 +831,6 @@ async function regenIdent(type) {
       }
     } else { throw new Error('API error'); }
   } catch(e) {
-    // Fallback : rotation d'extension pour le domaine, valeurs statics pour le reste
     if (type === 'domaine') {
       const exts = ['.com', '.fr', '.io', '.co', '.app'];
       const currentExt = identData.domaine ? identData.domaine.substring(identData.domaine.lastIndexOf('.')) : '.fr';
@@ -845,7 +843,6 @@ async function regenIdent(type) {
   btn.textContent = '✓ Valider';
   btn.disabled = false;
 
-  // ✅ Réactiver tous les boutons Régénérer
   document.querySelectorAll('.valid-regen').forEach(b => {
     b.disabled = false;
     b.style.opacity = '1';
@@ -876,9 +873,8 @@ function checkAllIdentValidated() {
 
 function goBack(step) { showStep(step - 1); }
 
-// ── FEATURE MARQUE EXISTANTE ──
-let modeMarque = null; // 'oui' ou 'non'
-let manuelLogoData = null; // { type: 'image', url: '...base64...' }
+let modeMarque = null;
+let manuelLogoData = null;
 
 function choisirMarque(choix) {
   modeMarque = choix;
@@ -888,7 +884,6 @@ function choisirMarque(choix) {
   if (choix === 'oui') {
     document.getElementById('step3Manuel').style.display = 'block';
     document.getElementById('step3Auto').style.display = 'none';
-    // Débloquer le bouton générer directement
     const btn = document.getElementById('launchGenBtn');
     btn.disabled = false;
     btn.style.opacity = '1';
@@ -897,17 +892,14 @@ function choisirMarque(choix) {
   } else {
     document.getElementById('step3Manuel').style.display = 'none';
     document.getElementById('step3Auto').style.display = 'none';
-    // Afficher un message de chargement
     const choiceCard = document.getElementById('step3Choice');
     choiceCard.querySelector('.section-card-sub').textContent = '✦ Génération de ton identité en cours, patiente quelques secondes…';
     choiceCard.querySelector('.section-card-sub').style.color = 'var(--violet-glow)';
-    document.getElementById('choiceNon').style.opacity = '0.5';
     document.getElementById('choiceOui').style.opacity = '0.5';
+    document.getElementById('choiceNon').style.opacity = '0.5';
     document.getElementById('choiceOui').style.pointerEvents = 'none';
     document.getElementById('choiceNon').style.pointerEvents = 'none';
-    // Lancer la génération auto
     genererIdentiteAuto().then(() => {
-      // Restaurer l'UI et afficher les cards
       choiceCard.querySelector('.section-card-sub').textContent = 'Régénère ou valide chaque élément avant de lancer la génération du site complet.';
       choiceCard.querySelector('.section-card-sub').style.color = '';
       document.getElementById('choiceOui').style.opacity = '1';
@@ -916,7 +908,6 @@ function choisirMarque(choix) {
       document.getElementById('choiceNon').style.pointerEvents = 'auto';
       document.getElementById('step3Auto').style.display = 'block';
     });
-    // Remettre le bouton en attente de validation
     const btn = document.getElementById('launchGenBtn');
     btn.disabled = true;
     btn.style.opacity = '0.4';
@@ -1003,7 +994,6 @@ async function lancerGeneration() {
   hideError();
   hideUpgrade();
 
-  // Construire identiteValidee selon le mode
   let identiteValidee = {};
 
   if (modeMarque === 'oui') {
@@ -1011,9 +1001,7 @@ async function lancerGeneration() {
     if (!nom) { showError('Le nom de marque est obligatoire.'); return; }
     const slogan = document.getElementById('manuelSlogan').value.trim();
     const domaine = document.getElementById('manuelDomaine').value.trim() || nomToDomaine(nom);
-    const idee = document.getElementById('ideaInput').value.trim();
 
-    // Si pas de logo uploadé → générer avec Ideogram
     let logoUrl = null;
     let logoSvg = null;
     if (manuelLogoData?.url) {
@@ -1042,7 +1030,6 @@ async function lancerGeneration() {
       logo_svg: logoSvg
     };
   } else {
-    // Mode auto — utiliser les données validées
     identiteValidee = {
       nom: identData.nom,
       slogan: identData.slogan,
@@ -1058,7 +1045,7 @@ async function lancerGeneration() {
   showStep(4);
   animateLoadingSteps();
 
-  // ✅ Bloquer la sidebar pendant la génération
+  // Bloquer la sidebar pendant la génération
   document.querySelectorAll('.nav-item').forEach(el => {
     el.style.pointerEvents = 'none';
     el.style.opacity = '0.4';
@@ -1078,13 +1065,40 @@ async function lancerGeneration() {
 
     const data = await response.json();
 
-    // ✅ Débloquer la sidebar
+    // Débloquer la sidebar
     document.querySelectorAll('.nav-item').forEach(el => { el.style.pointerEvents = ''; el.style.opacity = ''; });
     document.querySelector('.back-btn').style.pointerEvents = '';
     document.querySelector('.back-btn').style.opacity = '';
 
     if (!response.ok) {
-      if (data.upgrade) { showStep(3); showUpgrade(); return; }
+      // ── GESTION ERREUR 403 — Plan limité ──
+      if (response.status === 403) {
+        showStep(3);
+        const reason = data.reason || 'free';
+        const msgs = {
+          free: {
+            icon: '🔒',
+            title: 'Plan gratuit — site non inclus',
+            sub: 'Le plan Starter ne permet pas de générer un site complet. Choisis le One-Shot (49€ une seule fois) ou le Pro (29€/mois).'
+          },
+          oneshot_used: {
+            icon: '⚡',
+            title: 'One-Shot déjà utilisé',
+            sub: 'Tu as déjà généré ton site One-Shot. Passe au plan Pro pour générer jusqu\'à 4 sites par mois.'
+          },
+          limit_reached: {
+            icon: '📊',
+            title: 'Limite mensuelle atteinte',
+            sub: 'Tu as atteint ta limite de projets ce mois. Passe au plan Business pour des projets illimités.'
+          }
+        };
+        const m = msgs[reason] || msgs.free;
+        document.getElementById('upgradeIcon').textContent = m.icon;
+        document.getElementById('upgradeTitle').textContent = m.title;
+        document.getElementById('upgradeSub').textContent = m.sub;
+        showUpgrade();
+        return;
+      }
       showStep(3);
       showError((data.error || 'Erreur lors de la génération.') + ' — Clique sur "Générer mon site complet" pour réessayer.');
       return;
@@ -1096,7 +1110,6 @@ async function lancerGeneration() {
 
   } catch (err) {
     console.error('Generation error:', err);
-    // ✅ Débloquer la sidebar en cas d'erreur
     document.querySelectorAll('.nav-item').forEach(el => { el.style.pointerEvents = ''; el.style.opacity = ''; });
     document.querySelector('.back-btn').style.pointerEvents = '';
     document.querySelector('.back-btn').style.opacity = '';
@@ -1131,12 +1144,9 @@ function afficherResultat(r) {
   const logo = document.getElementById('rLogo');
   logo.innerHTML = '';
 
-  // ✅ Extraire le logo directement depuis le site HTML généré
-  // C'est la seule source de vérité — c'est exactement ce qui est dans le site
   if (r.site_html) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(r.site_html, 'text/html');
-    // Chercher le logo dans le header (premier svg ou img dans le header/nav)
     const headerSvg = doc.querySelector('header svg, nav svg, .header svg, .navbar svg');
     const headerImg = doc.querySelector('header img, nav img, .header img, .navbar img');
     if (headerSvg) {
@@ -1282,7 +1292,6 @@ function closeLogo() {
   document.getElementById('logoModal').classList.remove('open');
 }
 
-// Wrapper goStep3 avec désactivation bouton
 async function goStep3Btn() {
   const btn = document.getElementById('step2Btn');
   const loading = document.getElementById('step2Loading');
