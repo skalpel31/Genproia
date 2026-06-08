@@ -16,9 +16,9 @@ module.exports = async (req, res) => {
     }
 
     const PRICE_IDS = {
-      oneshot:  'price_1Tg0TmBMjR8Z8bynjs0r66Bv',
-      pro:      'price_1Tg0UUBMjR8Z8byn0XzIni0i',
-      business: 'price_1Tg0UuBMjR8Z8bynrr8zrlz6'
+      oneshot:  'price_1Tg9BE8kY6t6gqGZtT8uQcfb',
+      pro:      'price_1Tg9C78kY6t6gqGZZrDXAsjl',
+      business: 'price_1Tg9D18kY6t6gqGZGxtG64SN'
     };
 
     if (priceId !== PRICE_IDS[planType]) {
