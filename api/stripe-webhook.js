@@ -97,8 +97,8 @@ module.exports = async (req, res) => {
 
         const priceId = subscription.items?.data?.[0]?.price?.id;
         const PRICE_TO_PLAN = {
-          'price_1Tg0UUBMjR8Z8byn0XzIni0i': 'pro',
-          'price_1Tg0UuBMjR8Z8bynrr8zrlz6': 'business'
+          'price_1Tg9C78kY6t6gqGZZrDXAsjl': 'pro',
+          'price_1Tg9D18kY6t6gqGZGxtG64SN': 'business'
         };
         const newPlan = PRICE_TO_PLAN[priceId];
         if (!newPlan) break;
