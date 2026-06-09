@@ -18,6 +18,14 @@
       "dest": "/api/email-welcome.js"
     },
     {
+      "src": "/api/stripe-checkout",
+      "dest": "/api/stripe-checkout.js"
+    },
+    {
+      "src": "/api/stripe-webhook",
+      "dest": "/api/stripe-webhook.js"
+    },
+    {
       "src": "/api/chat-dashboard",
       "dest": "/api/chat-dashboard.js"
     },
