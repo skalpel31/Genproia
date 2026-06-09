@@ -103,7 +103,7 @@ module.exports = async function handler(req, res) {
         'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
       },
       body: JSON.stringify({
-        from: 'Genproia <onboarding@resend.dev>',
+        from: 'Genproia <bonjour@genproia.com>',
         to: [email],
         subject: `Bienvenue sur Genproia, ${prenom} ! 🎉`,
         html
