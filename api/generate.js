@@ -34,11 +34,23 @@ async function checkPlanLimit(userId) {
 
   // Plan free → toujours bloqué pour la génération de site
   if (plan === 'free') {
+    const { count } = await supabase
+      .from('projets')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId);
+    if (count >= 1) {
+      return {
+        allowed: false,
+        plan,
+        reason: 'free',
+        message: 'Le plan gratuit ne permet qu\'un seul aperçu.'
+      };
+    }
     return {
       allowed: true,
       plan,
       preview_only: true,
-      projets_restants: 1
+      projets_restants: 0
     };
   }
 
