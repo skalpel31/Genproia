@@ -35,10 +35,10 @@ async function checkPlanLimit(userId) {
   // Plan free → toujours bloqué pour la génération de site
   if (plan === 'free') {
     return {
-      allowed: false,
+      allowed: true,
       plan,
-      reason: 'free',
-      message: 'Le plan gratuit ne permet pas de générer un site complet. Passe au One-Shot (49€) ou Pro (29€/mois).'
+      preview_only: true,
+      projets_restants: 1
     };
   }
 
