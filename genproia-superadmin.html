@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Genproia — Super Admin</title>
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-B1ZT1KYG22"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-B1ZT1KYG22');</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -17,15 +20,10 @@
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html, body { height: 100%; overflow: hidden; }
   body { background: var(--void); color: var(--white); font-family: var(--font-body); display: flex; }
-  body::after { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E"); }
 
   .sidebar { width: var(--sidebar-w); min-height: 100vh; background: var(--deep); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; z-index: 50; }
   .sb-top { padding: 20px 16px; border-bottom: 1px solid var(--border); }
-  .sb-logo { display: flex; align-items: center; gap: 9px; margin-bottom: 10px; }
-  .sb-logo-icon { width: 30px; height: 30px; border-radius: 8px; background: linear-gradient(135deg, var(--violet), var(--pink)); display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 800; }
-  .sb-logo-text { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--white); letter-spacing: -0.03em; }
-  .sb-logo-text span { color: var(--violet-bright); }
-  .sb-admin-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.22); border-radius: 5px; padding: 3px 9px; font-family: 'Inter', sans-serif; font-size: 0.62rem; font-weight: 700; color: #fca5a5; letter-spacing: 0.08em; text-transform: uppercase; }
+  .sb-admin-badge { display: inline-flex; align-items: center; gap: 5px; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.22); border-radius: 5px; padding: 3px 9px; font-family: 'Inter', sans-serif; font-size: 0.62rem; font-weight: 700; color: #fca5a5; letter-spacing: 0.08em; text-transform: uppercase; margin-top: 10px; }
   .sb-admin-badge::before { content: '●'; color: var(--red); font-size: 0.48rem; }
   .sb-nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 1px; overflow-y: auto; }
   .sb-section { font-family: 'Inter', sans-serif; font-size: 0.58rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); padding: 9px 10px 4px; font-weight: 600; }
@@ -40,10 +38,9 @@
   .sb-badge.green { background: rgba(16,185,129,0.13); color: #6ee7b7; }
   .sb-badge.yellow { background: rgba(245,158,11,0.13); color: #fcd34d; }
   .sb-bottom { padding: 10px 8px; border-top: 1px solid var(--border); }
-  .sb-links { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
   .sb-link { display: flex; align-items: center; gap: 7px; padding: 6px 10px; border-radius: 7px; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.75rem; text-decoration: none; transition: background 0.2s, color 0.2s; cursor: pointer; }
   .sb-link:hover { background: rgba(255,255,255,0.04); color: var(--white); }
-  .sb-admin-user { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); }
+  .sb-admin-user { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); margin-top: 6px; }
   .admin-avatar { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #ef4444, #f97316); display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 0.72rem; flex-shrink: 0; }
   .admin-name { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; }
   .admin-role { font-family: 'Inter', sans-serif; font-size: 0.62rem; color: #fca5a5; }
@@ -52,17 +49,14 @@
   .topbar { position: sticky; top: 0; z-index: 40; background: rgba(3,2,10,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); height: 56px; padding: 0 26px; display: flex; align-items: center; justify-content: space-between; }
   .tb-breadcrumb { display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.8rem; color: var(--muted); }
   .tb-breadcrumb strong { color: var(--white); font-weight: 600; }
-  .tb-breadcrumb span { color: var(--muted2); }
   .tb-right { display: flex; align-items: center; gap: 9px; }
-  .tb-icon-btn { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.85rem; transition: background 0.2s; position: relative; }
+  .tb-icon-btn { width: 32px; height: 32px; border-radius: 8px; background: rgba(255,255,255,0.04); border: 1px solid var(--border2); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.85rem; transition: background 0.2s; }
   .tb-icon-btn:hover { background: rgba(255,255,255,0.08); }
-  .tb-notif { position: absolute; top: 5px; right: 5px; width: 6px; height: 6px; border-radius: 50%; background: var(--red); border: 1px solid var(--void); }
   .sys-status { display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--green); background: rgba(16,185,129,0.07); border: 1px solid rgba(16,185,129,0.18); padding: 4px 11px; border-radius: 100px; }
   .sys-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   .content { padding: 22px 26px; }
 
-  /* KPI */
   .kpi-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 20px; }
   .kpi { background: var(--card); border: 1px solid var(--border); border-radius: 13px; padding: 15px 16px; position: relative; overflow: hidden; transition: transform 0.25s, border-color 0.25s; animation: fadeUp 0.4s ease both; }
   .kpi:hover { transform: translateY(-2px); border-color: rgba(139,92,246,0.25); }
@@ -72,21 +66,19 @@
   .kpi-label { font-family: 'Inter', sans-serif; font-size: 0.67rem; color: var(--muted); font-weight: 500; }
   .kpi-icon { font-size: 0.95rem; }
   .kpi-value { font-family: 'Inter', sans-serif; font-size: 1.65rem; font-weight: 700; line-height: 1; margin-bottom: 4px; color: var(--white); letter-spacing: -0.04em; }
-  .kpi-delta { font-family: 'Inter', sans-serif; font-size: 0.65rem; display: flex; align-items: center; gap: 3px; }
+  .kpi-delta { font-family: 'Inter', sans-serif; font-size: 0.65rem; }
   .kpi-delta.up{color:var(--green)} .kpi-delta.down{color:var(--red)} .kpi-delta.neutral{color:var(--muted)}
   @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
-  /* PANELS */
   .grid-main { display: grid; grid-template-columns: 1fr 310px; gap: 16px; margin-bottom: 16px; }
   .grid-bottom { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .panel { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; animation: fadeUp 0.4s 0.2s ease both; }
   .panel-header { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .panel-title { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 7px; letter-spacing: -0.01em; }
+  .panel-title { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 7px; }
   .panel-action { font-family: 'Inter', sans-serif; font-size: 0.72rem; color: var(--violet-glow); cursor: pointer; transition: color 0.2s; }
   .panel-action:hover { color: var(--white); }
 
-  /* USERS TABLE */
   .users-table { width: 100%; border-collapse: collapse; }
   .users-table thead tr { border-bottom: 1px solid var(--border); }
   .users-table th { padding: 9px 14px; font-family: 'Inter', sans-serif; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; text-align: left; }
@@ -102,12 +94,12 @@
   .pt-pro { background: rgba(124,58,237,0.16); color: var(--violet-glow); border: 1px solid rgba(124,58,237,0.22); }
   .pt-business { background: rgba(245,158,11,0.1); color: #fcd34d; border: 1px solid rgba(245,158,11,0.18); }
   .pt-free { background: rgba(255,255,255,0.04); color: var(--muted); border: 1px solid var(--border2); }
+  .pt-oneshot { background: rgba(236,72,153,0.12); color: #f9a8d4; border: 1px solid rgba(236,72,153,0.22); }
   .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-  .sd-active{background:var(--green);box-shadow:0 0 4px rgba(16,185,129,0.4)} .sd-inactive{background:var(--muted2)} .sd-suspended{background:var(--red)}
+  .sd-active{background:var(--green)} .sd-inactive{background:var(--muted2)} .sd-suspended{background:var(--red)}
   .action-btn { font-family: 'Inter', sans-serif; background: transparent; border: 1px solid var(--border2); color: var(--muted); padding: 3px 9px; border-radius: 5px; font-size: 0.67rem; cursor: pointer; transition: all 0.2s; }
   .action-btn:hover { border-color: var(--violet-bright); color: var(--violet-glow); background: rgba(139,92,246,0.07); }
 
-  /* QUICK ACTIONS */
   .qa-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; padding: 12px; }
   .qa-btn { background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: 9px; padding: 11px 9px; text-align: center; cursor: pointer; transition: all 0.2s; }
   .qa-btn:hover { background: rgba(139,92,246,0.09); border-color: var(--border); }
@@ -115,17 +107,14 @@
   .qa-label { font-family: 'Inter', sans-serif; font-size: 0.7rem; font-weight: 600; }
   .qa-desc { font-size: 0.62rem; color: var(--muted); margin-top: 2px; }
 
-  /* PLANS */
   .plans-breakdown { padding: 14px 18px; }
   .plan-row { display: flex; align-items: center; gap: 11px; margin-bottom: 11px; }
-  .plan-row:last-child { margin-bottom: 0; }
   .plan-row-label { font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500; width: 76px; flex-shrink: 0; }
   .plan-bar-wrap { flex: 1; height: 4px; background: rgba(255,255,255,0.04); border-radius: 100px; overflow: hidden; }
   .plan-bar-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
-  .pbf-violet{background:linear-gradient(90deg,var(--violet),var(--violet-glow))} .pbf-yellow{background:linear-gradient(90deg,#d97706,var(--yellow))} .pbf-gray{background:rgba(255,255,255,0.12)}
+  .pbf-violet{background:linear-gradient(90deg,var(--violet),var(--violet-glow))} .pbf-pink{background:linear-gradient(90deg,var(--pink),#9333ea)} .pbf-yellow{background:linear-gradient(90deg,#d97706,var(--yellow))} .pbf-gray{background:rgba(255,255,255,0.12)}
   .plan-row-count { font-family: 'Inter', sans-serif; font-size: 0.7rem; color: var(--muted); width: 55px; text-align: right; flex-shrink: 0; }
 
-  /* GEN LOG */
   .gen-log-item { display: flex; align-items: center; gap: 11px; padding: 8px 18px; border-bottom: 1px solid rgba(255,255,255,0.022); transition: background 0.2s; }
   .gen-log-item:last-child { border-bottom: none; }
   .gen-log-item:hover { background: rgba(255,255,255,0.013); }
@@ -135,31 +124,36 @@
   .gen-log-user { font-size: 0.65rem; color: var(--muted); }
   .gen-log-time { font-family: 'Inter', sans-serif; font-size: 0.62rem; color: var(--muted2); white-space: nowrap; }
   .gen-status { font-family: 'Inter', sans-serif; font-size: 0.6rem; padding: 2px 7px; border-radius: 100px; font-weight: 600; }
-  .gs-done{background:rgba(16,185,129,0.1);color:#6ee7b7} .gs-proc{background:rgba(139,92,246,0.13);color:var(--violet-glow)} .gs-fail{background:rgba(239,68,68,0.1);color:#fca5a5}
+  .gs-done{background:rgba(16,185,129,0.1);color:#6ee7b7}
 
-  /* ADMIN PAGES */
   .admin-page { display: none; animation: fadeIn 0.3s ease; }
   .admin-page.active { display: block; }
   .page-title { font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; letter-spacing: -0.02em; }
-  .info-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 32px; text-align: center; }
-  .info-card-icon { font-size: 2.5rem; margin-bottom: 16px; }
-  .info-card-title { font-family: 'Inter', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
-  .info-card-sub { font-size: 0.83rem; color: var(--muted); }
 
-  /* MODAL */
+  /* PAYMENTS TABLE */
+  .payments-table { width: 100%; border-collapse: collapse; }
+  .payments-table th { padding: 9px 14px; font-family: 'Inter', sans-serif; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 600; text-align: left; border-bottom: 1px solid var(--border); }
+  .payments-table td { padding: 9px 14px; font-size: 0.78rem; border-bottom: 1px solid rgba(255,255,255,0.025); }
+
+  /* ANALYTICS EMBED */
+  .analytics-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 20px; }
+  .analytics-kpi { background: var(--card); border: 1px solid var(--border); border-radius: 13px; padding: 18px; text-align: center; }
+  .analytics-kpi-value { font-family: 'Inter', sans-serif; font-size: 2rem; font-weight: 700; letter-spacing: -0.04em; margin-bottom: 4px; }
+  .analytics-kpi-label { font-size: 0.72rem; color: var(--muted); }
+  .ga-link { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; background: rgba(66,133,244,0.1); border: 1px solid rgba(66,133,244,0.25); border-radius: 8px; color: #93c5fd; font-family: 'Inter', sans-serif; font-size: 0.78rem; font-weight: 600; text-decoration: none; transition: all 0.2s; }
+  .ga-link:hover { background: rgba(66,133,244,0.18); }
+
   .modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(3,2,10,0.88); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; }
   .modal-overlay.open { display: flex; animation: fadeIn 0.25s ease; }
   .modal { background: var(--card2); border: 1px solid rgba(139,92,246,0.22); border-radius: 18px; width: 100%; max-width: 500px; overflow: hidden; animation: fadeUp 0.3s ease; }
   .modal-top { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: relative; }
   .modal-top::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--violet), var(--pink)); }
-  .modal-title { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; letter-spacing: -0.02em; }
-  .modal-close { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border2); color: var(--muted); cursor: pointer; font-size: 0.82rem; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+  .modal-title { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; }
+  .modal-close { width: 26px; height: 26px; border-radius: 50%; background: rgba(255,255,255,0.05); border: 1px solid var(--border2); color: var(--muted); cursor: pointer; font-size: 0.82rem; display: flex; align-items: center; justify-content: center; }
   .modal-close:hover { background: rgba(255,255,255,0.1); color: var(--white); }
   .modal-body { padding: 18px 22px; }
   .modal-user-hero { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; padding: 12px; background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: 10px; }
   .modal-avatar { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Inter', sans-serif; font-weight: 800; font-size: 0.95rem; }
-  .modal-user-name { font-family: 'Inter', sans-serif; font-size: 0.92rem; font-weight: 700; letter-spacing: -0.02em; }
-  .modal-user-email { font-size: 0.75rem; color: var(--muted); }
   .modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 14px; }
   .modal-cell { background: rgba(255,255,255,0.03); border: 1px solid var(--border2); border-radius: 9px; padding: 9px 13px; }
   .modal-cell-label { font-family: 'Inter', sans-serif; font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 3px; }
@@ -174,14 +168,11 @@
   .gift-plan-opt:hover { border-color: rgba(139,92,246,0.28); background: rgba(139,92,246,0.07); }
   .gift-plan-opt.selected { border-color: var(--violet-bright); background: rgba(139,92,246,0.13); }
   .confirm-modal { background: var(--card2); border: 1px solid rgba(239,68,68,0.22); border-radius: 14px; width: 100%; max-width: 340px; padding: 22px; text-align: center; animation: fadeUp 0.3s ease; }
-  .confirm-icon { font-size: 2.2rem; margin-bottom: 10px; }
-  .confirm-title { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 5px; }
-  .confirm-sub { font-size: 0.78rem; color: var(--muted); margin-bottom: 18px; }
-  .confirm-btns { display: flex; gap: 9px; }
-  .confirm-btn { flex: 1; padding: 9px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+  .confirm-btns { display: flex; gap: 9px; margin-top: 14px; }
+  .confirm-btn { flex: 1; padding: 9px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.8rem; cursor: pointer; }
   .cb-cancel { background: transparent; border: 1px solid var(--border2); color: var(--muted); }
-  .cb-cancel:hover { color: var(--white); border-color: var(--border); }
   .cb-confirm { background: linear-gradient(135deg, #ef4444, #dc2626); border: none; color: var(--white); }
+
   .toast { position: fixed; bottom: 22px; right: 22px; z-index: 999; background: var(--card2); border: 1px solid var(--border); border-radius: 10px; padding: 11px 16px; display: flex; align-items: center; gap: 9px; font-family: 'Inter', sans-serif; font-size: 0.8rem; transform: translateY(70px); opacity: 0; transition: transform 0.3s ease, opacity 0.3s ease; }
   .toast.show { transform: translateY(0); opacity: 1; }
   .toast.success { border-color: rgba(16,185,129,0.28); }
@@ -195,7 +186,7 @@
     .grid-main { grid-template-columns: 1fr; }
     .grid-bottom { grid-template-columns: 1fr; }
     .content { padding: 13px; }
-    .sys-status { display: none; }
+    .analytics-grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
@@ -203,20 +194,19 @@
 
 <aside class="sidebar" id="sidebar">
   <div class="sb-top">
-    <div class="sb-logo">
-      <a href="/index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;font-weight:800;font-size:0.75rem;color:white;flex-shrink:0;">G</div><span style="font-family:Inter,sans-serif;font-size:0.95rem;font-weight:700;color:white;letter-spacing:-0.03em;">Genpr<span style="color:#8b5cf6">oia</span></span></a>
-    </div>
+    <a href="/index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px;"><div style="width:28px;height:28px;border-radius:7px;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;font-weight:800;font-size:0.75rem;color:white;">G</div><span style="font-family:Inter,sans-serif;font-size:0.95rem;font-weight:700;color:white;letter-spacing:-0.03em;">Genpr<span style="color:#8b5cf6">oia</span></span></a>
     <div class="sb-admin-badge">Super Admin</div>
   </div>
   <nav class="sb-nav">
     <div class="sb-section">Tableau de bord</div>
     <div class="sb-item active" onclick="showAdminPage('overview',this)"><span class="sb-icon">⊞</span> Vue d'ensemble</div>
-    <div class="sb-item" onclick="showAdminPage('analytics',this)"><span class="sb-icon">📊</span> Analytics <span class="sb-badge violet">Live</span></div>
-    <div class="sb-item" onclick="showAdminPage('revenus',this)"><span class="sb-icon">💰</span> Revenus</div>
+    <div class="sb-item" onclick="showAdminPage('analytics',this)"><span class="sb-icon">📊</span> Analytics <span class="sb-badge green">Live</span></div>
+    <div class="sb-item" onclick="showAdminPage('revenus',this)"><span class="sb-icon">💰</span> Revenus <span class="sb-badge green" id="sidebarMrr">€0</span></div>
     <div class="sb-section">Utilisateurs</div>
     <div class="sb-item" onclick="showAdminPage('users',this)"><span class="sb-icon">👥</span> Tous les users <span class="sb-badge violet" id="sidebarUserCount">0</span></div>
     <div class="sb-item" onclick="showAdminPage('free',this)"><span class="sb-icon">🆓</span> Free <span class="sb-badge" style="background:rgba(255,255,255,0.07);color:var(--muted)" id="freeCount">0</span></div>
-    <div class="sb-item" onclick="showAdminPage('pro',this)"><span class="sb-icon">⚡</span> Abonnés Pro <span class="sb-badge violet" id="proCount">0</span></div>
+    <div class="sb-item" onclick="showAdminPage('oneshot',this)"><span class="sb-icon">⚡</span> One-Shot <span class="sb-badge" style="background:rgba(236,72,153,0.15);color:#f9a8d4" id="oneshotCount">0</span></div>
+    <div class="sb-item" onclick="showAdminPage('pro',this)"><span class="sb-icon">🚀</span> Pro <span class="sb-badge violet" id="proCount">0</span></div>
     <div class="sb-item" onclick="showAdminPage('business',this)"><span class="sb-icon">🏢</span> Business <span class="sb-badge yellow" id="businessCount">0</span></div>
     <div class="sb-item" onclick="showAdminPage('suspendus',this)"><span class="sb-icon">🚫</span> Suspendus <span class="sb-badge red" id="suspendusCount">0</span></div>
     <div class="sb-section">Projets</div>
@@ -225,16 +215,12 @@
     <div class="sb-item" onclick="showAdminPage('ecommerces',this)"><span class="sb-icon">🛒</span> E-commerces</div>
     <div class="sb-item" onclick="showAdminPage('saas',this)"><span class="sb-icon">⚙️</span> SaaS générés</div>
     <div class="sb-section">Système</div>
-    <div class="sb-item" onclick="showAdminPage('alertes',this)"><span class="sb-icon">🔔</span> Alertes</div>
     <div class="sb-item" onclick="showAdminPage('api',this)"><span class="sb-icon">🔑</span> API & Clés</div>
-    <div class="sb-item" onclick="showAdminPage('emails',this)"><span class="sb-icon">📧</span> Emails</div>
     <div class="sb-item" onclick="showAdminPage('parametres',this)"><span class="sb-icon">⚙️</span> Paramètres</div>
     <div class="sb-item" onclick="showAdminPage('logs',this)"><span class="sb-icon">📋</span> Logs</div>
   </nav>
   <div class="sb-bottom">
-    <div class="sb-links">
-      <a class="sb-link" href="/genproia-dashboard.html">← Retour au dashboard</a>
-    </div>
+    <a class="sb-link" href="/genproia-dashboard.html">← Retour au dashboard</a>
     <div class="sb-admin-user">
       <div class="admin-avatar" id="adminAvatar">SA</div>
       <div><div class="admin-name" id="adminName">Super Admin</div><div class="admin-role">● Accès total</div></div>
@@ -250,22 +236,21 @@
     </div>
     <div class="tb-right">
       <div class="sys-status"><div class="sys-dot"></div>Tous systèmes opérationnels</div>
-      <div class="tb-icon-btn">🔍</div>
-      <div class="tb-icon-btn">🔔<div class="tb-notif"></div></div>
+      <div class="tb-icon-btn" onclick="loadAdminData()" title="Actualiser">🔄</div>
       <div class="tb-icon-btn" onclick="window.location.href='/genproia-dashboard.html'" title="Dashboard">🏠</div>
     </div>
   </div>
 
   <div class="content">
 
-    <!-- PAGE VUE D'ENSEMBLE -->
+    <!-- VUE D'ENSEMBLE -->
     <div id="admin-page-overview" class="admin-page active">
       <div class="kpi-row">
         <div class="kpi k1"><div class="kpi-top"><div class="kpi-label">Utilisateurs totaux</div><div class="kpi-icon">👥</div></div><div class="kpi-value" id="kpiUsers">0</div><div class="kpi-delta neutral" id="kpiUsersDelta">Chargement...</div></div>
-        <div class="kpi k2"><div class="kpi-top"><div class="kpi-label">MRR</div><div class="kpi-icon">€</div></div><div class="kpi-value" id="kpiMrr">€0</div><div class="kpi-delta neutral">Connecte Stripe</div></div>
+        <div class="kpi k2"><div class="kpi-top"><div class="kpi-label">MRR</div><div class="kpi-icon">€</div></div><div class="kpi-value" id="kpiMrr">€—</div><div class="kpi-delta neutral" id="kpiMrrDelta">Chargement...</div></div>
         <div class="kpi k3"><div class="kpi-top"><div class="kpi-label">Projets générés</div><div class="kpi-icon">✦</div></div><div class="kpi-value" id="kpiProjets">0</div><div class="kpi-delta neutral" id="kpiProjetsDelta">Chargement...</div></div>
-        <div class="kpi k4"><div class="kpi-top"><div class="kpi-label">Churn rate</div><div class="kpi-icon">↘</div></div><div class="kpi-value">N/A</div><div class="kpi-delta neutral">Bientôt disponible</div></div>
-        <div class="kpi k5"><div class="kpi-top"><div class="kpi-label">Sites déployés</div><div class="kpi-icon">🌐</div></div><div class="kpi-value" id="kpiSites">0</div><div class="kpi-delta neutral">Bientôt disponible</div></div>
+        <div class="kpi k4"><div class="kpi-top"><div class="kpi-label">Revenus totaux</div><div class="kpi-icon">💰</div></div><div class="kpi-value" id="kpiRevTotal">€—</div><div class="kpi-delta neutral" id="kpiRevDelta">Chargement...</div></div>
+        <div class="kpi k5"><div class="kpi-top"><div class="kpi-label">Sites déployés</div><div class="kpi-icon">🌐</div></div><div class="kpi-value" id="kpiSites">0</div><div class="kpi-delta neutral">Projets live</div></div>
       </div>
       <div class="grid-main">
         <div class="panel">
@@ -276,20 +261,16 @@
               <div class="panel-action" onclick="showAdminPage('users',null)">Voir tout →</div>
             </div>
           </div>
-          <div style="overflow-x:auto"><table class="users-table" id="usersTable"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="usersBody"></tbody></table></div>
+          <div style="overflow-x:auto"><table class="users-table" id="usersTable"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="usersBody"></tbody></table></div>
         </div>
         <div style="display:flex;flex-direction:column;gap:13px">
           <div class="panel">
-            <div class="panel-header"><div class="panel-title">Alertes système</div></div>
-            <div style="padding:18px;text-align:center;color:var(--muted);font-size:0.8rem;">Aucune alerte. Tout fonctionne normalement ✅</div>
-          </div>
-          <div class="panel">
             <div class="panel-header"><div class="panel-title">Actions rapides</div></div>
             <div class="qa-grid">
-              <div class="qa-btn" onclick="showToast('Fonctionnalité bientôt disponible','success')"><div class="qa-icon">📧</div><div class="qa-label">Envoyer email</div><div class="qa-desc">Broadcast all</div></div>
               <div class="qa-btn" onclick="exportCSV()"><div class="qa-icon">📤</div><div class="qa-label">Exporter CSV</div><div class="qa-desc">Tous les users</div></div>
-              <div class="qa-btn" onclick="showToast('Mode maintenance bientôt disponible','success')"><div class="qa-icon">🔧</div><div class="qa-label">Maintenance</div><div class="qa-desc">Activer le mode</div></div>
-              <div class="qa-btn" onclick="showToast('Rapport généré','success')"><div class="qa-icon">📋</div><div class="qa-label">Rapport MRR</div><div class="qa-desc">Ce mois-ci</div></div>
+              <div class="qa-btn" onclick="loadStripeStats()"><div class="qa-icon">🔄</div><div class="qa-label">Sync Stripe</div><div class="qa-desc">Actualiser revenus</div></div>
+              <div class="qa-btn" onclick="showAdminPage('analytics',null)"><div class="qa-icon">📊</div><div class="qa-label">Analytics</div><div class="qa-desc">Google Analytics</div></div>
+              <div class="qa-btn" onclick="showAdminPage('generations',null)"><div class="qa-icon">✦</div><div class="qa-label">Générations</div><div class="qa-desc">Voir tout</div></div>
             </div>
           </div>
         </div>
@@ -298,15 +279,16 @@
         <div class="panel">
           <div class="panel-header"><div class="panel-title">Répartition des plans</div></div>
           <div class="plans-breakdown">
-            <div class="plan-row"><div class="plan-row-label" style="color:var(--violet-glow)">Pro</div><div class="plan-bar-wrap"><div class="plan-bar-fill pbf-violet" id="barPro" style="width:0%"></div></div><div class="plan-row-count" id="countPro">0</div></div>
             <div class="plan-row"><div class="plan-row-label" style="color:#fcd34d">Business</div><div class="plan-bar-wrap"><div class="plan-bar-fill pbf-yellow" id="barBusiness" style="width:0%"></div></div><div class="plan-row-count" id="countBusiness">0</div></div>
+            <div class="plan-row"><div class="plan-row-label" style="color:var(--violet-glow)">Pro</div><div class="plan-bar-wrap"><div class="plan-bar-fill pbf-violet" id="barPro" style="width:0%"></div></div><div class="plan-row-count" id="countPro">0</div></div>
+            <div class="plan-row"><div class="plan-row-label" style="color:#f9a8d4">One-Shot</div><div class="plan-bar-wrap"><div class="plan-bar-fill pbf-pink" id="barOneshot" style="width:0%"></div></div><div class="plan-row-count" id="countOneshot">0</div></div>
             <div class="plan-row"><div class="plan-row-label" style="color:var(--muted)">Free</div><div class="plan-bar-wrap"><div class="plan-bar-fill pbf-gray" id="barFree" style="width:100%"></div></div><div class="plan-row-count" id="countFree">0</div></div>
             <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
-              <div style="font-family:'Inter',sans-serif;font-size:0.65rem;color:var(--muted);margin-bottom:9px;letter-spacing:0.05em;text-transform:uppercase;">MRR par plan</div>
+              <div style="font-family:'Inter',sans-serif;font-size:0.65rem;color:var(--muted);margin-bottom:9px;letter-spacing:0.05em;text-transform:uppercase;">MRR par plan (Stripe)</div>
               <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px">
-                <div style="text-align:center;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.13);border-radius:8px;padding:9px 5px"><div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:var(--violet-glow)" id="mrrPro">€0</div><div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Pro</div></div>
-                <div style="text-align:center;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.13);border-radius:8px;padding:9px 5px"><div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:#fcd34d" id="mrrBusiness">€0</div><div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Business</div></div>
-                <div style="text-align:center;background:rgba(255,255,255,0.03);border:1px solid var(--border2);border-radius:8px;padding:9px 5px"><div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:var(--muted)">€0</div><div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Free</div></div>
+                <div style="text-align:center;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.13);border-radius:8px;padding:9px 5px"><div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:var(--violet-glow)" id="mrrPro">€—</div><div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Pro</div></div>
+                <div style="text-align:center;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.13);border-radius:8px;padding:9px 5px"><div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:#fcd34d" id="mrrBusiness">€—</div><div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">Business</div></div>
+                <div style="text-align:center;background:rgba(236,72,153,0.05);border:1px solid rgba(236,72,153,0.13);border-radius:8px;padding:9px 5px"><div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;color:#f9a8d4" id="revenueOneshot">€—</div><div style="font-family:'Inter',sans-serif;font-size:0.6rem;color:var(--muted);margin-top:2px">One-Shot</div></div>
               </div>
             </div>
           </div>
@@ -318,173 +300,180 @@
       </div>
     </div>
 
-    <!-- PAGE TOUS LES USERS -->
+    <!-- ANALYTICS -->
+    <div id="admin-page-analytics" class="admin-page">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="page-title" style="margin-bottom:0">Analytics — genproia.com</div>
+        <a href="https://analytics.google.com/analytics/web/#/p$(GA_PROPERTY)/reports/reportinghub" target="_blank" class="ga-link">📊 Ouvrir Google Analytics →</a>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:16px;">
+        <div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;margin-bottom:6px;">Google Analytics connecté ✅</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-bottom:14px;">ID de mesure : <strong style="color:var(--violet-glow)">G-B1ZT1KYG22</strong> — Les données de visite sont collectées en temps réel sur genproia.com.</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="https://analytics.google.com" target="_blank" class="ga-link">📈 Visiteurs en temps réel</a>
+          <a href="https://analytics.google.com" target="_blank" class="ga-link">🗺️ Acquisition</a>
+          <a href="https://analytics.google.com" target="_blank" class="ga-link">📱 Comportement</a>
+          <a href="https://analytics.google.com" target="_blank" class="ga-link">🎯 Conversions</a>
+        </div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border);font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:600;">Statistiques Supabase (temps réel)</div>
+        <div style="padding:16px 20px;">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+            <div style="background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.15);border-radius:10px;padding:16px;text-align:center;"><div style="font-family:'Inter',sans-serif;font-size:1.8rem;font-weight:700;color:var(--violet-glow)" id="analyticsUsers">—</div><div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">Utilisateurs inscrits</div></div>
+            <div style="background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.15);border-radius:10px;padding:16px;text-align:center;"><div style="font-family:'Inter',sans-serif;font-size:1.8rem;font-weight:700;color:var(--green)" id="analyticsProjets">—</div><div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">Sites générés</div></div>
+            <div style="background:rgba(6,182,212,0.07);border:1px solid rgba(6,182,212,0.15);border-radius:10px;padding:16px;text-align:center;"><div style="font-family:'Inter',sans-serif;font-size:1.8rem;font-weight:700;color:var(--cyan)" id="analyticsLive">—</div><div style="font-size:0.72rem;color:var(--muted);margin-top:4px;">Sites live</div></div>
+          </div>
+          <div style="margin-top:14px;padding:12px;background:rgba(255,255,255,0.02);border-radius:8px;font-size:0.75rem;color:var(--muted);">
+            💡 Pour voir les visiteurs, pages vues et sources de trafic en détail, ouvre <a href="https://analytics.google.com" target="_blank" style="color:var(--violet-glow);">Google Analytics</a> directement.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVENUS -->
+    <div id="admin-page-revenus" class="admin-page">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div class="page-title" style="margin-bottom:0">Revenus Stripe</div>
+        <button onclick="loadStripeStats()" style="padding:8px 16px;background:rgba(124,58,237,0.15);border:1px solid rgba(124,58,237,0.3);color:var(--violet-glow);border-radius:8px;font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:600;cursor:pointer;">🔄 Actualiser</button>
+      </div>
+      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);">
+        <div class="kpi k2"><div class="kpi-top"><div class="kpi-label">MRR (abonnements actifs)</div><div class="kpi-icon">📈</div></div><div class="kpi-value" id="revMrr">€—</div><div class="kpi-delta neutral" id="revMrrDelta">Chargement...</div></div>
+        <div class="kpi k3"><div class="kpi-top"><div class="kpi-label">Ce mois-ci</div><div class="kpi-icon">📅</div></div><div class="kpi-value" id="revMonth">€—</div><div class="kpi-delta neutral">Paiements reçus</div></div>
+        <div class="kpi k4"><div class="kpi-top"><div class="kpi-label">Total cumulé</div><div class="kpi-icon">💰</div></div><div class="kpi-value" id="revTotal">€—</div><div class="kpi-delta neutral">Depuis le début</div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Derniers paiements</div></div>
+        <div style="overflow-x:auto">
+          <table class="payments-table" id="paymentsTable">
+            <thead><tr><th>Date</th><th>Email</th><th>Montant</th><th>Statut</th></tr></thead>
+            <tbody id="paymentsBody"><tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted);">Chargement des paiements Stripe...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOUS LES USERS -->
     <div id="admin-page-users" class="admin-page">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div class="page-title" style="margin-bottom:0">Tous les utilisateurs</div>
-        <input type="text" placeholder="Rechercher un utilisateur…" style="background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:8px 14px;color:var(--white);font-family:'Inter',sans-serif;font-size:0.82rem;outline:none;width:220px;" oninput="filterUsers(this.value)">
+        <input type="text" placeholder="Rechercher…" style="background:var(--card);border:1px solid var(--border2);border-radius:9px;padding:8px 14px;color:var(--white);font-family:'Inter',sans-serif;font-size:0.82rem;outline:none;width:220px;" oninput="filterUsers(this.value)">
       </div>
-      <div class="panel">
-        <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="allUsersBody"></tbody></table></div>
-      </div>
+      <div class="panel"><div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="allUsersBody"></tbody></table></div></div>
     </div>
 
-    <!-- PAGE FREE -->
-    <div id="admin-page-free" class="admin-page">
-      <div class="page-title">Utilisateurs Free</div>
-      <div class="panel">
-        <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="freeUsersBody"></tbody></table></div>
-      </div>
-    </div>
+    <!-- PAGES PAR PLAN -->
+    <div id="admin-page-free" class="admin-page"><div class="page-title">Utilisateurs Free</div><div class="panel"><div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="freeUsersBody"></tbody></table></div></div></div>
+    <div id="admin-page-oneshot" class="admin-page"><div class="page-title">Utilisateurs One-Shot</div><div class="panel"><div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="oneshotUsersBody"></tbody></table></div></div></div>
+    <div id="admin-page-pro" class="admin-page"><div class="page-title">Abonnés Pro</div><div class="panel"><div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="proUsersBody"></tbody></table></div></div></div>
+    <div id="admin-page-business" class="admin-page"><div class="page-title">Abonnés Business</div><div class="panel"><div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="businessUsersBody"></tbody></table></div></div></div>
+    <div id="admin-page-suspendus" class="admin-page"><div class="page-title">Utilisateurs suspendus</div><div class="panel"><div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="suspendusUsersBody"></tbody></table></div></div></div>
 
-    <!-- PAGE PRO -->
-    <div id="admin-page-pro" class="admin-page">
-      <div class="page-title">Abonnés Pro</div>
-      <div class="panel">
-        <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="proUsersBody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- PAGE BUSINESS -->
-    <div id="admin-page-business" class="admin-page">
-      <div class="page-title">Abonnés Business</div>
-      <div class="panel">
-        <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="businessUsersBody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- PAGE SUSPENDUS -->
-    <div id="admin-page-suspendus" class="admin-page">
-      <div class="page-title">Utilisateurs suspendus</div>
-      <div class="panel">
-        <div style="overflow-x:auto"><table class="users-table"><thead><tr><th>Utilisateur</th><th>Plan</th><th>Projets</th><th>Revenus</th><th>Inscription</th><th>Statut</th><th>Actions</th></tr></thead><tbody id="suspendusUsersBody"></tbody></table></div>
-      </div>
-    </div>
-
-    <!-- PAGE GENERATIONS -->
+    <!-- GENERATIONS -->
     <div id="admin-page-generations" class="admin-page">
       <div class="page-title">Toutes les générations</div>
-      <div class="panel">
-        <div id="allGenerationsList"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div>
-      </div>
+      <div class="panel"><div id="allGenerationsList"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div></div>
     </div>
 
-    <!-- PAGES BIENTOT DISPONIBLES -->
-    <div id="admin-page-analytics" class="admin-page">
-      <div class="page-title">Analytics</div>
-      <div class="info-card"><div class="info-card-icon">📊</div><div class="info-card-title">Analytics avancées</div><div class="info-card-sub">Visiteurs, conversions, rétention — disponible prochainement.</div></div>
-    </div>
-    <div id="admin-page-revenus" class="admin-page">
-      <div class="page-title">Revenus</div>
-      <div class="info-card"><div class="info-card-icon">💰</div><div class="info-card-title">Module Revenus</div><div class="info-card-sub">MRR détaillé, ARR, historique — disponible après intégration Stripe.</div></div>
-    </div>
+    <!-- SITES DEPLOYES -->
     <div id="admin-page-sites" class="admin-page">
-      <div class="page-title">Sites déployés</div>
-      <div class="info-card"><div class="info-card-icon">🌐</div><div class="info-card-title">Sites déployés live</div><div class="info-card-sub">Disponible après intégration du déploiement automatique.</div></div>
+      <div class="page-title">Sites déployés live</div>
+      <div class="panel"><div id="sitesList"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div></div>
     </div>
+
+    <!-- E-COMMERCES -->
     <div id="admin-page-ecommerces" class="admin-page">
       <div class="page-title">E-commerces générés</div>
-      <div class="panel">
-        <div id="ecommercesList"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div>
-      </div>
+      <div class="panel"><div id="ecommercesList"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div></div>
     </div>
+
+    <!-- SAAS -->
     <div id="admin-page-saas" class="admin-page">
       <div class="page-title">SaaS générés</div>
-      <div class="panel">
-        <div id="saasList"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div>
-      </div>
+      <div class="panel"><div id="saasList"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div></div>
     </div>
-    <div id="admin-page-alertes" class="admin-page">
-      <div class="page-title">Alertes système</div>
-      <div class="info-card"><div class="info-card-icon">✅</div><div class="info-card-title">Aucune alerte active</div><div class="info-card-sub">Tous les systèmes fonctionnent normalement.</div></div>
-    </div>
+
+    <!-- API -->
     <div id="admin-page-api" class="admin-page">
       <div class="page-title">API & Clés</div>
       <div class="panel" style="padding:20px;">
         <div style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:600;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">Clés configurées</div>
         <div style="display:flex;flex-direction:column;gap:10px;">
-          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:9px;"><span style="font-size:1rem">🤖</span><div><div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;">Anthropic API</div><div style="font-size:0.72rem;color:var(--green);">✓ Configurée</div></div></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:9px;"><span style="font-size:1rem">🗄️</span><div><div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;">Supabase</div><div style="font-size:0.72rem;color:var(--green);">✓ Connecté</div></div></div>
-          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.15);border-radius:9px;"><span style="font-size:1rem">💳</span><div><div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;">Stripe</div><div style="font-size:0.72rem;color:var(--yellow);">⚠ Non configuré</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:9px;"><span>🤖</span><div><div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;">Anthropic API</div><div style="font-size:0.72rem;color:var(--green);">✓ Configurée</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:9px;"><span>🗄️</span><div><div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;">Supabase</div><div style="font-size:0.72rem;color:var(--green);">✓ Connecté</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:9px;"><span>💳</span><div><div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;">Stripe</div><div style="font-size:0.72rem;color:var(--green);">✓ Configuré (mode test)</div></div></div>
+          <div style="display:flex;align-items:center;gap:12px;padding:12px;background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.15);border-radius:9px;"><span>📊</span><div><div style="font-family:'Inter',sans-serif;font-size:0.82rem;font-weight:600;">Google Analytics</div><div style="font-size:0.72rem;color:var(--green);">✓ G-B1ZT1KYG22</div></div></div>
         </div>
       </div>
     </div>
-    <div id="admin-page-emails" class="admin-page">
-      <div class="page-title">Emails</div>
-      <div class="info-card"><div class="info-card-icon">📧</div><div class="info-card-title">Module Emails</div><div class="info-card-sub">Envoi d'emails transactionnels et broadcast — disponible prochainement.</div></div>
-    </div>
+
+    <!-- PARAMETRES -->
     <div id="admin-page-parametres" class="admin-page">
       <div class="page-title">Paramètres système</div>
       <div class="panel" style="padding:20px;">
         <div style="font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">Configuration</div>
         <div style="display:flex;flex-direction:column;gap:12px;font-size:0.83rem;">
-          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Version</span><span style="font-family:'Inter',sans-serif;font-weight:600;">Genproia v2.3</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Version</span><span style="font-family:'Inter',sans-serif;font-weight:600;">Genproia v2.5</span></div>
           <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Environnement</span><span style="font-family:'Inter',sans-serif;font-weight:600;color:var(--green)">Production</span></div>
           <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Modèle IA</span><span style="font-family:'Inter',sans-serif;font-weight:600;">claude-sonnet-4-5</span></div>
           <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Base de données</span><span style="font-family:'Inter',sans-serif;font-weight:600;color:var(--green)">Supabase ✓</span></div>
           <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Hébergement</span><span style="font-family:'Inter',sans-serif;font-weight:600;">Vercel</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted)">Analytics</span><span style="font-family:'Inter',sans-serif;font-weight:600;color:var(--green)">Google Analytics ✓</span></div>
         </div>
       </div>
     </div>
+
+    <!-- LOGS -->
     <div id="admin-page-logs" class="admin-page">
       <div class="page-title">Logs système</div>
-      <div class="panel">
-        <div id="logsContainer"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement des logs...</div></div>
-      </div>
+      <div class="panel"><div id="logsContainer"><div style="padding:24px;text-align:center;color:var(--muted);">Chargement...</div></div></div>
     </div>
 
   </div>
 </div>
 
 <!-- USER MODAL -->
-<div class="modal-overlay" id="userModal" onclick="closeModalOut(event)">
+<div class="modal-overlay" id="userModal" onclick="if(event.target.id==='userModal')closeModal()">
   <div class="modal">
     <div class="modal-top"><div class="modal-title">Détails utilisateur</div><button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="modal-body">
       <div class="modal-user-hero">
         <div class="modal-avatar ua1" id="modalAvatar">KD</div>
-        <div><div class="modal-user-name" id="modalName">—</div><div class="modal-user-email" id="modalEmail">—</div></div>
+        <div><div style="font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:700;" id="modalName">—</div><div style="font-size:0.75rem;color:var(--muted);" id="modalEmail">—</div></div>
         <div style="margin-left:auto" id="modalPlanTag"></div>
       </div>
       <div class="modal-grid">
         <div class="modal-cell"><div class="modal-cell-label">Inscrit le</div><div class="modal-cell-value" id="modalDate">—</div></div>
         <div class="modal-cell"><div class="modal-cell-label">Projets</div><div class="modal-cell-value" id="modalProjects">—</div></div>
-        <div class="modal-cell"><div class="modal-cell-label">Revenus</div><div class="modal-cell-value" id="modalRevenue">—</div></div>
         <div class="modal-cell"><div class="modal-cell-label">Statut</div><div class="modal-cell-value" id="modalStatus">—</div></div>
+        <div class="modal-cell"><div class="modal-cell-label">Plan actuel</div><div class="modal-cell-value" id="modalCurrentPlan">—</div></div>
       </div>
       <div style="background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.18);border-radius:10px;padding:14px;margin-bottom:12px;">
-        <div style="font-family:'Inter',sans-serif;font-size:0.68rem;color:var(--violet-glow);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:9px;">Attribuer un abonnement gratuit</div>
+        <div style="font-family:'Inter',sans-serif;font-size:0.68rem;color:var(--violet-glow);font-weight:700;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:9px;">Attribuer un plan gratuitement</div>
         <div style="display:flex;gap:7px;margin-bottom:9px;">
           <div class="gift-plan-opt selected" onclick="selectGiftPlan(this,'free')"><div style="font-size:0.62rem;color:var(--muted)">Free</div><div style="font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:700">Gratuit</div></div>
-          <div class="gift-plan-opt" onclick="selectGiftPlan(this,'pro')"><div style="font-size:0.62rem;color:var(--violet-glow)">Pro</div><div style="font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:700">29€/mois</div></div>
-          <div class="gift-plan-opt" onclick="selectGiftPlan(this,'business')"><div style="font-size:0.62rem;color:#fcd34d">Business</div><div style="font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:700">79€/mois</div></div>
+          <div class="gift-plan-opt" onclick="selectGiftPlan(this,'oneshot')"><div style="font-size:0.62rem;color:#f9a8d4">One-Shot</div><div style="font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:700">49€</div></div>
+          <div class="gift-plan-opt" onclick="selectGiftPlan(this,'pro')"><div style="font-size:0.62rem;color:var(--violet-glow)">Pro</div><div style="font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:700">29€/m</div></div>
+          <div class="gift-plan-opt" onclick="selectGiftPlan(this,'business')"><div style="font-size:0.62rem;color:#fcd34d">Business</div><div style="font-family:'Inter',sans-serif;font-size:0.78rem;font-weight:700">79€/m</div></div>
         </div>
-        <select id="giftDuration" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:7px;padding:7px 10px;color:var(--white);font-family:'Inter',sans-serif;font-size:0.75rem;outline:none;margin-bottom:8px;">
-          <option value="lifetime">À vie (sans expiration)</option>
-          <option value="1month">1 mois</option>
-          <option value="3months">3 mois</option>
-          <option value="6months">6 mois</option>
-          <option value="1year">1 an</option>
-        </select>
-        <input type="text" id="giftNote" placeholder="Note interne (ex: partenaire, test…)" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:7px;padding:7px 11px;color:var(--white);font-size:0.75rem;outline:none;font-family:var(--font-body);margin-bottom:9px;">
         <button onclick="applyGiftPlan()" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--violet),#9333ea);color:var(--white);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-weight:600;font-size:0.8rem;cursor:pointer;">Appliquer gratuitement</button>
       </div>
       <div class="modal-actions-grid">
-        <button class="modal-action-btn primary" onclick="showToast('Email envoyé !','success');closeModal()">📧 Envoyer email</button>
+        <button class="modal-action-btn" onclick="showToast('Fonctionnalité bientôt disponible','success');closeModal()">📧 Envoyer email</button>
         <button class="modal-action-btn" onclick="showToast('Reset envoyé','success');closeModal()">🔑 Reset mdp</button>
         <button class="modal-action-btn danger" onclick="closeModal();showConfirm()">🚫 Suspendre</button>
-        <button class="modal-action-btn" onclick="closeModal()">✏ Éditer profil</button>
+        <button class="modal-action-btn" onclick="closeModal()">✕ Fermer</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- CONFIRM MODAL -->
+<!-- CONFIRM -->
 <div class="modal-overlay" id="confirmModal">
   <div class="confirm-modal">
-    <div class="confirm-icon">🚫</div>
-    <div class="confirm-title">Suspendre cet utilisateur ?</div>
-    <div class="confirm-sub">L'accès sera révoqué immédiatement.</div>
+    <div style="font-size:2.2rem;margin-bottom:10px;">🚫</div>
+    <div style="font-family:'Inter',sans-serif;font-size:0.95rem;font-weight:700;margin-bottom:5px;">Suspendre cet utilisateur ?</div>
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:18px;">L'accès sera révoqué immédiatement.</div>
     <div class="confirm-btns">
       <button class="confirm-btn cb-cancel" onclick="document.getElementById('confirmModal').classList.remove('open')">Annuler</button>
       <button class="confirm-btn cb-confirm" onclick="document.getElementById('confirmModal').classList.remove('open');showToast('Utilisateur suspendu','error')">Confirmer</button>
@@ -492,8 +481,8 @@
   </div>
 </div>
 
-<!-- SITE PREVIEW MODAL -->
-<div id="sitePreviewModal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(3,2,10,0.95);backdrop-filter:blur(10px);flex-direction:column;">
+<!-- SITE PREVIEW -->
+<div id="sitePreviewModal" style="display:none;position:fixed;inset:0;z-index:400;background:rgba(3,2,10,0.95);flex-direction:column;">
   <div style="background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:12px;">
     <div style="display:flex;gap:6px;"><div style="width:10px;height:10px;border-radius:50%;background:#ef4444"></div><div style="width:10px;height:10px;border-radius:50%;background:#f59e0b"></div><div style="width:10px;height:10px;border-radius:50%;background:#10b981"></div></div>
     <div style="flex:1;background:rgba(255,255,255,0.04);border:1px solid var(--border2);border-radius:6px;padding:5px 12px;font-size:0.75rem;color:var(--muted);font-family:Inter,sans-serif;" id="sitePreviewUrl">Aperçu</div>
@@ -505,7 +494,13 @@
 
 <div class="toast" id="toast"><span id="toastIcon">✓</span><span id="toastMsg">Action effectuée</span></div>
 
-<script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script translate="no">
+const SADMIN_URL = 'https://fgkqobuomiuirwtvuuxz.supabase.co';
+const SADMIN_KEY = 'sb_publishable_D8jaWGbn4G72A7eq8oBtqg_acLVSLBX';
+const _sbAdmin = window.supabase.createClient(SADMIN_URL, SADMIN_KEY);
+const ADMIN_EMAILS = ['alex.skp31@gmail.com'];
+
 let users = [];
 let allProjets = [];
 let currentUser = null;
@@ -517,34 +512,36 @@ function showAdminPage(page, el) {
   const pageEl = document.getElementById('admin-page-' + page);
   if (pageEl) pageEl.classList.add('active');
   if (el) el.classList.add('active');
-  const labels = {
-    overview:'Vue d\'ensemble', analytics:'Analytics', revenus:'Revenus',
-    users:'Tous les users', free:'Utilisateurs Free', pro:'Abonnés Pro', business:'Business', suspendus:'Suspendus',
-    generations:'Générations', sites:'Sites déployés', ecommerces:'E-commerces', saas:'SaaS générés',
-    alertes:'Alertes', api:'API & Clés', emails:'Emails', parametres:'Paramètres', logs:'Logs'
-  };
+  const labels = { overview:'Vue d\'ensemble', analytics:'Analytics', revenus:'Revenus Stripe', users:'Tous les users', free:'Utilisateurs Free', oneshot:'One-Shot', pro:'Abonnés Pro', business:'Business', suspendus:'Suspendus', generations:'Générations', sites:'Sites déployés', ecommerces:'E-commerces', saas:'SaaS générés', api:'API & Clés', parametres:'Paramètres', logs:'Logs' };
   document.getElementById('breadcrumbTitle').textContent = labels[page] || page;
   if (page === 'users') renderUsersPage('allUsersBody', users);
   if (page === 'free') renderUsersPage('freeUsersBody', users.filter(u => u.plan === 'free'));
+  if (page === 'oneshot') renderUsersPage('oneshotUsersBody', users.filter(u => u.plan === 'oneshot'));
   if (page === 'pro') renderUsersPage('proUsersBody', users.filter(u => u.plan === 'pro'));
   if (page === 'business') renderUsersPage('businessUsersBody', users.filter(u => u.plan === 'business'));
   if (page === 'suspendus') renderUsersPage('suspendusUsersBody', users.filter(u => u.status === 'suspended'));
   if (page === 'generations') renderGenerationsPage();
+  if (page === 'sites') renderSitesPage();
   if (page === 'ecommerces') renderTypePage('ecommercesList', 'ecommerce');
   if (page === 'saas') renderTypePage('saasList', 'saas');
   if (page === 'logs') renderLogsPage();
+  if (page === 'analytics') {
+    document.getElementById('analyticsUsers').textContent = users.length;
+    document.getElementById('analyticsProjets').textContent = allProjets.length;
+    document.getElementById('analyticsLive').textContent = allProjets.filter(p => p.site_url).length;
+  }
+  if (page === 'revenus') loadStripeStats();
 }
 
 // ── USERS TABLE ──
 function buildUserRow(u, showDate) {
-  const planClasses = { pro:'pt-pro', business:'pt-business', free:'pt-free' };
-  const planLabels = { pro:'Pro', business:'Business', free:'Free' };
+  const planClasses = { pro:'pt-pro', business:'pt-business', free:'pt-free', oneshot:'pt-oneshot' };
+  const planLabels = { pro:'Pro', business:'Business', free:'Free', oneshot:'One-Shot' };
   const statusMap = { active:'<span class="status-dot sd-active"></span>Actif', inactive:'<span class="status-dot sd-inactive"></span>Inactif', suspended:'<span class="status-dot sd-suspended"></span>Suspendu' };
   return `<tr>
     <td><div class="user-cell"><div class="u-avatar ${u.avatarClass}">${u.initials}</div><div><div class="u-name">${u.name}</div><div class="u-email">${u.email}</div></div></div></td>
-    <td><span class="plan-tag ${planClasses[u.plan]}">${planLabels[u.plan]}</span></td>
+    <td><span class="plan-tag ${planClasses[u.plan] || 'pt-free'}">${planLabels[u.plan] || u.plan}</span></td>
     <td style="color:var(--violet-glow);font-weight:600">${u.projects}</td>
-    <td style="color:var(--green);font-weight:600">${u.revenue}</td>
     ${showDate ? `<td style="font-size:0.72rem;color:var(--muted)">${u.date}</td>` : ''}
     <td style="font-size:0.73rem">${statusMap[u.status] || statusMap.active}</td>
     <td><button class="action-btn" onclick="openUser('${u.id}')">Gérer →</button></td>
@@ -552,17 +549,17 @@ function buildUserRow(u, showDate) {
 }
 
 function renderUsers(data) {
-  document.getElementById('usersBody').innerHTML = data.map(u => buildUserRow(u, false)).join('');
+  document.getElementById('usersBody').innerHTML = data.length === 0
+    ? '<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">Aucun utilisateur</td></tr>'
+    : data.map(u => buildUserRow(u, false)).join('');
 }
 
 function renderUsersPage(bodyId, data) {
   const el = document.getElementById(bodyId);
   if (!el) return;
-  if (data.length === 0) {
-    el.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--muted);">Aucun utilisateur dans cette catégorie</td></tr>';
-    return;
-  }
-  el.innerHTML = data.map(u => buildUserRow(u, true)).join('');
+  el.innerHTML = data.length === 0
+    ? '<tr><td colspan="6" style="text-align:center;padding:24px;color:var(--muted);">Aucun utilisateur</td></tr>'
+    : data.map(u => buildUserRow(u, true)).join('');
 }
 
 function filterUsers(q) {
@@ -573,84 +570,130 @@ function filterUsers(q) {
 // ── GENERATIONS ──
 function renderGenerationsPage() {
   const container = document.getElementById('allGenerationsList');
-  if (allProjets.length === 0) {
-    container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">Aucune génération</div>';
-    return;
-  }
+  if (allProjets.length === 0) { container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">Aucune génération</div>'; return; }
   const icons = { ecommerce:'🛒', saas:'⚙️', vitrine:'🏢', landing:'📱', marketplace:'🏪', blog:'📰' };
   container.innerHTML = allProjets.map(p => `
     <div class="gen-log-item">
-      <div class="gen-type-icon" style="background:rgba(124,58,237,0.13)">${icons[p.type] || '✦'}</div>
-      <div class="gen-log-main">
-        <div class="gen-log-name">${p.nom || 'Projet'}</div>
-        <div class="gen-log-user">${p.type || 'Projet'} · ${(p.idee || '').substring(0,40)}</div>
-      </div>
+      <div class="gen-type-icon" style="background:rgba(124,58,237,0.13)">${icons[p.type]||'✦'}</div>
+      <div class="gen-log-main"><div class="gen-log-name">${p.nom||'Projet'}</div><div class="gen-log-user">${p.type||''} · ${(p.idee||'').substring(0,40)}</div></div>
       <div class="gen-log-time">${new Date(p.created_at).toLocaleDateString('fr-FR')}</div>
       <span class="gen-status gs-done">Généré</span>
       ${p.site_html ? `<button onclick="openSitePreview(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);color:var(--violet-glow);padding:3px 9px;border-radius:5px;font-size:0.65rem;cursor:pointer;font-family:Inter,sans-serif;">👁 Voir</button>` : ''}
+    </div>`).join('');
+}
+
+function renderSitesPage() {
+  const container = document.getElementById('sitesList');
+  const sites = allProjets.filter(p => p.site_url);
+  if (sites.length === 0) { container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">Aucun site déployé</div>'; return; }
+  container.innerHTML = sites.map(p => `
+    <div class="gen-log-item">
+      <div class="gen-type-icon" style="background:rgba(16,185,129,0.13)">🌐</div>
+      <div class="gen-log-main"><div class="gen-log-name">${p.nom||'Projet'}</div><div class="gen-log-user"><a href="${p.site_url}" target="_blank" style="color:var(--cyan);text-decoration:none;">${p.site_url}</a></div></div>
+      <div class="gen-log-time">${new Date(p.created_at).toLocaleDateString('fr-FR')}</div>
+      <span class="gen-status gs-done" style="background:rgba(16,185,129,0.1);color:#6ee7b7">Live</span>
     </div>`).join('');
 }
 
 function renderTypePage(containerId, type) {
   const container = document.getElementById(containerId);
   const filtered = allProjets.filter(p => p.type === type);
-  if (filtered.length === 0) {
-    container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">Aucun projet de ce type</div>';
-    return;
-  }
+  if (filtered.length === 0) { container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">Aucun projet de ce type</div>'; return; }
   const icons = { ecommerce:'🛒', saas:'⚙️', vitrine:'🏢', landing:'📱', marketplace:'🏪', blog:'📰' };
   container.innerHTML = filtered.map(p => `
     <div class="gen-log-item">
-      <div class="gen-type-icon" style="background:rgba(124,58,237,0.13)">${icons[p.type] || '✦'}</div>
-      <div class="gen-log-main"><div class="gen-log-name">${p.nom || 'Projet'}</div><div class="gen-log-user">${(p.idee || '').substring(0,50)}</div></div>
+      <div class="gen-type-icon" style="background:rgba(124,58,237,0.13)">${icons[p.type]||'✦'}</div>
+      <div class="gen-log-main"><div class="gen-log-name">${p.nom||'Projet'}</div><div class="gen-log-user">${(p.idee||'').substring(0,50)}</div></div>
       <div class="gen-log-time">${new Date(p.created_at).toLocaleDateString('fr-FR')}</div>
       <span class="gen-status gs-done">Généré</span>
       ${p.site_html ? `<button onclick="openSitePreview(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);color:var(--violet-glow);padding:3px 9px;border-radius:5px;font-size:0.65rem;cursor:pointer;font-family:Inter,sans-serif;">👁 Voir</button>` : ''}
     </div>`).join('');
 }
 
-// ── LOGS ──
 function renderLogsPage() {
   const container = document.getElementById('logsContainer');
-  const logs = allProjets.slice(0, 20).map(p => ({
-    time: new Date(p.created_at).toLocaleString('fr-FR'),
-    action: 'Génération projet',
-    detail: (p.nom || '') + ' (' + (p.type || '') + ')',
-    level: 'success'
-  }));
-  if (logs.length === 0) {
-    container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">Aucun log disponible</div>';
-    return;
-  }
-  container.innerHTML = logs.map(l => `
+  if (allProjets.length === 0) { container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--muted);">Aucun log disponible</div>'; return; }
+  container.innerHTML = allProjets.slice(0, 30).map(p => `
     <div style="display:flex;gap:12px;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.025);font-size:0.78rem;">
-      <div style="color:var(--muted2);width:130px;flex-shrink:0;font-family:'Inter',sans-serif;font-size:0.68rem;">${l.time}</div>
+      <div style="color:var(--muted2);width:130px;flex-shrink:0;font-family:'Inter',sans-serif;font-size:0.68rem;">${new Date(p.created_at).toLocaleString('fr-FR')}</div>
       <div style="color:var(--green);flex-shrink:0;">✓</div>
-      <div style="color:var(--muted)">${l.action} — <span style="color:var(--white)">${l.detail}</span></div>
+      <div style="color:var(--muted)">Génération — <span style="color:var(--white)">${p.nom||''} (${p.type||''})</span></div>
     </div>`).join('');
+}
+
+// ── STRIPE STATS ──
+async function loadStripeStats() {
+  const token = localStorage.getItem('genproia_token');
+  if (!token) return;
+  try {
+    const resp = await fetch('/api/stripe-stats', { headers: { 'Authorization': 'Bearer ' + token } });
+    const data = await resp.json();
+    if (!data.success) throw new Error(data.error);
+
+    // KPIs vue d'ensemble
+    document.getElementById('kpiMrr').textContent = '€' + data.mrr;
+    document.getElementById('kpiMrrDelta').textContent = data.activeSubs + ' abonnement(s) actif(s)';
+    document.getElementById('kpiRevTotal').textContent = '€' + data.totalRevenue;
+    document.getElementById('kpiRevDelta').textContent = '€' + data.mrrThisMonth + ' ce mois';
+    document.getElementById('sidebarMrr').textContent = '€' + data.mrr;
+
+    // Page revenus
+    document.getElementById('revMrr').textContent = '€' + data.mrr;
+    document.getElementById('revMrrDelta').textContent = data.activeSubs + ' abonnement(s) actif(s)';
+    document.getElementById('revMonth').textContent = '€' + data.mrrThisMonth;
+    document.getElementById('revTotal').textContent = '€' + data.totalRevenue;
+
+    // MRR par plan (estimation)
+    const proCount = users.filter(u => u.plan === 'pro').length;
+    const bizCount = users.filter(u => u.plan === 'business').length;
+    document.getElementById('mrrPro').textContent = '€' + (proCount * 29);
+    document.getElementById('mrrBusiness').textContent = '€' + (bizCount * 79);
+    const oneshotCount = users.filter(u => u.plan === 'oneshot').length;
+    document.getElementById('revenueOneshot').textContent = '€' + (oneshotCount * 49);
+
+    // Tableau paiements
+    if (data.recentPayments && data.recentPayments.length > 0) {
+      document.getElementById('paymentsBody').innerHTML = data.recentPayments.map(p => `
+        <tr>
+          <td style="color:var(--muted);font-size:0.75rem">${p.date}</td>
+          <td>${p.email}</td>
+          <td style="color:var(--green);font-weight:600">€${p.amount}</td>
+          <td><span style="background:rgba(16,185,129,0.1);color:#6ee7b7;padding:2px 8px;border-radius:100px;font-size:0.65rem;font-weight:600;">✓ ${p.status}</span></td>
+        </tr>`).join('');
+    } else {
+      document.getElementById('paymentsBody').innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted);">Aucun paiement ce mois</td></tr>';
+    }
+  } catch(e) {
+    console.error('Stripe stats error:', e);
+    document.getElementById('kpiMrr').textContent = '€0';
+    document.getElementById('kpiRevTotal').textContent = '€0';
+    document.getElementById('revMrr').textContent = '€0';
+    document.getElementById('revMonth').textContent = '€0';
+    document.getElementById('revTotal').textContent = '€0';
+    document.getElementById('paymentsBody').innerHTML = '<tr><td colspan="4" style="text-align:center;padding:24px;color:var(--muted);">Erreur Stripe : ' + e.message + '</td></tr>';
+  }
 }
 
 // ── USER MODAL ──
 function openUser(id) {
   currentUser = users.find(u => u.id === id);
   if (!currentUser) return;
+  const planLabels = { pro:'Pro', business:'Business', free:'Free', oneshot:'One-Shot' };
+  const planClasses = { pro:'pt-pro', business:'pt-business', free:'pt-free', oneshot:'pt-oneshot' };
   document.getElementById('modalName').textContent = currentUser.name;
   document.getElementById('modalEmail').textContent = currentUser.email;
   document.getElementById('modalDate').textContent = currentUser.date;
   document.getElementById('modalProjects').textContent = currentUser.projects;
-  document.getElementById('modalRevenue').textContent = currentUser.revenue;
-  document.getElementById('modalStatus').textContent = currentUser.status === 'active' ? '✅ Actif' : currentUser.status === 'suspended' ? '🚫 Suspendu' : '⚪ Inactif';
+  document.getElementById('modalStatus').textContent = currentUser.status === 'active' ? '✅ Actif' : '🚫 Suspendu';
+  document.getElementById('modalCurrentPlan').textContent = planLabels[currentUser.plan] || currentUser.plan;
   const av = document.getElementById('modalAvatar');
   av.className = 'modal-avatar ' + currentUser.avatarClass;
   av.textContent = currentUser.initials;
-  const planClasses = { pro:'pt-pro', business:'pt-business', free:'pt-free' };
-  const planLabels = { pro:'Pro', business:'Business', free:'Free' };
-  document.getElementById('modalPlanTag').innerHTML = `<span class="plan-tag ${planClasses[currentUser.plan]}">${planLabels[currentUser.plan]}</span>`;
+  document.getElementById('modalPlanTag').innerHTML = `<span class="plan-tag ${planClasses[currentUser.plan]||'pt-free'}">${planLabels[currentUser.plan]||currentUser.plan}</span>`;
   document.getElementById('userModal').classList.add('open');
 }
 
 function closeModal() { document.getElementById('userModal').classList.remove('open'); }
-function closeModalOut(e) { if (e.target.id === 'userModal') closeModal(); }
 function showConfirm() { document.getElementById('confirmModal').classList.add('open'); }
 
 let selectedGiftPlan = 'free';
@@ -662,45 +705,44 @@ function selectGiftPlan(el, plan) {
 
 async function applyGiftPlan() {
   if (!currentUser) return;
-  const planLabels = { free:'Free', pro:'Pro', business:'Business' };
   const btn = document.querySelector('[onclick="applyGiftPlan()"]');
   if (btn) { btn.textContent = 'Application...'; btn.disabled = true; }
-
-  // Sauvegarder dans Supabase
-  const { error } = await _sbAdmin.from('users').update({
-    plan: selectedGiftPlan,
-    updated_at: new Date().toISOString()
-  }).eq('id', currentUser.id);
-
+  const { error } = await _sbAdmin.from('users').update({ plan: selectedGiftPlan, updated_at: new Date().toISOString() }).eq('id', currentUser.id);
   if (btn) { btn.textContent = 'Appliquer gratuitement'; btn.disabled = false; }
-
-  if (error) {
-    showToast('Erreur : ' + error.message, 'error');
-    return;
-  }
-
-  // Mettre à jour localement
+  if (error) { showToast('Erreur : ' + error.message, 'error'); return; }
   const u = users.find(x => x.id === currentUser.id);
   if (u) u.plan = selectedGiftPlan;
   renderUsers(users);
+  updateCounts();
+  closeModal();
+  showToast('Plan appliqué à ' + currentUser.name + ' ✓', 'success');
+}
 
-  // Mettre à jour les compteurs
+function updateCounts() {
+  const total = users.length;
   const pro = users.filter(u => u.plan === 'pro').length;
   const business = users.filter(u => u.plan === 'business').length;
   const free = users.filter(u => u.plan === 'free').length;
+  const oneshot = users.filter(u => u.plan === 'oneshot').length;
+  const suspended = users.filter(u => u.status === 'suspended').length;
   document.getElementById('proCount').textContent = pro;
   document.getElementById('businessCount').textContent = business;
   document.getElementById('freeCount').textContent = free;
+  document.getElementById('oneshotCount').textContent = oneshot;
+  document.getElementById('suspendusCount').textContent = suspended;
+  document.getElementById('sidebarUserCount').textContent = total;
+  document.getElementById('kpiUsers').textContent = total;
+  document.getElementById('userCountBadge').textContent = total + ' total';
   document.getElementById('countPro').textContent = pro;
   document.getElementById('countBusiness').textContent = business;
   document.getElementById('countFree').textContent = free;
-  // MRR = €0 tant que Stripe n'est pas connecté
-  document.getElementById('kpiMrr').textContent = '€0';
-  document.getElementById('mrrPro').textContent = '€0';
-  document.getElementById('mrrBusiness').textContent = '€0';
-
-  closeModal();
-  showToast('Plan ' + planLabels[selectedGiftPlan] + ' appliqué à ' + currentUser.name + ' ✓', 'success');
+  document.getElementById('countOneshot').textContent = oneshot;
+  if (total > 0) {
+    document.getElementById('barPro').style.width = Math.round(pro/total*100) + '%';
+    document.getElementById('barBusiness').style.width = Math.round(business/total*100) + '%';
+    document.getElementById('barFree').style.width = Math.round(free/total*100) + '%';
+    document.getElementById('barOneshot').style.width = Math.round(oneshot/total*100) + '%';
+  }
 }
 
 // ── EXPORT CSV ──
@@ -722,15 +764,15 @@ function showToast(msg, type) {
   const t = document.getElementById('toast');
   document.getElementById('toastMsg').textContent = msg;
   document.getElementById('toastIcon').textContent = type === 'success' ? '✓' : '⚠';
-  t.className = 'toast ' + type;
+  t.className = 'toast ' + (type || 'success');
   setTimeout(() => t.classList.add('show'), 10);
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); document.getElementById('confirmModal').classList.remove('open'); closeSitePreview(); } });
 
+// ── SITE PREVIEW ──
 let currentPreviewSite = null;
-
 function openSitePreview(p) {
   if (!p.site_html) return;
   currentPreviewSite = p;
@@ -740,40 +782,25 @@ function openSitePreview(p) {
   const blob = new Blob([p.site_html], { type: 'text/html' });
   document.getElementById('sitePreviewFrame').src = URL.createObjectURL(blob);
 }
-
-function closeSitePreview() {
-  document.getElementById('sitePreviewModal').style.display = 'none';
-  document.getElementById('sitePreviewFrame').src = '';
-}
-
+function closeSitePreview() { document.getElementById('sitePreviewModal').style.display = 'none'; document.getElementById('sitePreviewFrame').src = ''; }
 function downloadPreviewSite() {
   if (!currentPreviewSite) return;
   const blob = new Blob([currentPreviewSite.site_html], { type: 'text/html' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = (currentPreviewSite.nom || 'site').toLowerCase().replace(/\s+/g,'-') + '.html';
-  a.click();
+  a.href = url; a.download = (currentPreviewSite.nom||'site').toLowerCase().replace(/\s+/g,'-') + '.html'; a.click();
   URL.revokeObjectURL(url);
 }
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script translate="no">
-const SADMIN_URL = 'https://fgkqobuomiuirwtvuuxz.supabase.co';
-const SADMIN_KEY = 'sb_publishable_D8jaWGbn4G72A7eq8oBtqg_acLVSLBX';
-const _sbAdmin = window.supabase.createClient(SADMIN_URL, SADMIN_KEY);
-const ADMIN_EMAILS = ['alex.skp31@gmail.com'];
-
+// ── CHARGEMENT PRINCIPAL ──
 async function checkAdminAccess() {
   const userRaw = localStorage.getItem('genproia_user');
   if (!userRaw) { window.location.href = '/index.html'; return false; }
   const user = JSON.parse(userRaw);
   if (!ADMIN_EMAILS.includes(user.email)) {
-    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#05030f;color:#f0ecff;font-family:Inter,sans-serif;text-align:center"><div><div style="font-size:2.5rem;margin-bottom:14px">🚫</div><h1 style="font-size:1.3rem;margin-bottom:7px;font-weight:700">Accès refusé</h1><p style="color:#7a6fa0;font-size:0.85rem">Tu n\'as pas accès à cette page.</p><a href="/index.html" style="display:inline-block;margin-top:18px;padding:9px 22px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-weight:600">Retour</a></div></div>';
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;min-height:100vh;background:#05030f;color:#f0ecff;font-family:Inter,sans-serif;text-align:center"><div><div style="font-size:2.5rem;margin-bottom:14px">🚫</div><h1 style="font-size:1.3rem;margin-bottom:7px;font-weight:700">Accès refusé</h1><p style="color:#7a6fa0">Tu n\'as pas accès à cette page.</p><a href="/index.html" style="display:inline-block;margin-top:18px;padding:9px 22px;background:#7c3aed;color:white;border-radius:8px;text-decoration:none;font-weight:600">Retour</a></div></div>';
     return false;
   }
-  // Afficher le nom de l'admin
   document.getElementById('adminName').textContent = user.nom || user.email;
   document.getElementById('adminAvatar').textContent = (user.nom || user.email).substring(0,2).toUpperCase();
   return true;
@@ -783,77 +810,51 @@ async function loadAdminData() {
   const ok = await checkAdminAccess();
   if (!ok) return;
 
-  // Charger users
+  // Charger users depuis Supabase
   const { data: usersData } = await _sbAdmin.from('users').select('*').order('created_at', { ascending: false });
   if (usersData) {
+    const avatarClasses = ['ua1','ua2','ua3','ua4','ua5','ua6'];
     users = usersData.map(function(u, i) {
-      const avatarClasses = ['ua1','ua2','ua3','ua4','ua5','ua6'];
       return {
         id: u.id, name: u.nom || u.email, email: u.email,
         plan: u.plan || 'free', projects: u.projets_count || 0,
-        revenue: '€0', // Stripe non connecté
         status: u.statut || 'active',
         date: new Date(u.created_at).toLocaleDateString('fr-FR'),
         avatarClass: avatarClasses[i % 6],
         initials: (u.nom || u.email).substring(0,2).toUpperCase()
       };
     });
-
-    const total = users.length;
-    const pro = users.filter(u => u.plan === 'pro').length;
-    const business = users.filter(u => u.plan === 'business').length;
-    const free = users.filter(u => u.plan === 'free').length;
-    const suspended = users.filter(u => u.status === 'suspended').length;
-
-    document.getElementById('kpiUsers').textContent = total;
-    document.getElementById('kpiUsersDelta').textContent = total + ' inscrits';
-    document.getElementById('sidebarUserCount').textContent = total;
-    document.getElementById('suspendusCount').textContent = suspended;
-    document.getElementById('freeCount').textContent = free;
-    document.getElementById('proCount').textContent = pro;
-    document.getElementById('businessCount').textContent = business;
-    document.getElementById('userCountBadge').textContent = total + ' total';
-
-    if (total > 0) {
-      document.getElementById('barPro').style.width = Math.round(pro/total*100) + '%';
-      document.getElementById('barBusiness').style.width = Math.round(business/total*100) + '%';
-      document.getElementById('barFree').style.width = Math.round(free/total*100) + '%';
-    }
-    document.getElementById('countPro').textContent = pro;
-    document.getElementById('countBusiness').textContent = business;
-    document.getElementById('countFree').textContent = free;
-
-    // MRR = €0 tant que Stripe n'est pas connecté
-    document.getElementById('kpiMrr').textContent = '€0';
-    document.getElementById('mrrPro').textContent = '€0';
-    document.getElementById('mrrBusiness').textContent = '€0';
-
+    updateCounts();
+    document.getElementById('kpiUsersDelta').textContent = users.length + ' inscrits';
     renderUsers(users);
   }
 
-  // Charger projets
+  // Charger projets depuis Supabase
   const { data: projetsData, count } = await _sbAdmin.from('projets').select('*', { count: 'exact' }).order('created_at', { ascending: false });
   if (projetsData) {
     allProjets = projetsData;
     document.getElementById('kpiProjets').textContent = count || projetsData.length;
     document.getElementById('kpiProjetsDelta').textContent = (count || projetsData.length) + ' projets créés';
+    const liveSites = projetsData.filter(p => p.site_url).length;
+    document.getElementById('kpiSites').textContent = liveSites;
 
-    // Générations récentes dans vue d'ensemble
+    // Générations récentes
     const icons = { ecommerce:'🛒', saas:'⚙️', vitrine:'🏢', landing:'📱', marketplace:'🏪', blog:'📰' };
     const genList = document.getElementById('genLogList');
-    if (projetsData.length === 0) {
-      genList.innerHTML = '<div style="padding:18px;text-align:center;color:var(--muted);font-size:0.8rem;">Aucune génération</div>';
-    } else {
-      genList.innerHTML = projetsData.slice(0, 5).map(p => `
+    genList.innerHTML = projetsData.length === 0
+      ? '<div style="padding:18px;text-align:center;color:var(--muted);font-size:0.8rem;">Aucune génération</div>'
+      : projetsData.slice(0, 5).map(p => `
         <div class="gen-log-item">
-          <div class="gen-type-icon" style="background:rgba(124,58,237,0.13)">${icons[p.type] || '✦'}</div>
-          <div class="gen-log-main"><div class="gen-log-name">${p.nom || 'Projet'}</div><div class="gen-log-user">${p.type || 'Projet'}</div></div>
+          <div class="gen-type-icon" style="background:rgba(124,58,237,0.13)">${icons[p.type]||'✦'}</div>
+          <div class="gen-log-main"><div class="gen-log-name">${p.nom||'Projet'}</div><div class="gen-log-user">${p.type||''}</div></div>
           <div class="gen-log-time">${new Date(p.created_at).toLocaleDateString('fr-FR')}</div>
           <span class="gen-status gs-done">Généré</span>
           ${p.site_html ? `<button onclick="openSitePreview(${JSON.stringify(p).replace(/"/g,'&quot;')})" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.25);color:var(--violet-glow);padding:3px 9px;border-radius:5px;font-size:0.65rem;cursor:pointer;font-family:Inter,sans-serif;">👁 Voir</button>` : ''}
         </div>`).join('');
-    }
   }
+
+  // Charger Stripe
+  loadStripeStats();
 }
 
 document.addEventListener('DOMContentLoaded', loadAdminData);
