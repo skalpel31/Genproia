@@ -905,7 +905,7 @@ async function validateSignup() {
   }
 
   // Succès — sauvegarder les données utilisateur si session disponible
-  if (result.data && result.data.session) {
+  if (result.data && result.data.user) {
     const userData = { id: result.data.user.id, email: result.data.user.email, nom: name, plan: 'free' };
     localStorage.setItem('genproia_token', result.data.session.access_token);
     localStorage.setItem('genproia_user', JSON.stringify(userData));
@@ -916,7 +916,7 @@ async function validateSignup() {
 
   // Vérifier priorités après inscription
   const pendingPlan = localStorage.getItem('genproia_pending_plan');
-  if (pendingPlan && result.data && result.data.session) {
+  if (pendingPlan && result.data && result.data.user) {
     localStorage.removeItem('genproia_pending_plan');
     closeSignup();
     startStripeCheckout(pendingPlan);
@@ -924,7 +924,7 @@ async function validateSignup() {
   }
 
   const redirect = localStorage.getItem('genproia_redirect_after_login');
-  if (redirect && result.data && result.data.session) {
+  if (redirect && result.data && result.data.user) {
     localStorage.removeItem('genproia_redirect_after_login');
     closeSignup();
     window.location.href = redirect;
