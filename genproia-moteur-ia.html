@@ -1238,7 +1238,20 @@ function recommencer() {
   document.getElementById('ideaInput').value = '';
   hideError();
   hideUpgrade();
+  const _savedProject = localStorage.getItem('genproia_project');
+const _fromDemo = new URLSearchParams(window.location.search).get('fromdemo');
+if (_fromDemo && _savedProject) {
+  try {
+    const _proj = JSON.parse(_savedProject);
+    if (_proj.idee) document.getElementById('ideaInput').value = _proj.idee;
+    if (_proj.type) currentType = _proj.type;
+    if (_proj.nom) identData = { nom: _proj.nom, slogan: _proj.slogan, couleur1: _proj.couleurPrimaire || '#7c3aed', couleur2: _proj.couleurSecondaire || '#ec4899', domaine: _proj.domainChoisi || '', initiales: (_proj.nom||'GN').substring(0,2).toUpperCase() };
+    if (_proj.nom) { identValidated = { nom: true, slogan: true, logo: true, domaine: true }; modeMarque = 'non'; lancerGeneration(); }
+    else { showStep(1); }
+  } catch(e) { showStep(1); }
+} else {
   showStep(1);
+}
 }
 
 function showError(msg) {
