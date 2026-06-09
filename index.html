@@ -158,7 +158,7 @@
 
   .pricing-section { padding: 100px 60px; display: flex; flex-direction: column; align-items: center; }
   .pricing-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 56px; width: 100%; max-width: 1100px; }
-  .pricing-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 28px 22px; position: relative; transition: transform 0.3s; display: flex; flex-direction: column; }
+  .pricing-card { background: var(--card); border: 1px solid var(--border); border-radius: 22px; padding: 20px 18px; position: relative; transition: transform 0.3s; display: flex; flex-direction: column; }
   .pricing-card:hover { transform: translateY(-4px); }
   .pricing-card.featured { border-color: rgba(139,92,246,0.45); background: linear-gradient(160deg, rgba(124,58,237,0.1) 0%, var(--card) 60%); }
   .pricing-card.oneshot { border-color: rgba(236,72,153,0.35); background: linear-gradient(160deg, rgba(236,72,153,0.08) 0%, var(--card) 60%); }
@@ -168,7 +168,7 @@
   .pricing-price sup { font-size: 1rem; vertical-align: top; margin-top: 8px; font-weight: 600; }
   .pricing-period { color: var(--muted); font-size: 0.78rem; margin-bottom: 20px; }
   .pricing-divider { height: 1px; background: var(--border); margin-bottom: 20px; }
-  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 9px; margin-bottom: 24px; flex: 1; }
+  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 7px; margin-bottom: 16px; flex: 1; }
   .pricing-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 0.82rem; color: var(--muted); }
   .pricing-features li .check { color: var(--violet-glow); font-size: 0.78rem; margin-top: 2px; flex-shrink: 0; }
   .pricing-features li.active { color: var(--white); }
@@ -319,9 +319,10 @@
     <li><a href="#features">Fonctionnalités</a></li>
     <li><a href="#pricing">Tarifs</a></li>
   </ul>
-  <div class="nav-auth-btns">
-    <a href="#" class="nav-btn-signup" onclick="openModal('signup'); return false;">Inscription</a>
-    <a href="#" class="nav-btn-login" onclick="openModal('login'); return false;">Connexion</a>
+  <div class="nav-auth-btns" id="navAuthBtns">
+    <a href="#" class="nav-btn-signup" id="navSignupBtn" onclick="openModal('signup'); return false;">Inscription</a>
+    <a href="#" class="nav-btn-login" id="navLoginBtn" onclick="openModal('login'); return false;">Connexion</a>
+    <a href="/genproia-dashboard.html" class="nav-btn-signup" id="navDashBtn" style="display:none;">Dashboard →</a>
   </div>
 </nav>
 
@@ -510,10 +511,8 @@
       <ul class="pricing-features">
         <li class="active"><span class="check">✓</span> 1 site web complet généré</li>
         <li class="active"><span class="check">✓</span> Téléchargement du site</li>
-        <li class="active"><span class="check">✓</span> Paiement Stripe intégré</li>
+        <li class="active"><span class="check">✓</span> Paiement Stripe intégré possible</li>
         <li class="active"><span class="check">✓</span> Nom + Slogan + Logo</li>
-        <li><span class="check" style="color:var(--border)">✕</span> Projets multiples</li>
-        <li><span class="check" style="color:var(--border)">✕</span> Support prioritaire</li>
       </ul>
       <button class="pricing-btn pricing-btn-pink" id="oneshotBtn" onclick="startStripeCheckout('oneshot')">Obtenir mon site →</button>
     </div>
@@ -524,7 +523,7 @@
         <li class="active"><span class="check">✓</span> 4 projets / mois</li>
         <li class="active"><span class="check">✓</span> Site web complet généré</li>
         <li class="active"><span class="check">✓</span> Téléchargement illimité</li>
-        <li class="active"><span class="check">✓</span> Paiement Stripe intégré</li>
+        <li class="active"><span class="check">✓</span> Paiement Stripe intégré possible</li>
         <li class="active"><span class="check">✓</span> Dashboard admin</li>
         <li class="active"><span class="check">✓</span> Support prioritaire</li>
       </ul>
@@ -905,7 +904,7 @@ async function validateSignup() {
   }
 
   // Succès — sauvegarder les données utilisateur si session disponible
-  if (result.data && result.data.user) {
+  if (result.data && result.data.session) {
     const userData = { id: result.data.user.id, email: result.data.user.email, nom: name, plan: 'free' };
     localStorage.setItem('genproia_token', result.data.session.access_token);
     localStorage.setItem('genproia_user', JSON.stringify(userData));
@@ -916,7 +915,7 @@ async function validateSignup() {
 
   // Vérifier priorités après inscription
   const pendingPlan = localStorage.getItem('genproia_pending_plan');
-  if (pendingPlan && result.data && result.data.user) {
+  if (pendingPlan && result.data && result.data.session) {
     localStorage.removeItem('genproia_pending_plan');
     closeSignup();
     startStripeCheckout(pendingPlan);
@@ -924,7 +923,7 @@ async function validateSignup() {
   }
 
   const redirect = localStorage.getItem('genproia_redirect_after_login');
-  if (redirect && result.data && result.data.user) {
+  if (redirect && result.data && result.data.session) {
     localStorage.removeItem('genproia_redirect_after_login');
     closeSignup();
     window.location.href = redirect;
@@ -1012,6 +1011,17 @@ window.addEventListener('beforeinstallprompt', function(e) {
   e.preventDefault(); deferredPrompt = e;
   setTimeout(function() { const b = document.getElementById('installBanner'); if (b) { b.style.transform = 'translateY(0)'; adjustChatBtn(true); } }, 3000);
 });
+
+// Init — vérifier si connecté
+(function() {
+  const user = JSON.parse(localStorage.getItem('genproia_user') || 'null');
+  const token = localStorage.getItem('genproia_token');
+  if (user && token) {
+    document.getElementById('navSignupBtn').style.display = 'none';
+    document.getElementById('navLoginBtn').style.display = 'none';
+    document.getElementById('navDashBtn').style.display = 'inline-flex';
+  }
+})();
 
 // Init démo
 demoShowStep(1);
