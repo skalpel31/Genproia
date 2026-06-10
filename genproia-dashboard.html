@@ -833,4 +833,223 @@ function renderAllProjets() {
     const statusHtml2 = isLive ? '<div class="project-status ps-live">🟢 Live</div>' : '<div class="project-status ps-generated">Généré</div>';
     // URL + date uniquement (pas de description)
     const urlHtml2 = p.site_url ? '<div class="deploy-url-row">🌐 <a href="' + p.site_url + '" target="_blank" onclick="event.stopPropagation()">' + p.site_url + '</a></div>' : '';
-    const dateHtml = '<div style="font-size:0.68rem;color:var(--muted2);margin-top:2px;">' + new Date(p.created_at).toLocaleDat
+    const dateHtml = '<div style="font-size:0.68rem;color:var(--muted2);margin-top:2px;">' + new Date(p.created_at).toLocaleDateString('fr-FR') + '</div>';
+
+    const actionsBtns2 = currentUserPlan === 'free'
+      ? '<div class="proj-btn" onclick="event.stopPropagation();openPreview(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')">👁 Aperçu</div>' +
+        '<div class="proj-btn" style="background:linear-gradient(135deg,rgba(236,72,153,0.2),rgba(124,58,237,0.2));border-color:rgba(236,72,153,0.4);color:var(--pink);font-weight:600;" onclick="event.stopPropagation();launchUpgrade(\'oneshot\')">⚡ Obtenir ce site — 49€</div>' +
+        '<div class="proj-btn danger" onclick="event.stopPropagation();deleteProjet(\'' + p.id + '\')">🗑 Supprimer</div>'
+      : '<div class="proj-btn" onclick="event.stopPropagation();openPreview(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')">👁 Aperçu</div>' +
+        '<div class="proj-btn" onclick="event.stopPropagation();downloadSite(\'' + p.id + '\',\'' + (p.nom||'site') + '\')">⬇ Télécharger</div>' +
+        '<div class="proj-btn deploy" id="deploy-btn-' + p.id + '" onclick="event.stopPropagation();deployProjet(\'' + p.id + '\',\'' + (p.nom||'site').replace(/'/g,"\\'") + '\')">🚀 Déployer</div>' +
+        '<div class="proj-btn danger" onclick="event.stopPropagation();deleteProjet(\'' + p.id + '\')">🗑 Supprimer</div>';
+
+    const div = document.createElement('div');
+    div.className = 'project-item';
+    div.style.padding = '16px 18px';
+    div.onclick = () => openPreview(p);
+    div.innerHTML = logoHtml2 + '<div class="project-info"><div class="project-name" style="font-size:0.9rem">' + (p.nom||'Projet') + '</div>' + urlHtml2 + dateHtml + '</div>' + statusHtml2 + '<div class="project-actions">' + actionsBtns2 + '</div>';
+    container.appendChild(div);
+  });
+}
+
+function renderIdentite() {
+  const container = document.getElementById('identityList');
+  if (allProjets.length === 0) return;
+  container.innerHTML = '';
+  allProjets.forEach(function(p) {
+    const couleur = p.couleur_primaire && p.couleur_secondaire ? 'linear-gradient(135deg,' + p.couleur_primaire + ',' + p.couleur_secondaire + ')' : 'linear-gradient(135deg,#7c3aed,#ec4899)';
+    const initiales = (p.logo_initiales || (p.nom||'PR').substring(0,2)).toUpperCase();
+    const logoHtml3 = p.logo_svg
+      ? '<div class="identity-logo" style="overflow:hidden;padding:0;background:none;">' + p.logo_svg.replace(/id="([^"]*)"/g,'id="$1_id'+p.id.substring(0,8)+'"').replace(/url\(#([^)]*)\)/g,'url(#$1_id'+p.id.substring(0,8)+')').replace(/width="[^"]*"/,'width="50"').replace(/height="[^"]*"/,'height="50"').replace(/viewBox="[^"]*"/,'viewBox="0 0 100 100"') + '</div>'
+      : '<div class="identity-logo" style="background:' + couleur + '">' + initiales + '</div>';
+    const div = document.createElement('div');
+    div.className = 'identity-card';
+    div.innerHTML = logoHtml3 + '<div class="identity-info"><div class="identity-name">' + (p.nom||'Projet') + '</div><div class="identity-slogan">' + (p.slogan||'') + '</div><div class="identity-colors">' + (p.couleur_primaire ? '<div class="color-chip" style="background:' + p.couleur_primaire + '"></div>' : '') + (p.couleur_secondaire ? '<div class="color-chip" style="background:' + p.couleur_secondaire + '"></div>' : '') + '</div></div><div style="font-size:0.72rem;color:var(--muted)">' + (p.type||'') + '</div>';
+    container.appendChild(div);
+  });
+}
+
+function renderDomaines() {
+  const container = document.getElementById('domainesList');
+  if (allProjets.length === 0) return;
+  container.innerHTML = '';
+  allProjets.forEach(function(p) {
+    if (!p.domaine) return;
+    const div = document.createElement('div');
+    div.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;';
+    div.innerHTML = '<div style="font-family:Inter,sans-serif;font-weight:700;font-size:0.88rem;">' + p.nom + '</div><div style="flex:1;font-size:0.82rem;color:var(--cyan);">🌐 ' + p.domaine + '</div><a href="https://www.lws.fr/nom-de-domaine.php?domaine=' + p.domaine + '" target="_blank" style="font-size:0.72rem;color:var(--violet-glow);border:1px solid rgba(139,92,246,0.3);padding:4px 10px;border-radius:6px;text-decoration:none;">Vérifier dispo →</a>';
+    container.appendChild(div);
+  });
+}
+
+function openPreview(p) {
+  if (!p.site_html) { showToast('Pas de site HTML disponible pour ce projet.'); return; }
+  currentPreviewHtml = p.site_html;
+  currentPreviewNom = p.nom || 'site';
+  document.getElementById('previewUrl').textContent = (p.domaine || p.nom) + ' — Aperçu';
+  const iframe = document.getElementById('previewFrame');
+  const blob = new Blob([p.site_html], { type: 'text/html' });
+  iframe.src = URL.createObjectURL(blob);
+  document.getElementById('previewModal').classList.add('open');
+  const dlBtn = document.getElementById('previewDownloadBtn');
+  if (dlBtn) dlBtn.style.display = currentUserPlan === 'free' ? 'none' : '';
+}
+function closePreview() {
+  document.getElementById('previewModal').classList.remove('open');
+  document.getElementById('previewFrame').src = '';
+}
+function downloadCurrentSite() { downloadHtml(currentPreviewHtml, currentPreviewNom); }
+
+async function downloadSite(id, nom) {
+  const p = allProjets.find(x => x.id === id);
+  if (p && p.site_html) { downloadHtml(p.site_html, nom); return; }
+  const { data } = await _sb.from('projets').select('site_html,nom').eq('id', id).single();
+  if (data && data.site_html) downloadHtml(data.site_html, data.nom || nom);
+}
+function downloadHtml(html, nom) {
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = nom.toLowerCase().replace(/\s+/g,'-') + '.html'; a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function deleteProjet(id) {
+  if (!confirm('Supprimer ce projet ? Cette action est irréversible.')) return;
+  await _sb.from('projets').delete().eq('id', id);
+  allProjets = allProjets.filter(p => p.id !== id);
+  location.reload();
+}
+
+async function deployProjet(id, nom) {
+  const p = allProjets.find(x => x.id === id);
+  if (!p || !p.site_html) { showToast('Pas de HTML disponible pour ce projet.'); return; }
+  const btn = document.getElementById('deploy-btn-' + id) || document.getElementById('deploy-btn-overview-' + id);
+  if (btn) { btn.textContent = '⏳ Déploiement...'; btn.style.opacity = '0.6'; btn.style.pointerEvents = 'none'; }
+  try {
+    const token = localStorage.getItem('genproia_token');
+    const res = await fetch('/api/deploy', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ projetId: id, nom, html: p.site_html }) });
+    const data = await res.json();
+    if (data.url) {
+      await _sb.from('projets').update({ site_url: data.url, statut: 'live' }).eq('id', id);
+      p.site_url = data.url; p.statut = 'live';
+      if (btn) { btn.textContent = '✅ En ligne !'; btn.classList.remove('deploy'); btn.style.background = 'rgba(16,185,129,0.15)'; btn.style.borderColor = 'rgba(16,185,129,0.35)'; btn.style.color = '#6ee7b7'; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+      const projectInfo = btn ? btn.closest('.project-item').querySelector('.project-info') : null;
+      if (projectInfo) { const existing = projectInfo.querySelector('.deploy-url-row'); if (existing) existing.remove(); const urlDiv = document.createElement('div'); urlDiv.className = 'deploy-url-row'; urlDiv.innerHTML = '🌐 <a href="' + data.url + '" target="_blank" onclick="event.stopPropagation()">' + data.url + '</a>'; projectInfo.appendChild(urlDiv); }
+      const statusEl = btn ? btn.closest('.project-item').querySelector('.project-status') : null;
+      if (statusEl) { statusEl.className = 'project-status ps-live'; statusEl.textContent = '🟢 Live'; }
+      document.getElementById('statSites').textContent = allProjets.filter(x => x.statut === 'live' || x.site_url).length;
+    } else { throw new Error(data.error || 'Erreur inconnue'); }
+  } catch(e) {
+    if (btn) { btn.textContent = '🚀 Déployer'; btn.style.opacity = '1'; btn.style.pointerEvents = 'auto'; }
+    showToast('Erreur déploiement : ' + e.message);
+  }
+}
+
+async function saveSettings() {
+  const nom = document.getElementById('settingsNom').value.trim();
+  const msg = document.getElementById('settingsMsg');
+  if (!nom) { msg.textContent = 'Entre ton nom.'; msg.style.color = '#fca5a5'; return; }
+  const user = JSON.parse(localStorage.getItem('genproia_user'));
+  const { error } = await _sb.from('users').update({ nom }).eq('id', user.id);
+  if (error) { msg.textContent = 'Erreur. Réessaie.'; msg.style.color = '#fca5a5'; return; }
+  user.nom = nom;
+  localStorage.setItem('genproia_user', JSON.stringify(user));
+  document.getElementById('userName').textContent = nom;
+  document.getElementById('topGreeting').textContent = 'Bonjour, ' + nom.split(' ')[0];
+  msg.textContent = '✓ Profil mis à jour !'; msg.style.color = '#6ee7b7';
+}
+
+async function changePw() {
+  const pw1 = document.getElementById('settingsNewPw').value;
+  const pw2 = document.getElementById('settingsConfirmPw').value;
+  const msg = document.getElementById('pwMsg');
+  if (pw1.length < 8) { msg.textContent = 'Minimum 8 caractères.'; msg.style.color = '#fca5a5'; return; }
+  if (pw1 !== pw2) { msg.textContent = 'Les mots de passe ne correspondent pas.'; msg.style.color = '#fca5a5'; return; }
+  const { error } = await _sb.auth.updateUser({ password: pw1 });
+  if (error) { msg.textContent = 'Erreur : ' + error.message; msg.style.color = '#fca5a5'; return; }
+  msg.textContent = '✓ Mot de passe mis à jour !'; msg.style.color = '#6ee7b7';
+  document.getElementById('settingsNewPw').value = '';
+  document.getElementById('settingsConfirmPw').value = '';
+}
+
+function sendSupport() {
+  const sujet = document.getElementById('supportSujet').value.trim();
+  const msg = document.getElementById('supportMsg').value.trim();
+  const resp = document.getElementById('supportResponse');
+  if (!sujet || !msg) { resp.textContent = 'Remplis tous les champs.'; resp.style.color = '#fca5a5'; return; }
+  resp.textContent = '✓ Message envoyé ! On te répond dans les 24h.'; resp.style.color = '#6ee7b7';
+  document.getElementById('supportSujet').value = '';
+  document.getElementById('supportMsg').value = '';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  loadDashboard();
+  const urlParams = new URLSearchParams(window.location.search);
+  const pageParam = urlParams.get('page');
+  if (pageParam) setTimeout(() => showPage(pageParam, null), 500);
+  if (urlParams.get('payment') === 'success') {
+    const plan = urlParams.get('plan') || '';
+    const msgs = { oneshot: '🎉 Paiement réussi ! Ton plan One-Shot est actif.', pro: '🎉 Bienvenue sur le plan Pro !', business: '🎉 Bienvenue sur le plan Business !' };
+    setTimeout(() => { if (msgs[plan]) showToast(msgs[plan]); window.history.replaceState({}, '', '/genproia-dashboard.html'); }, 800);
+  }
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closePreview(); closeDrawer(); } });
+
+let chatHistory = [];
+let chatOpen = false;
+
+function toggleChat() {
+  chatOpen = !chatOpen;
+  const win = document.getElementById('chatWindow');
+  win.classList.toggle('open', chatOpen);
+  if (chatOpen) document.getElementById('chatInput').focus();
+}
+
+function sendSuggestion(el) {
+  document.getElementById('chatInput').value = el.textContent;
+  document.getElementById('chatSuggestions').style.display = 'none';
+  sendChat();
+}
+
+async function sendChat() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = ''; input.style.height = 'auto';
+  document.getElementById('chatSuggestions').style.display = 'none';
+  addChatMsg(msg, 'user');
+  chatHistory.push({ role: 'user', content: msg });
+  const typingId = 'typing_' + Date.now();
+  const typingEl = document.createElement('div');
+  typingEl.className = 'chat-msg ai chat-typing'; typingEl.id = typingId;
+  typingEl.innerHTML = '<div class="chat-typing-dots"><span></span><span></span><span></span></div>';
+  document.getElementById('chatMessages').appendChild(typingEl);
+  scrollChat();
+  try {
+    const token = localStorage.getItem('genproia_token');
+    const response = await fetch('/api/chat-dashboard', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, body: JSON.stringify({ message: msg, history: chatHistory.slice(-10) }) });
+    const data = await response.json();
+    document.getElementById(typingId)?.remove();
+    if (data.success) { addChatMsg(data.reply, 'ai'); chatHistory.push({ role: 'assistant', content: data.reply }); if (data.action) setTimeout(() => location.reload(), 1500); }
+    else { addChatMsg('Désolé, une erreur est survenue. Réessaie.', 'ai'); }
+  } catch(e) { document.getElementById(typingId)?.remove(); addChatMsg('Erreur de connexion. Vérifie ta connexion.', 'ai'); }
+}
+
+function addChatMsg(text, role) {
+  const now = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + role;
+  div.innerHTML = '<div class="chat-msg-bubble">' + text.replace(/\n/g, '<br>') + '</div><div class="chat-msg-time">' + now + '</div>';
+  document.getElementById('chatMessages').appendChild(div);
+  scrollChat();
+}
+
+function scrollChat() {
+  const msgs = document.getElementById('chatMessages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+</script>
+</body>
+</html>
