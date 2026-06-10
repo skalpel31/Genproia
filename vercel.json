@@ -26,6 +26,10 @@
       "dest": "/api/stripe-webhook.js"
     },
     {
+      "src": "/api/stripe-stats",
+      "dest": "/api/stripe-stats.js"
+    },
+    {
       "src": "/api/chat-dashboard",
       "dest": "/api/chat-dashboard.js"
     },
