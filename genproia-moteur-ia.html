@@ -595,8 +595,9 @@ async function regenIdent(type) {
         document.getElementById('vNom').textContent = r.nom;
         document.getElementById('vSlogan').textContent = r.slogan;
         document.getElementById('vDomaine').textContent = identData.domaine;
-        identValidated.slogan = false; identValidated.domaine = false; identValidated.logo = false;
-        ['valSlogan','valDomaine','valLogo'].forEach(id => { const b = document.getElementById(id); if (!b) return; b.classList.remove('validated'); b.textContent = '✓ Valider'; b.disabled = false; });
+        identValidated.slogan = false; identValidated.domaine = false;
+        // logo reste true — il est toujours auto-généré
+        ['valSlogan','valDomaine'].forEach(id => { const b = document.getElementById(id); if (!b) return; b.classList.remove('validated'); b.textContent = '✓ Valider'; b.disabled = false; });
       } else if (type === 'slogan') {
         identData.slogan = r.slogan; document.getElementById('vSlogan').textContent = r.slogan;
       } else if (type === 'domaine') {
