@@ -190,6 +190,14 @@ async function getAllImages(idee, type) {
     ambianceQuery = 'garden nature green sunlight';
 
   // ── MODE & VÊTEMENTS ──
+  } else if (idea.includes('maillot') || idea.includes('swimwear') || idea.includes('bikini') || idea.includes('bain') || idea.includes('natation') || idea.includes('plage')) {
+    heroQuery = 'swimwear bikini beach summer fashion editorial';
+    productQuery = 'swimsuit bikini swimwear product photography sea';
+    ambianceQuery = 'beach summer lifestyle ocean fashion';
+  } else if (idea.includes('lingerie') || idea.includes('sous-vêtement')) {
+    heroQuery = 'lingerie elegant fashion minimal editorial';
+    productQuery = 'lingerie fashion product photography minimal';
+    ambianceQuery = 'lingerie fashion elegant aesthetic';
   } else if (idea.includes('street') || idea.includes('urban') || idea.includes('hype') || idea.includes('skateboard')) {
     heroQuery = 'streetwear fashion urban youth editorial';
     productQuery = 'streetwear clothing hoodie sneakers flatlay';
