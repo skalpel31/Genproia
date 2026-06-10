@@ -19,9 +19,9 @@
   body { background: var(--void); color: var(--white); font-family: var(--font-body); display: flex; }
   body::before { content: ''; position: fixed; inset: 0; z-index: 0; pointer-events: none; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E"); opacity: 0.5; }
 
-  /* ═══ SIDEBAR ═══ */
   .sidebar { width: var(--sidebar-w); min-height: 100vh; background: var(--deep); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; z-index: 50; transition: transform 0.3s; }
   .sidebar-logo { padding: 26px 22px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+  .sidebar-logo a { line-height: 0; }
   .sidebar-nav { flex: 1; padding: 18px 10px; display: flex; flex-direction: column; gap: 2px; overflow-y: auto; }
   .nav-section-label { font-family: 'Inter', sans-serif; font-size: 0.6rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted2); padding: 10px 12px 5px; font-weight: 600; }
   .nav-item { display: flex; align-items: center; gap: 11px; padding: 9px 12px; border-radius: 9px; cursor: pointer; transition: background 0.2s, color 0.2s; color: var(--muted); font-size: 0.83rem; font-weight: 500; text-decoration: none; position: relative; border: 1px solid transparent; }
@@ -37,7 +37,6 @@
   .user-name { font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 600; }
   .user-plan { font-family: 'Inter', sans-serif; font-size: 0.67rem; color: var(--violet-glow); background: rgba(124,58,237,0.12); padding: 1px 7px; border-radius: 100px; margin-top: 2px; display: inline-block; }
 
-  /* ═══ PLAN FREE ═══ */
   .nav-item-locked { opacity: 0.5; pointer-events: none; }
   .nav-item-locked::after { content: '🔒'; position: absolute; right: 12px; font-size: 0.7rem; }
   .upgrade-cards-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-top: 14px; }
@@ -52,7 +51,6 @@
   .toast-notif { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: var(--card); border: 1px solid rgba(139,92,246,0.3); border-radius: 12px; padding: 12px 20px; font-family: 'Inter',sans-serif; font-size: 0.82rem; color: var(--white); z-index: 9999; display: none; box-shadow: 0 4px 20px rgba(0,0,0,0.4); white-space: nowrap; }
   .toast-notif.show { display: block; animation: fadeUp 0.3s ease; }
 
-  /* ═══ MAIN ═══ */
   .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; min-height: 100vh; overflow-y: auto; }
   .topbar { position: sticky; top: 0; z-index: 40; background: rgba(5,3,15,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 30px; height: 62px; display: flex; align-items: center; justify-content: space-between; }
   .topbar-left { display: flex; flex-direction: column; }
@@ -66,7 +64,6 @@
   .new-project-btn:hover { transform: translateY(-1px); opacity: 0.9; }
   .content { padding: 28px 30px; }
 
-  /* ═══ STATS ═══ */
   .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
   .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; position: relative; overflow: hidden; transition: transform 0.3s, border-color 0.3s; animation: fadeUp 0.5s ease both; }
   .stat-card:nth-child(1){animation-delay:.05s} .stat-card:nth-child(2){animation-delay:.1s} .stat-card:nth-child(3){animation-delay:.15s} .stat-card:nth-child(4){animation-delay:.2s}
@@ -83,7 +80,6 @@
   @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
   @keyframes fadeIn { from{opacity:0} to{opacity:1} }
 
-  /* ═══ MAIN GRID ═══ */
   .main-grid { display: grid; grid-template-columns: 1fr 320px; gap: 18px; }
   .projects-section { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; animation: fadeUp 0.5s 0.25s ease both; }
   .section-header { padding: 18px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
@@ -111,7 +107,6 @@
   .new-project-label { font-family: 'Inter', sans-serif; font-size: 0.83rem; color: var(--violet-glow); font-weight: 600; }
   .new-project-sub { font-size: 0.72rem; color: var(--muted); }
 
-  /* ═══ RIGHT COL ═══ */
   .right-col { display: flex; flex-direction: column; gap: 18px; }
   .generate-widget { background: linear-gradient(160deg, rgba(124,58,237,0.18) 0%, var(--card) 60%); border: 1px solid rgba(139,92,246,0.28); border-radius: 18px; padding: 22px; position: relative; overflow: hidden; animation: fadeUp 0.5s 0.3s ease both; }
   .generate-widget::before { content: ''; position: absolute; top: -60px; right: -60px; width: 150px; height: 150px; background: radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%); pointer-events: none; }
@@ -142,7 +137,6 @@
   .activity-widget { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; margin-top: 18px; animation: fadeUp 0.5s 0.3s ease both; }
   .activity-list { padding: 6px 10px; }
 
-  /* ═══ PREVIEW MODAL ═══ */
   .preview-modal { position: fixed; inset: 0; z-index: 300; background: rgba(5,3,15,0.95); backdrop-filter: blur(10px); display: none; flex-direction: column; }
   .preview-modal.open { display: flex; animation: fadeIn 0.3s ease; }
   .preview-bar { background: var(--card); border-bottom: 1px solid var(--border); padding: 12px 20px; display: flex; align-items: center; gap: 12px; }
@@ -155,7 +149,6 @@
   .preview-download:hover { opacity: 0.9; }
   .preview-iframe { flex: 1; border: none; background: white; }
 
-  /* ═══ PAGES ═══ */
   .page-content { display: none; }
   .page-content.active { display: block; animation: fadeIn 0.3s ease; }
   .settings-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 24px; margin-bottom: 16px; }
@@ -179,16 +172,15 @@
   .deploy-url-row a { color: var(--cyan); text-decoration: none; }
   .deploy-url-row a:hover { text-decoration: underline; }
 
-  /* ═══ CHAT ═══ */
-  .chat-window { position: fixed; bottom: 28px; right: 28px; z-index: 200; width: 360px; height: 500px; background: var(--card); border: 1px solid rgba(139,92,246,0.25); border-radius: 20px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.4); }
-  .chat-window.open { display: flex; animation: fadeUp 0.3s ease; }
+  .chat-window { position: fixed; bottom: 28px; right: 28px; z-index: 200; width: 360px; height: 500px; background: var(--card); border: 1px solid rgba(139,92,246,0.25); border-radius: 20px; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 8px 40px rgba(0,0,0,0.4); animation: fadeUp 0.3s ease; }
+  .chat-window.open { display: flex; }
   .chat-header { background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(147,51,234,0.15)); border-bottom: 1px solid var(--border); padding: 14px 16px; display: flex; align-items: center; gap: 10px; }
   .chat-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--violet), var(--pink)); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
   .chat-header-info { flex: 1; }
   .chat-header-name { font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 600; }
   .chat-header-status { font-size: 0.68rem; color: var(--green); display: flex; align-items: center; gap: 4px; }
   .chat-header-status::before { content: ''; width: 5px; height: 5px; background: var(--green); border-radius: 50%; display: inline-block; }
-  .chat-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; padding: 4px; }
+  .chat-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; padding: 4px; transition: color 0.2s; }
   .chat-close:hover { color: var(--white); }
   .chat-messages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
   .chat-messages::-webkit-scrollbar { width: 4px; }
@@ -218,13 +210,12 @@
   .chat-suggestion:hover { background: rgba(139,92,246,0.18); border-color: var(--violet-bright); }
 
   /* ═══ MOBILE BOTTOM NAV ═══ */
-  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--deep); border-top: 1px solid var(--border); padding: 8px 0 max(8px, env(safe-area-inset-bottom)); }
+  .bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: var(--deep); border-top: 1px solid var(--border); padding: 6px 0 max(6px, env(safe-area-inset-bottom)); }
   .bottom-nav-inner { display: flex; align-items: center; justify-content: space-around; }
-  .bn-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 16px; border-radius: 10px; cursor: pointer; transition: background 0.2s; border: none; background: none; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.6rem; font-weight: 600; flex: 1; }
+  .bn-item { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 12px; border-radius: 10px; cursor: pointer; transition: background 0.2s; border: none; background: none; color: var(--muted); font-family: 'Inter', sans-serif; flex: 1; }
   .bn-item.active { color: var(--violet-bright); }
-  .bn-item:active { background: rgba(139,92,246,0.1); }
-  .bn-icon { font-size: 1.3rem; line-height: 1; }
-  .bn-label { font-size: 0.58rem; letter-spacing: 0.02em; }
+  .bn-icon { font-size: 1.2rem; line-height: 1; }
+  .bn-label { font-size: 0.58rem; font-weight: 600; letter-spacing: 0.02em; }
 
   /* ═══ MOBILE DRAWER ═══ */
   .mobile-drawer-overlay { display: none; position: fixed; inset: 0; z-index: 200; background: rgba(5,3,15,0.7); backdrop-filter: blur(4px); }
@@ -232,78 +223,56 @@
   .mobile-drawer { position: fixed; bottom: 0; left: 0; right: 0; z-index: 201; background: var(--deep); border-top: 1px solid var(--border); border-radius: 20px 20px 0 0; padding: 12px 16px max(20px, env(safe-area-inset-bottom)); max-height: 75vh; overflow-y: auto; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4,0,0.2,1); }
   .mobile-drawer.open { transform: translateY(0); }
   .drawer-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.15); border-radius: 2px; margin: 0 auto 16px; }
-  .drawer-title { font-family: 'Inter', sans-serif; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); font-weight: 600; padding: 0 4px 8px; }
-  .drawer-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; cursor: pointer; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500; transition: background 0.2s, color 0.2s; }
-  .drawer-item:hover, .drawer-item:active { background: rgba(139,92,246,0.1); color: var(--white); }
-  .drawer-item-icon { width: 20px; text-align: center; font-size: 1rem; flex-shrink: 0; }
-  .drawer-sep { height: 1px; background: var(--border); margin: 8px 0; }
+  .drawer-section-label { font-family: 'Inter', sans-serif; font-size: 0.62rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted2); font-weight: 600; padding: 4px 4px 8px; }
+  .drawer-item { display: flex; align-items: center; gap: 12px; padding: 13px 8px; border-radius: 10px; cursor: pointer; color: var(--muted); font-family: 'Inter', sans-serif; font-size: 0.85rem; font-weight: 500; transition: background 0.2s, color 0.2s; }
+  .drawer-item:active { background: rgba(139,92,246,0.1); color: var(--white); }
+  .drawer-item-icon { width: 22px; text-align: center; font-size: 1rem; flex-shrink: 0; }
+  .drawer-sep { height: 1px; background: var(--border); margin: 6px 0; }
 
-  /* ═══ MEDIA QUERIES ═══ */
+  /* ═══ DESKTOP ═══ */
   @media (min-width: 901px) {
     .bottom-nav { display: none !important; }
-    .mobile-drawer { display: none !important; }
     .mobile-drawer-overlay { display: none !important; }
+    .mobile-drawer { display: none !important; }
   }
 
+  /* ═══ MOBILE ═══ */
   @media (max-width: 900px) {
-    /* Cacher la sidebar, afficher bottom nav */
     .sidebar { display: none; }
-    .main { margin-left: 0; }
+    .main { margin-left: 0; overflow-y: auto; }
     .bottom-nav { display: block; }
-
-    /* Topbar mobile */
     .topbar { padding: 0 14px; height: 54px; }
-    .topbar-greeting { font-size: 0.85rem; }
     .topbar-sub { display: none; }
     .new-project-btn { font-size: 0.72rem; padding: 7px 12px; }
-
-    /* Contenu mobile */
     .content { padding: 14px 14px 90px; }
-
-    /* Stats 2x2 */
     .stats-row { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-    .stat-card { padding: 14px 14px; }
+    .stat-card { padding: 14px; }
     .stat-value { font-size: 1.4rem; }
-
-    /* Main grid 1 colonne */
     .main-grid { grid-template-columns: 1fr; gap: 14px; }
-
-    /* Projet item mobile — layout vertical */
-    .project-item { flex-wrap: wrap; gap: 10px; padding: 12px; }
+    /* Projets mobile — description cachée, boutons en grille */
+    .project-item { flex-wrap: wrap; padding: 12px; }
     .project-info { width: calc(100% - 56px); }
     .project-status { margin-left: auto; }
-    .project-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-left: 0; margin-top: 4px; }
-    .proj-btn { justify-content: center; padding: 8px 6px; font-size: 0.72rem; }
-
-    /* Upgrade cards 1 colonne */
+    .project-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-left: 0; margin-top: 6px; }
+    .proj-btn { justify-content: center; padding: 9px 6px; font-size: 0.72rem; }
+    /* Upgrade cards 1 colonne horizontal */
     .upgrade-cards-grid { grid-template-columns: 1fr; gap: 8px; }
-    .upgrade-card { padding: 12px 16px; display: flex; align-items: center; gap: 14px; text-align: left; }
-    .upgrade-card-price { font-size: 1.5rem; margin-bottom: 0; min-width: 50px; }
-    .upgrade-card-name { margin-bottom: 2px; }
+    .upgrade-card { display: flex; align-items: center; gap: 14px; padding: 12px 16px; text-align: left; }
+    .upgrade-card-price { font-size: 1.4rem; margin-bottom: 0; min-width: 48px; }
+    .upgrade-card-name { margin-bottom: 1px; }
     .upgrade-card-desc { margin-bottom: 0; }
-    .upgrade-card-btn { width: auto; padding: 8px 16px; white-space: nowrap; margin-left: auto; flex-shrink: 0; }
-
-    /* Generate widget mobile */
+    .upgrade-card-btn { width: auto; padding: 8px 14px; white-space: nowrap; margin-left: auto; flex-shrink: 0; }
     .generate-widget { padding: 16px; }
     .widget-textarea { height: 56px; }
-
-    /* Plan widget mobile */
     .plan-widget { padding: 14px; }
-
-    /* Tips widget mobile */
     .tip-item { padding: 10px 14px; }
-
-    /* Chat — plein écran sur mobile */
-    .chat-window { bottom: 70px; right: 8px; left: 8px; width: auto; height: 420px; }
-
-    /* Toast au dessus bottom nav */
+    .chat-window { bottom: 72px; right: 8px; left: 8px; width: auto; height: 420px; }
     .toast-notif { bottom: 80px; }
   }
 </style>
 </head>
 <body>
 
-<!-- ═══ SIDEBAR (desktop uniquement) ═══ -->
 <aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <a href="/index.html" style="text-decoration:none;display:flex;align-items:center;gap:8px;"><div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#7c3aed,#ec4899);display:flex;align-items:center;justify-content:center;font-family:Inter,sans-serif;font-weight:800;font-size:0.8rem;color:white;flex-shrink:0;">G</div><span style="font-family:Inter,sans-serif;font-size:1rem;font-weight:700;color:white;letter-spacing:-0.03em;">Genpr<span style="color:#8b5cf6">oia</span></span></a>
@@ -325,17 +294,21 @@
   </nav>
   <div class="sidebar-bottom">
     <div id="adminLink" style="display:none;margin-bottom:8px;">
-      <a href="/genproia-superadmin.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:9px;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.22);text-decoration:none;color:var(--pink);font-family:Inter,sans-serif;font-size:0.75rem;font-weight:600;"><span>⚡</span> Super Admin</a>
+      <a href="/genproia-superadmin.html" style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:9px;background:rgba(236,72,153,0.08);border:1px solid rgba(236,72,153,0.22);text-decoration:none;color:var(--pink);font-family:Inter,sans-serif;font-size:0.75rem;font-weight:600;">
+        <span>⚡</span> Super Admin
+      </a>
     </div>
-    <div class="user-card" onclick="logout()">
+    <div class="user-card" onclick="logout()" title="Se déconnecter">
       <div class="user-avatar" id="userAvatar">?</div>
-      <div><div class="user-name" id="userName">Chargement…</div><div class="user-plan" id="userPlan">Free</div></div>
+      <div>
+        <div class="user-name" id="userName">Chargement…</div>
+        <div class="user-plan" id="userPlan">Free</div>
+      </div>
       <span style="margin-left:auto;color:var(--muted);font-size:0.8rem">⏻</span>
     </div>
   </div>
 </aside>
 
-<!-- ═══ MAIN ═══ -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-left">
@@ -351,7 +324,7 @@
 
   <div class="content">
 
-    <!-- VUE D'ENSEMBLE -->
+    <!-- PAGE VUE D'ENSEMBLE -->
     <div id="page-overview" class="page-content active">
       <div class="stats-row">
         <div class="stat-card s1"><div class="stat-header"><div class="stat-label-top">Projets générés</div><div class="stat-icon-wrap si-violet">✦</div></div><div class="stat-value" id="statProjets">0</div><div class="stat-change neutral" id="statProjetsLabel">Aucun projet</div></div>
@@ -359,35 +332,63 @@
         <div class="stat-card s3"><div class="stat-header"><div class="stat-label-top">Visiteurs totaux</div><div class="stat-icon-wrap si-cyan">👁</div></div><div class="stat-value">0</div><div class="stat-change neutral">Bientôt disponible</div></div>
         <div class="stat-card s4"><div class="stat-header"><div class="stat-label-top">Revenus générés</div><div class="stat-icon-wrap si-green">€</div></div><div class="stat-value">€0</div><div class="stat-change neutral">Connecte Stripe</div></div>
       </div>
+
       <div class="main-grid">
         <div>
           <div class="projects-section">
-            <div class="section-header"><div class="section-title">Mes projets récents</div><div class="section-action" onclick="showPage('projets',null)">Voir tout →</div></div>
+            <div class="section-header">
+              <div class="section-title">Mes projets récents</div>
+              <div class="section-action" onclick="showPage('projets',null)">Voir tout →</div>
+            </div>
             <div class="projects-list" id="projectsList">
-              <div id="projectsEmpty" style="padding:28px;text-align:center;color:var(--muted);"><div style="font-size:2rem;margin-bottom:10px;opacity:0.4">✦</div><div style="font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:600;margin-bottom:5px;color:var(--white)">Aucun projet pour l'instant</div><div style="font-size:0.8rem;">Crée ton premier projet !</div></div>
-              <div class="new-project-card" onclick="window.location.href='/genproia-moteur-ia.html'"><div class="new-plus">+</div><div><div class="new-project-label">Créer un nouveau projet</div><div class="new-project-sub">Décris ton idée, on génère tout</div></div></div>
+              <div id="projectsEmpty" style="padding:28px;text-align:center;color:var(--muted);">
+                <div style="font-size:2rem;margin-bottom:10px;opacity:0.4">✦</div>
+                <div style="font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:600;margin-bottom:5px;color:var(--white)">Aucun projet pour l'instant</div>
+                <div style="font-size:0.8rem;">Crée ton premier projet et génère ton business !</div>
+              </div>
+              <div class="new-project-card" onclick="window.location.href='/genproia-moteur-ia.html'">
+                <div class="new-plus">+</div>
+                <div><div class="new-project-label">Créer un nouveau projet</div><div class="new-project-sub">Décris ton idée, on génère tout</div></div>
+              </div>
             </div>
           </div>
+
           <div class="activity-widget">
             <div class="section-header"><div class="section-title">Activité récente</div></div>
-            <div class="activity-list" id="activityList"><div style="padding:18px;text-align:center;color:var(--muted);font-size:0.8rem;">Ton activité apparaîtra ici après ton premier projet.</div></div>
+            <div class="activity-list" id="activityList">
+              <div style="padding:18px;text-align:center;color:var(--muted);font-size:0.8rem;">Ton activité apparaîtra ici après ton premier projet.</div>
+            </div>
           </div>
         </div>
+
         <div class="right-col">
           <div class="generate-widget">
             <div class="widget-title">Nouvelle idée ?</div>
             <div class="widget-sub">Décris ton projet en quelques mots et laisse Genproia faire le reste.</div>
-            <textarea class="widget-textarea" placeholder="Ex : Je veux lancer un SaaS de gestion RH…"></textarea>
+            <textarea class="widget-textarea" placeholder="Ex : Je veux lancer un SaaS de gestion RH pour PME…"></textarea>
             <button class="widget-generate-btn" onclick="window.location.href='/genproia-moteur-ia.html'">Générer mon projet</button>
           </div>
-          <div class="tips-widget">
+
+          <div class="tips-widget" id="tipsWidget">
             <div class="section-header"><div class="section-title">Conseils rapides</div></div>
-            <div class="tip-item" onclick="window.location.href='/genproia-moteur-ia.html'"><div class="tip-icon">✦</div><div><div class="tip-text">Crée ton premier projet</div><div class="tip-sub">Décris ton idée et génère tout</div></div></div>
-            <div class="tip-item" onclick="handleNavClick('paiements',null)"><div class="tip-icon">💳</div><div><div class="tip-text">Connecte Stripe</div><div class="tip-sub">Active les paiements sur tes projets</div></div></div>
-            <div class="tip-item" onclick="handleNavClick('domaines',null)"><div class="tip-icon">🌐</div><div><div class="tip-text">Choisis ton nom de domaine</div><div class="tip-sub">Disponible dès la génération</div></div></div>
+            <div class="tip-item" onclick="window.location.href='/genproia-moteur-ia.html'">
+              <div class="tip-icon">✦</div>
+              <div><div class="tip-text">Crée ton premier projet</div><div class="tip-sub">Décris ton idée et génère tout</div></div>
+            </div>
+            <div class="tip-item" onclick="handleNavClick('paiements',null)">
+              <div class="tip-icon">💳</div>
+              <div><div class="tip-text">Connecte Stripe</div><div class="tip-sub">Active les paiements sur tes projets</div></div>
+            </div>
+            <div class="tip-item" onclick="handleNavClick('domaines',null)">
+              <div class="tip-icon">🌐</div>
+              <div><div class="tip-text">Choisis ton nom de domaine</div><div class="tip-sub">Disponible dès la génération</div></div>
+            </div>
           </div>
+
           <div class="plan-widget">
-            <div class="plan-header"><div class="plan-name" id="planName">Mon plan <span class="plan-badge" id="planBadge">Free</span></div></div>
+            <div class="plan-header">
+              <div class="plan-name" id="planName">Mon plan <span class="plan-badge" id="planBadge">Free</span></div>
+            </div>
             <div class="usage-row"><div class="usage-label">Projets générés</div><div class="usage-val" id="planProjets">0</div></div>
             <div class="progress-bar"><div class="progress-fill" id="planProgress" style="width:0%"></div></div>
             <div class="renew-info" id="planInfo">Plan gratuit · 1 aperçu inclus</div>
@@ -395,15 +396,21 @@
               <div style="font-family:Inter,sans-serif;font-size:0.72rem;color:var(--muted);margin-bottom:10px;text-align:center;" id="upgradeTitle">Passe à un plan supérieur</div>
               <div class="upgrade-cards-grid">
                 <div class="upgrade-card oneshot" onclick="launchUpgrade('oneshot')">
-                  <div><div class="upgrade-card-name">One-Shot</div><div class="upgrade-card-price" style="color:var(--pink)">€49</div><div class="upgrade-card-desc">1 site complet</div></div>
+                  <div class="upgrade-card-name">One-Shot</div>
+                  <div class="upgrade-card-price" style="color:var(--pink)">€49</div>
+                  <div class="upgrade-card-desc">1 site complet</div>
                   <button class="upgrade-card-btn" style="background:linear-gradient(135deg,var(--pink),#9333ea);color:white;">Choisir</button>
                 </div>
                 <div class="upgrade-card pro" onclick="launchUpgrade('pro')">
-                  <div><div class="upgrade-card-name">Pro</div><div class="upgrade-card-price" style="color:var(--violet-glow)">€29</div><div class="upgrade-card-desc">4 projets/mois</div></div>
+                  <div class="upgrade-card-name">Pro</div>
+                  <div class="upgrade-card-price" style="color:var(--violet-glow)">€29</div>
+                  <div class="upgrade-card-desc">4/mois</div>
                   <button class="upgrade-card-btn" style="background:linear-gradient(135deg,var(--violet),#9333ea);color:white;">Choisir</button>
                 </div>
                 <div class="upgrade-card" onclick="launchUpgrade('business')">
-                  <div><div class="upgrade-card-name">Business</div><div class="upgrade-card-price">€79</div><div class="upgrade-card-desc">Illimité</div></div>
+                  <div class="upgrade-card-name">Business</div>
+                  <div class="upgrade-card-price">€79</div>
+                  <div class="upgrade-card-desc">Illimité</div>
                   <button class="upgrade-card-btn" style="background:rgba(255,255,255,0.08);color:var(--white);border:1px solid var(--border);">Choisir</button>
                 </div>
               </div>
@@ -413,44 +420,73 @@
       </div>
     </div>
 
-    <!-- MES PROJETS -->
+    <!-- PAGE MES PROJETS -->
     <div id="page-projets" class="page-content">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <div><div style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:-0.02em;">Mes projets</div><div style="font-size:0.78rem;color:var(--muted);margin-top:3px;" id="projetsCount">0 projet</div></div>
+        <div>
+          <div style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;letter-spacing:-0.02em;">Mes projets</div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-top:3px;" id="projetsCount">0 projet</div>
+        </div>
         <button class="new-project-btn" onclick="window.location.href='/genproia-moteur-ia.html'">+ Nouveau projet</button>
       </div>
       <div id="allProjectsList" style="display:flex;flex-direction:column;gap:8px;">
-        <div style="padding:40px;text-align:center;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:18px;"><div style="font-size:2rem;margin-bottom:10px;opacity:0.4">✦</div><div style="font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:600;margin-bottom:5px;color:var(--white)">Aucun projet pour l'instant</div><div style="font-size:0.8rem;margin-bottom:16px;">Génère ton premier business en quelques minutes</div><button class="new-project-btn" onclick="window.location.href='/genproia-moteur-ia.html'">Générer mon premier projet →</button></div>
+        <div style="padding:40px;text-align:center;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:18px;">
+          <div style="font-size:2rem;margin-bottom:10px;opacity:0.4">✦</div>
+          <div style="font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:600;margin-bottom:5px;color:var(--white)">Aucun projet pour l'instant</div>
+          <div style="font-size:0.8rem;margin-bottom:16px;">Génère ton premier business en quelques minutes</div>
+          <button class="new-project-btn" onclick="window.location.href='/genproia-moteur-ia.html'">Générer mon premier projet →</button>
+        </div>
       </div>
     </div>
 
-    <!-- IDENTITE VISUELLE -->
+    <!-- PAGE IDENTITE VISUELLE -->
     <div id="page-identite" class="page-content">
       <div style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:20px;letter-spacing:-0.02em;">Identité visuelle</div>
-      <div id="identityList"><div style="padding:40px;text-align:center;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:18px;"><div style="font-size:2rem;margin-bottom:10px;opacity:0.4">🎨</div><div style="font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:600;color:var(--white);margin-bottom:5px;">Aucune identité générée</div><div style="font-size:0.8rem;">Génère un projet pour voir son identité visuelle ici</div></div></div>
+      <div id="identityList">
+        <div style="padding:40px;text-align:center;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:18px;">
+          <div style="font-size:2rem;margin-bottom:10px;opacity:0.4">🎨</div>
+          <div style="font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:600;color:var(--white);margin-bottom:5px;">Aucune identité générée</div>
+          <div style="font-size:0.8rem;">Génère un projet pour voir son identité visuelle ici</div>
+        </div>
+      </div>
     </div>
 
-    <!-- DOMAINES -->
+    <!-- PAGE DOMAINES -->
     <div id="page-domaines" class="page-content">
       <div style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:20px;letter-spacing:-0.02em;">Domaines suggérés</div>
-      <div id="domainesList"><div style="padding:40px;text-align:center;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:18px;"><div style="font-size:2rem;margin-bottom:10px;opacity:0.4">🌐</div><div style="font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:600;color:var(--white);margin-bottom:5px;">Aucun domaine disponible</div><div style="font-size:0.8rem;">Les domaines suggérés apparaîtront ici</div></div></div>
+      <div id="domainesList">
+        <div style="padding:40px;text-align:center;color:var(--muted);background:var(--card);border:1px solid var(--border);border-radius:18px;">
+          <div style="font-size:2rem;margin-bottom:10px;opacity:0.4">🌐</div>
+          <div style="font-family:'Inter',sans-serif;font-size:0.92rem;font-weight:600;color:var(--white);margin-bottom:5px;">Aucun domaine disponible</div>
+          <div style="font-size:0.8rem;">Les domaines suggérés pour tes projets apparaîtront ici</div>
+        </div>
+      </div>
     </div>
 
-    <!-- PAIEMENTS -->
+    <!-- PAGE PAIEMENTS -->
     <div id="page-paiements" class="page-content">
       <div style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:20px;letter-spacing:-0.02em;">Paiements</div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;text-align:center;"><div style="font-size:2.5rem;margin-bottom:16px;">💳</div><div style="font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;margin-bottom:8px;">Connecte Stripe</div><div style="font-size:0.83rem;color:var(--muted);max-width:400px;margin:0 auto 20px;">Active les paiements sur tes sites générés.</div><button class="new-project-btn" style="opacity:0.5;cursor:not-allowed;">Bientôt disponible</button></div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">💳</div>
+        <div style="font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;margin-bottom:8px;">Connecte Stripe</div>
+        <div style="font-size:0.83rem;color:var(--muted);max-width:400px;margin:0 auto 20px;">Active les paiements sur tes sites générés. Reçois tes revenus directement sur ton compte bancaire.</div>
+        <button class="new-project-btn" style="opacity:0.5;cursor:not-allowed;">Bientôt disponible</button>
+      </div>
     </div>
 
-    <!-- ANALYTICS -->
+    <!-- PAGE ANALYTICS -->
     <div id="page-analytics" class="page-content">
       <div style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:20px;letter-spacing:-0.02em;">Analytics</div>
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;text-align:center;"><div style="font-size:2.5rem;margin-bottom:16px;">📊</div><div style="font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;margin-bottom:8px;">Analytics bientôt disponibles</div><div style="font-size:0.83rem;color:var(--muted);">Visiteurs, conversions, revenus — tout en temps réel.</div></div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;text-align:center;">
+        <div style="font-size:2.5rem;margin-bottom:16px;">📊</div>
+        <div style="font-family:'Inter',sans-serif;font-size:1rem;font-weight:700;margin-bottom:8px;">Analytics bientôt disponibles</div>
+        <div style="font-size:0.83rem;color:var(--muted);">Visiteurs, conversions, revenus — tout en temps réel.</div>
+      </div>
     </div>
 
-    <!-- PARAMETRES -->
+    <!-- PAGE PARAMETRES -->
     <div id="page-parametres" class="page-content">
-      <div style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:20px;letter-spacing:-0.02em;">Paramètres</div>
+      <div style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:20px;letter-spacing:-0.02em;">Paramètres du compte</div>
       <div class="settings-card">
         <div class="settings-title">Informations personnelles</div>
         <div class="settings-field"><label class="settings-label">Prénom & Nom</label><input type="text" class="settings-input" id="settingsNom" placeholder="Ton nom"></div>
@@ -461,18 +497,18 @@
       <div class="settings-card">
         <div class="settings-title">Changer le mot de passe</div>
         <div class="settings-field"><label class="settings-label">Nouveau mot de passe</label><input type="password" class="settings-input" id="settingsNewPw" placeholder="8 caractères minimum"></div>
-        <div class="settings-field"><label class="settings-label">Confirmer</label><input type="password" class="settings-input" id="settingsConfirmPw" placeholder="Répète ton mot de passe"></div>
+        <div class="settings-field"><label class="settings-label">Confirmer le mot de passe</label><input type="password" class="settings-input" id="settingsConfirmPw" placeholder="Répète ton mot de passe"></div>
         <button class="settings-btn" onclick="changePw()">Changer le mot de passe</button>
         <div class="settings-msg" id="pwMsg"></div>
       </div>
       <div class="settings-card" style="border-color:rgba(239,68,68,0.2);">
         <div class="settings-title" style="color:#fca5a5;">Zone de danger</div>
-        <div style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Se déconnecter de ton compte.</div>
+        <div style="font-size:0.82rem;color:var(--muted);margin-bottom:14px;">Se déconnecter de ton compte Genproia.</div>
         <button onclick="logout()" style="padding:9px 20px;background:rgba(239,68,68,0.1);color:#fca5a5;border:1px solid rgba(239,68,68,0.3);cursor:pointer;border-radius:9px;font-family:'Inter',sans-serif;font-weight:600;font-size:0.82rem;">Se déconnecter</button>
       </div>
     </div>
 
-    <!-- SUPPORT -->
+    <!-- PAGE SUPPORT -->
     <div id="page-support" class="page-content">
       <div style="font-family:'Inter',sans-serif;font-size:1.1rem;font-weight:700;margin-bottom:20px;letter-spacing:-0.02em;">Support</div>
       <div class="support-card">
@@ -487,6 +523,8 @@
         <div style="font-size:0.83rem;color:var(--muted);line-height:1.7;">
           <div style="color:var(--white);font-weight:600;margin-bottom:4px;">Comment télécharger mon site ?</div>
           <div style="margin-bottom:14px;">Va dans "Mes projets", clique sur "Aperçu" puis "Télécharger".</div>
+          <div style="color:var(--white);font-weight:600;margin-bottom:4px;">Puis-je modifier mon site généré ?</div>
+          <div style="margin-bottom:14px;">La modification IA arrive bientôt. En attendant tu peux télécharger le HTML et l'éditer.</div>
           <div style="color:var(--white);font-weight:600;margin-bottom:4px;">Comment upgrader mon plan ?</div>
           <div>Clique sur les cards de plan dans le tableau de bord.</div>
         </div>
@@ -496,10 +534,14 @@
   </div>
 </div>
 
-<!-- ═══ PREVIEW MODAL ═══ -->
+<!-- APERCU MODAL -->
 <div class="preview-modal" id="previewModal">
   <div class="preview-bar">
-    <div class="preview-dots"><div class="preview-dot" style="background:#ef4444"></div><div class="preview-dot" style="background:#f59e0b"></div><div class="preview-dot" style="background:#10b981"></div></div>
+    <div class="preview-dots">
+      <div class="preview-dot" style="background:#ef4444"></div>
+      <div class="preview-dot" style="background:#f59e0b"></div>
+      <div class="preview-dot" style="background:#10b981"></div>
+    </div>
     <div class="preview-url" id="previewUrl">Aperçu du site</div>
     <button class="preview-download" id="previewDownloadBtn" onclick="downloadCurrentSite()">⬇ Télécharger</button>
     <button class="preview-close" onclick="closePreview()">✕ Fermer</button>
@@ -507,39 +549,51 @@
   <iframe id="previewFrame" class="preview-iframe" sandbox="allow-scripts allow-same-origin"></iframe>
 </div>
 
-<!-- ═══ TOAST ═══ -->
 <div class="toast-notif" id="toastNotif"></div>
 
-<!-- ═══ BOTTOM NAV (mobile) ═══ -->
+<!-- BOTTOM NAV MOBILE -->
 <nav class="bottom-nav">
   <div class="bottom-nav-inner">
-    <button class="bn-item active" id="bn-overview" onclick="bnNav('overview',this)"><span class="bn-icon">⊞</span><span class="bn-label">Accueil</span></button>
-    <button class="bn-item" id="bn-projets" onclick="bnNav('projets',this)"><span class="bn-icon">✦</span><span class="bn-label">Projets</span></button>
-    <button class="bn-item" onclick="window.location.href='/genproia-moteur-ia.html'"><span class="bn-icon" style="background:linear-gradient(135deg,var(--violet),#9333ea);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;margin-bottom:2px;">⚡</span><span class="bn-label">Générer</span></button>
-    <button class="bn-item" id="bn-parametres" onclick="bnNav('parametres',this)"><span class="bn-icon">⚙️</span><span class="bn-label">Compte</span></button>
-    <button class="bn-item" onclick="openDrawer()"><span class="bn-icon">☰</span><span class="bn-label">Menu</span></button>
+    <button class="bn-item active" id="bn-overview" onclick="bnNav('overview',this)">
+      <span class="bn-icon">⊞</span><span class="bn-label">Accueil</span>
+    </button>
+    <button class="bn-item" id="bn-projets" onclick="bnNav('projets',this)">
+      <span class="bn-icon">✦</span><span class="bn-label">Projets</span>
+    </button>
+    <button class="bn-item" onclick="window.location.href='/genproia-moteur-ia.html'">
+      <span class="bn-icon" style="background:linear-gradient(135deg,var(--violet),#9333ea);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;">⚡</span>
+      <span class="bn-label">Générer</span>
+    </button>
+    <button class="bn-item" id="bn-parametres" onclick="bnNav('parametres',this)">
+      <span class="bn-icon">⚙️</span><span class="bn-label">Compte</span>
+    </button>
+    <button class="bn-item" onclick="openDrawer()">
+      <span class="bn-icon">☰</span><span class="bn-label">Menu</span>
+    </button>
   </div>
 </nav>
 
-<!-- ═══ MOBILE DRAWER ═══ -->
+<!-- MOBILE DRAWER -->
 <div class="mobile-drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 <div class="mobile-drawer" id="mobileDrawer">
   <div class="drawer-handle"></div>
-  <div class="drawer-title">Outils</div>
+  <div class="drawer-section-label">Outils</div>
   <div class="drawer-item" onclick="closeDrawer();handleNavClick('identite',null)"><span class="drawer-item-icon">🎨</span> Identité visuelle</div>
   <div class="drawer-item" onclick="closeDrawer();handleNavClick('domaines',null)"><span class="drawer-item-icon">🌐</span> Domaines</div>
   <div class="drawer-item" onclick="closeDrawer();handleNavClick('paiements',null)"><span class="drawer-item-icon">💳</span> Paiements</div>
   <div class="drawer-item" onclick="closeDrawer();handleNavClick('analytics',null)"><span class="drawer-item-icon">📊</span> Analytics</div>
   <div class="drawer-sep"></div>
-  <div class="drawer-title">Compte</div>
+  <div class="drawer-section-label">Compte</div>
   <div class="drawer-item" onclick="closeDrawer();showPage('support',null)"><span class="drawer-item-icon">🆘</span> Support</div>
   <div class="drawer-item" onclick="closeDrawer();toggleChat()"><span class="drawer-item-icon">✦</span> Assistant IA</div>
-  <div id="adminDrawerLink" style="display:none"><div class="drawer-sep"></div><div class="drawer-item" onclick="window.location.href='/genproia-superadmin.html'" style="color:var(--pink)"><span class="drawer-item-icon">⚡</span> Super Admin</div></div>
+  <div id="adminDrawerLink" style="display:none;">
+    <div class="drawer-sep"></div>
+    <div class="drawer-item" onclick="window.location.href='/genproia-superadmin.html'" style="color:var(--pink);"><span class="drawer-item-icon">⚡</span> Super Admin</div>
+  </div>
   <div class="drawer-sep"></div>
   <div class="drawer-item" onclick="logout()" style="color:#fca5a5;"><span class="drawer-item-icon">⏻</span> Se déconnecter</div>
 </div>
 
-<!-- ═══ CHAT ═══ -->
 <div class="chat-window" id="chatWindow">
   <div class="chat-header">
     <div class="chat-avatar">✦</div>
@@ -547,11 +601,12 @@
     <button class="chat-close" onclick="toggleChat()">✕</button>
   </div>
   <div class="chat-messages" id="chatMessages">
-    <div class="chat-msg ai"><div class="chat-msg-bubble">Bonjour ! Je suis ton assistant Genproia. 🚀</div><div class="chat-msg-time">Maintenant</div></div>
+    <div class="chat-msg ai"><div class="chat-msg-bubble">Bonjour ! Je suis ton assistant Genproia. Je peux t'aider à gérer tes projets, modifier des éléments ou répondre à tes questions. 🚀</div><div class="chat-msg-time">Maintenant</div></div>
   </div>
   <div class="chat-suggestions" id="chatSuggestions">
     <span class="chat-suggestion" onclick="sendSuggestion(this)">Mes projets</span>
     <span class="chat-suggestion" onclick="sendSuggestion(this)">Comment générer un site ?</span>
+    <span class="chat-suggestion" onclick="sendSuggestion(this)">Aide</span>
   </div>
   <div class="chat-input-area">
     <textarea class="chat-input" id="chatInput" placeholder="Pose ta question..." rows="1" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChat()}" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"></textarea>
@@ -564,21 +619,24 @@
 const SUPABASE_URL = 'https://fgkqobuomiuirwtvuuxz.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_D8jaWGbn4G72A7eq8oBtqg_acLVSLBX';
 const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const PRICE_IDS = { oneshot:'price_1Tg9BE8kY6t6gqGZtT8uQcfb', pro:'price_1Tg9C78kY6t6gqGZZrDXAsjl', business:'price_1Tg9D18kY6t6gqGZGxtG64SN' };
+
+const PRICE_IDS = {
+  oneshot: 'price_1Tg9BE8kY6t6gqGZtT8uQcfb',
+  pro:     'price_1Tg9C78kY6t6gqGZZrDXAsjl',
+  business:'price_1Tg9D18kY6t6gqGZGxtG64SN'
+};
 
 let allProjets = [];
 let currentUserPlan = 'free';
 let currentPreviewHtml = '';
 let currentPreviewNom = '';
 
-// ── TOAST ──
 function showToast(msg) {
   const t = document.getElementById('toastNotif');
   t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-// ── DRAWER MOBILE ──
 function openDrawer() {
   document.getElementById('drawerOverlay').classList.add('open');
   document.getElementById('mobileDrawer').classList.add('open');
@@ -588,27 +646,28 @@ function closeDrawer() {
   document.getElementById('mobileDrawer').classList.remove('open');
 }
 
-// ── BOTTOM NAV ──
 function bnNav(page, el) {
   document.querySelectorAll('.bn-item').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   showPage(page, null);
 }
 
-// ── STRIPE ──
 async function launchUpgrade(planType) {
   const user = JSON.parse(localStorage.getItem('genproia_user') || 'null');
   if (!user || !user.id) { window.location.href = '/index.html'; return; }
   showToast('Redirection vers le paiement...');
   try {
-    const resp = await fetch('/api/stripe-checkout', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({ priceId:PRICE_IDS[planType], planType, userEmail:user.email, userId:user.id }) });
+    const resp = await fetch('/api/stripe-checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ priceId: PRICE_IDS[planType], planType, userEmail: user.email, userId: user.id })
+    });
     const data = await resp.json();
     if (data.success && data.url) { window.location.href = data.url; }
     else { showToast('Erreur de paiement. Réessaie.'); }
   } catch(e) { showToast('Erreur de connexion.'); }
 }
 
-// ── RESTRICTIONS ──
 function applyFreeRestrictions(plan) {
   const upgradeSection = document.getElementById('upgradeCardsSection');
   const upgradeTitle = document.getElementById('upgradeTitle');
@@ -638,25 +697,25 @@ function handleNavClick(page, el) {
   showPage(page, el);
 }
 
-// ── AUTH ──
 function logout() {
   localStorage.removeItem('genproia_token');
   localStorage.removeItem('genproia_user');
   window.location.href = '/index.html';
 }
 
-// ── NAVIGATION ──
 function showPage(page, el) {
   document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
-  if (el) { document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active')); el.classList.add('active'); }
+  if (el) {
+    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
   if (chatOpen) toggleChat();
   if (page === 'projets') renderAllProjets();
   if (page === 'identite') renderIdentite();
   if (page === 'domaines') renderDomaines();
 }
 
-// ── DATE ──
 function setDate() {
   const now = new Date();
   const jours = ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
@@ -664,7 +723,6 @@ function setDate() {
   document.getElementById('topSub').textContent = jours[now.getDay()] + ' ' + now.getDate() + ' ' + mois[now.getMonth()] + ' ' + now.getFullYear();
 }
 
-// ── CHARGEMENT ──
 async function loadDashboard() {
   const token = localStorage.getItem('genproia_token');
   const userRaw = localStorage.getItem('genproia_user');
@@ -685,7 +743,11 @@ async function loadDashboard() {
   let plan = user.plan || 'free';
   try {
     const { data: userData } = await _sb.from('users').select('plan').eq('id', user.id).single();
-    if (userData && userData.plan) { plan = userData.plan; user.plan = plan; localStorage.setItem('genproia_user', JSON.stringify(user)); }
+    if (userData && userData.plan) {
+      plan = userData.plan;
+      user.plan = plan;
+      localStorage.setItem('genproia_user', JSON.stringify(user));
+    }
   } catch(e) {}
 
   currentUserPlan = plan;
@@ -706,7 +768,9 @@ async function loadDashboard() {
   document.getElementById('planProjets').textContent = count + (plan === 'free' ? ' / 1' : plan === 'oneshot' ? ' / 1' : ' / ∞');
   document.getElementById('planProgress').style.width = (plan === 'free' || plan === 'oneshot') ? Math.min(count * 100, 100) + '%' : '20%';
   document.getElementById('planInfo').textContent = plan === 'free' ? 'Plan gratuit · 1 aperçu inclus' : plan === 'oneshot' ? 'One-Shot · 1 site inclus' : 'Plan ' + planLabel + ' · Projets illimités';
-  document.getElementById('statSites').textContent = allProjets.filter(p => p.statut === 'live' || p.site_url).length;
+
+  const liveSites = allProjets.filter(p => p.statut === 'live' || p.site_url).length;
+  document.getElementById('statSites').textContent = liveSites;
 
   applyFreeRestrictions(plan);
 
@@ -722,12 +786,12 @@ async function loadDashboard() {
         : '<div class="project-logo" style="background:' + couleur + '">' + initiales + '</div>';
       const isLive = p.statut === 'live' || p.site_url;
       const statusHtml = isLive ? '<div class="project-status ps-live">🟢 Live</div>' : '<div class="project-status ps-generated">Généré</div>';
-      // URL seulement (pas de description)
+      // URL uniquement (pas de description type/idee)
       const urlHtml = p.site_url ? '<div class="deploy-url-row">🌐 <a href="' + p.site_url + '" target="_blank" onclick="event.stopPropagation()">' + p.site_url + '</a></div>' : '';
 
       const actionsBtns = plan === 'free' || plan === 'oneshot'
         ? '<div class="proj-btn" onclick="event.stopPropagation();openPreview(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')">👁 Aperçu</div>' +
-          (plan === 'free' ? '<div class="proj-btn" style="background:linear-gradient(135deg,rgba(236,72,153,0.2),rgba(124,58,237,0.2));border-color:rgba(236,72,153,0.4);color:var(--pink);font-weight:600;" onclick="event.stopPropagation();launchUpgrade(\'oneshot\')">⚡ Obtenir — 49€</div>' :
+          (plan === 'free' ? '<div class="proj-btn" style="background:linear-gradient(135deg,rgba(236,72,153,0.2),rgba(124,58,237,0.2));border-color:rgba(236,72,153,0.4);color:var(--pink);font-weight:600;" onclick="event.stopPropagation();launchUpgrade(\'oneshot\')">⚡ Obtenir ce site — 49€</div>' :
            '<div class="proj-btn" onclick="event.stopPropagation();downloadSite(\'' + p.id + '\',\'' + (p.nom||'site').replace(/'/g,"\\'") + '\')">⬇ Télécharger</div>') +
           '<div class="proj-btn danger" onclick="event.stopPropagation();deleteProjet(\'' + p.id + '\')">🗑 Supprimer</div>'
         : '<div class="proj-btn" onclick="event.stopPropagation();openPreview(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')">👁 Aperçu</div>' +
@@ -745,15 +809,15 @@ async function loadDashboard() {
     const actList = document.getElementById('activityList');
     actList.innerHTML = '';
     allProjets.slice(0, 5).forEach(function(p) {
+      const date = new Date(p.created_at);
       const item = document.createElement('div');
       item.style.cssText = 'display:flex;align-items:center;gap:11px;padding:9px 8px;border-radius:7px;';
-      item.innerHTML = '<div style="width:7px;height:7px;border-radius:50%;background:var(--violet-glow);flex-shrink:0"></div><div style="flex:1;font-size:0.78rem;color:var(--muted)">Projet <strong style="color:var(--white)">' + (p.nom||'') + '</strong> généré</div><div style="font-size:0.68rem;color:var(--muted2)">' + new Date(p.created_at).toLocaleDateString('fr-FR') + '</div>';
+      item.innerHTML = '<div style="width:7px;height:7px;border-radius:50%;background:var(--violet-glow);flex-shrink:0"></div><div style="flex:1;font-size:0.78rem;color:var(--muted)">Projet <strong style="color:var(--white)">' + (p.nom||'') + '</strong> généré</div><div style="font-size:0.68rem;color:var(--muted2)">' + date.toLocaleDateString('fr-FR') + '</div>';
       actList.appendChild(item);
     });
   }
 }
 
-// ── TOUS LES PROJETS ──
 function renderAllProjets() {
   const container = document.getElementById('allProjectsList');
   if (allProjets.length === 0) return;
@@ -767,10 +831,6 @@ function renderAllProjets() {
       : '<div class="project-logo" style="background:' + couleur + ';width:48px;height:48px;">' + initiales + '</div>';
     const isLive = p.statut === 'live' || p.site_url;
     const statusHtml2 = isLive ? '<div class="project-status ps-live">🟢 Live</div>' : '<div class="project-status ps-generated">Généré</div>';
-    // URL + date seulement (pas de description)
+    // URL + date uniquement (pas de description)
     const urlHtml2 = p.site_url ? '<div class="deploy-url-row">🌐 <a href="' + p.site_url + '" target="_blank" onclick="event.stopPropagation()">' + p.site_url + '</a></div>' : '';
-    const dateHtml = '<div style="font-size:0.68rem;color:var(--muted2);margin-top:2px;">' + new Date(p.created_at).toLocaleDateString('fr-FR') + '</div>';
-
-    const actionsBtns2 = currentUserPlan === 'free'
-      ? '<div class="proj-btn" onclick="event.stopPropagation();openPreview(' + JSON.stringify(p).replace(/"/g,'&quot;') + ')">👁 Aperçu</div>' +
-        '<div class="proj-btn" style="background:linear-gradient(135deg,rgba(236,72,153,0.2),rgba(124,58,237,0.2));border-color:rgba(236,72,153,0.4);color:var(--pink);font-weight:600;" onclick="event.stopPropagation();launchUpgrade(\'oneshot\')">⚡ Obte
+    const dateHtml = '<div style="font-size:0.68rem;color:var(--muted2);margin-top:2px;">' + new Date(p.created_at).toLocaleDat
